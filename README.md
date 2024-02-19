@@ -1,3 +1,0 @@
-# wavyindustries.com
-## Monkey
-...
