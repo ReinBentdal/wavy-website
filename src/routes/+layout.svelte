@@ -47,7 +47,7 @@
     <nav >
         <a class="logo {$page.url.pathname === '/' ? 'active' : ''}" href="/" rel="noopener noreferrer">Wavy Industries</a>
         <a href="/monkey" class={$page.url.pathname === '/monkey' ? 'active' : ''}>Monkey</a>
-        <a href="/midi-toolbar" class={$page.url.pathname === '/midi-toolbar' ? 'active' : ''}>MIDI Toolbar</a>
+        <a href="/midi-connect-mac" class={$page.url.pathname === '/midi-connect-mac' ? 'active' : ''}>MIDI Connect for macOS</a>
         <a href="/about" class={$page.url.pathname === '/about' ? 'active' : ''}>About</a>
     </nav>
     <div></div>

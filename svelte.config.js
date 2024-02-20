@@ -15,8 +15,8 @@ const config = {
 			// if you have a single-page app (SPA) with no server-side rendering, 
 			// set 'fallback' to a file that will be served for any non-static routes
 			fallback: 'index.html',
-			pages: 'build',
-			assets: 'build',
+			pages: 'docs',
+			assets: 'docs',
 			// other adapter-static options...
 		  }),
 	},
