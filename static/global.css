@@ -4,7 +4,7 @@ html {
 }
 
 body {
-    margin: 0 2rem;
+    -webkit-font-smoothing: antialiased;
 }
 
 h1 {

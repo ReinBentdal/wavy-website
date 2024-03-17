@@ -56,7 +56,7 @@
 
   .current-page {
     opacity: 1;
-    text-decoration: underline;
+    /* text-decoration: underline; */
   }
 
   nav tr * {

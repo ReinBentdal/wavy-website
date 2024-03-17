@@ -15,16 +15,16 @@ const config = {
 			// if you have a single-page app (SPA) with no server-side rendering, 
 			// set 'fallback' to a file that will be served for any non-static routes
 			fallback: 'index.html',
-			pages: 'docs',
-			assets: 'docs',
+			pages: 'build',
+			assets: 'build',
 			// other adapter-static options...
 		  }),
 	},
 
 	// Override http methods in the prerendering configuration
-	prerender: {
-		default: false
-	}
+	// prerender: {
+	// 	default: false
+	// }
 };
 
 export default config;
