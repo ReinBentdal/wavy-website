@@ -1,0 +1,23 @@
+---
+import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
+import Header from '../layouts/Header.astro';
+import Footer from '../layouts/Footer.astro';
+
+---
+
+<Layout title="Wavy Industries: About">
+	<main>
+		<Header />
+		<div class="section-margin">
+			<div class="temp"></div>
+		</div>
+		<Footer />
+	</main>
+</Layout>
+
+<style>
+	.temp {
+		height: 100vh;
+	}
+</style>

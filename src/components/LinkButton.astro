@@ -1,0 +1,31 @@
+---
+const props = Astro.props
+
+import '../styles/global.css'
+---
+
+<a {...props}>
+    <slot />
+</a>
+
+
+<style>
+    a {
+        background-color: #3366FF;
+        border: none;
+        color: white;
+        padding: 0.2rem 0.5rem;
+        text-align: center;
+        text-decoration: none;
+        display: inline-block;
+        font-size: 16px;
+        margin: 4px 2px;
+        cursor: pointer;
+        font-family: var( --font-family);
+    }
+
+    a:hover {
+        /* text-decoration: underline; */
+        background-color: #264ec5;
+    }
+</style>

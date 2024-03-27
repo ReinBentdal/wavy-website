@@ -1,0 +1,57 @@
+---
+import '../styles/global.css';
+
+import Layout from '../layouts/Layout.astro';
+import Header from '../layouts/Header.astro';
+import Footer from '../layouts/Footer.astro';
+import LinkButton from '../components/LinkButton.astro';
+---
+
+<Layout title="Wavy Industries">
+	<main>
+		<Header />
+		<img class="landing-image" src="./assets/monkey dark.png" alt="Wavy Monkey front image" />
+
+		<section class="section-margin">
+			<div class="product-title">
+				<h1>Monkey</h1>
+				<h2>Ultra portable Bluetooth™ MIDI keyboard</h2>
+			</div>
+			<div class="info-card">
+				<p>Lorem ipsum dolor sit amet consectetur adipisicing elit. Eos, fuga facilis? At, quisquam iure maiores soluta amet nesciunt ex? Veritatis recusandae asperiores veniam culpa illo nam numquam dolorem dicta ipsum. Lorem ipsum dolor sit amet consectetur adipisicing elit. Obcaecati, culpa dolorem! Labore architecto et suscipit incidunt, quae, dolore nihil exercitationem, ut fugiat nesciunt totam odio blanditiis laborum. Et, nostrum harum.</p>
+				<LinkButton href="https://buy.stripe.com/7sI9Co9Mwb8a6WIbIJ">Buy now</LinkButton>
+			</div>
+		</section>
+		<Footer />
+	</main>
+</Layout>
+
+<style>
+	.section-margin {
+		margin-top: 2rem;
+	}
+
+	.landing-image {
+		width: 100%;
+		height: 600px;
+		object-fit: cover;
+	}
+
+	.product-title {
+		border-bottom: 1px solid #000;
+	}
+
+	.product-title h1 {
+		display: inline;
+	}
+
+	.product-title h2 {
+		display: inline;
+		font-weight: normal;
+		font-size: 1rem;
+	}
+
+	.info-card {
+		width: 500px;
+	}
+</style>

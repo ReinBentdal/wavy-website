@@ -1,0 +1,16 @@
+:root {
+    --font-family: 'space mono', monospace;
+    --font-family-alt: 'space grotsek', monospace;
+}
+
+body {
+    font-family: var(--font-family);
+}
+
+a:link, a:visited {
+    color: inherit; /* Makes the link color inherit from the parent element */
+}
+
+.section-margin {
+    margin: 0 50px;
+  }

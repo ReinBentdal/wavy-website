@@ -1,0 +1,63 @@
+---
+import '../styles/global.css';
+
+// const links = {'/monkey': 'Monkey', '/midi-connect': 'MIDI Connect', '/resources': 'Resources', '/about': 'About'};
+const links = {'/about': 'About'};
+
+// find which page is currently active
+const pathname = new URL(Astro.request.url).pathname;
+---
+<header>
+    <section class="section-margin">
+        <nav>
+            <a href="/"><h1>Wavy Industries</h1></a>
+            <span class="nav-items">
+                <!-- Loop through the links and create the nav items -->
+                {Object.entries(links).map(([link, title]) => {
+                    const activeLink = pathname == link ? "active-link" : "";
+                    return <a href={link} class={`page-link ${activeLink}`}>{title}</a>
+                })}
+                <a href="https://discord.gg/pxCjpFvb" target="_blank"><img alt="Discord channel link" src="./assets/Discord blue mark.svg" /></a>
+            </span>
+        </nav>
+    </section>
+</header>
+
+<style>
+	nav {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+        width: 100%;
+	}
+
+    a {
+        text-decoration: none;
+    }
+    
+    .nav-items {
+        display: flex;
+        align-items: center;
+    }
+
+    .nav-items a img {
+        opacity: 1 !important;
+        width: 1.5rem;
+        margin-left: 3rem;
+    }
+
+    .nav-items .page-link.active-link {
+        opacity: 1;
+        text-decoration: underline;
+    }
+
+    .nav-items .page-link {
+        opacity: 0.6;
+        margin-left: 2rem;
+    }
+
+    .nav-items .page-link:hover {
+        opacity: 1;
+    }
+
+</style>
