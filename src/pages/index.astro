@@ -1,0 +1,23 @@
+---
+import '../styles/global.css';
+
+import Layout from '../layouts/Layout.astro';
+import Header from '../layouts/Header.astro';
+import Footer from '../layouts/Footer.astro';
+---
+
+<Layout title="Wavy Industries">
+	<main>
+		<Header />
+		<section class="section-margin">
+			<p>Based in Norway, we develop MIDI devices using low-latency, low-power Bluetooth. We admire and strive for high quality in every part of the product</p>
+		</section>
+		<Footer />
+	</main>
+</Layout>
+
+<style>
+	p {
+		font-size: 24px;
+	}
+</style>

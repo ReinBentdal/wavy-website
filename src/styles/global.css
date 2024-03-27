@@ -1,0 +1,25 @@
+:root {
+    --font-family: "Inter", sans-serif;
+    --font-family-alt: "Inter", sans-serif;
+}
+
+body {
+    font-family: var(--font-family);
+}
+
+
+a {
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+a:link, a:visited {
+    color: inherit; /* Makes the link color inherit from the parent element */
+}
+
+.section-margin {
+    margin: 0 50px;
+}

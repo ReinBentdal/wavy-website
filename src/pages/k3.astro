@@ -1,0 +1,59 @@
+---
+import '../styles/global.css';
+import Layout from '../layouts/Layout.astro';
+import Header from '../layouts/Header.astro';
+import Footer from '../layouts/Footer.astro';
+
+---
+
+<Layout title="Wavy Industries: About">
+	<main>
+		<Header />
+		<div class="contents">
+            <div class="section-margin">
+                <ul>
+                    <li><a href="" class="disabled">buy now (coming soon)</a></li>
+                    <li><a href="http://eepurl.com/ivXTOk" style="color: #0075FF">Subscribe to updates</a></li>
+                </ul>
+            </div>
+        </div>
+		<div class="section-margin">
+			<img src="assets/k3.png" />
+			<p>More info on K3 is coming soon</p>
+		</div>
+		<Footer />
+	</main>
+</Layout>
+
+<style>
+ul {
+    list-style-type: none;
+    font-size: 16px;
+    font-style: italic;
+    margin: 0.5em 0px;
+    padding: 0px;
+    display: flex;
+    gap: 50px;
+}
+ul li {
+    display: inline;
+}
+
+p {
+    font-size: 24px;
+}
+img {
+    max-width: 600px;
+    width: 100%;
+}
+.contents {
+    border-top: 1px solid #c8c8c8;
+    border-bottom: 1px solid #c8c8c8;
+    margin-bottom: 50px;
+    width: 100%;
+}
+.disabled {
+	cursor: not-allowed;
+	opacity: 0.5;
+}
+</style>
