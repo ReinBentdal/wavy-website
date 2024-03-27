@@ -6,7 +6,7 @@ import Tooltop from '../components/Tooltip.astro';
 const links = {'/monkey': 'monkey', '/k3': 'k3', '/midi-connect': 'MIDI connect'};
 
 // find which page is currently active
-const pathname = new URL(Astro.request.url).pathname;
+const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '');
 ---
 <header>
     <section class="section-margin">
