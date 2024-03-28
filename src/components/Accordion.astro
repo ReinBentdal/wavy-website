@@ -1,0 +1,58 @@
+---
+const {title, ...rest} = Astro.props;
+---
+
+<div class="accordion" {...rest}>
+  <input type="checkbox" id={title} class="accordion-toggle"/>
+  <label for={title} class="accordion-label">{title}</label>
+  <div class="accordion-content">
+    <slot>
+  </div>
+</div>
+
+<style>
+.accordion {
+  margin-bottom: 5px;
+}
+
+/* Hide the checkbox */
+.accordion-toggle {
+  display: none;
+}
+
+/* Styling for the label */
+.accordion-label {
+  display: block;
+  background-color: #f0f0f0;
+  padding: 10px;
+  cursor: pointer;
+  border: 1px solid #ccc;
+}
+
+.accordion-toggle:checked + .accordion-label {
+  background-color: #c3c3c3;
+}
+
+.accordion-toggle + .accordion-label::before {
+    content: "⏵";
+    margin-right: 5px;
+}
+.accordion-toggle:checked + .accordion-label::before {
+    content: "⏷";
+}
+
+/* Hide the content by default */
+.accordion-content {
+  visibility: hidden;
+  overflow: hidden;
+  background-color: #f0f0f0;
+  height: 0px;
+}
+
+/* Show content when checkbox is checked */
+.accordion-toggle:checked + .accordion-label + .accordion-content {
+  visibility: visible;
+  height: auto;
+  padding: 10px;
+}
+</style>

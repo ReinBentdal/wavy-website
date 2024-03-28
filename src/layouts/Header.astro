@@ -6,7 +6,7 @@ import Tooltop from '../components/Tooltip.astro';
 const links = {'/monkey': 'monkey', '/k3': 'k3', '/midi-connect': 'MIDI connect'};
 
 // find which page is currently active
-const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '');
+const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
 ---
 <header>
     <section class="section-margin">
@@ -18,7 +18,7 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '');
             <ul class="urls">
                 <!-- Loop through the links and create the nav items -->
                 {Object.entries(links).map(([link, title]) => {
-                    console.log(link, pathname)
+                    // console.log(link, pathname)
                     const activeLink = pathname == link ? "active-link" : "";
                     return <li class={`${activeLink}`}><a href={link}>{title}</a></li>
                 })}
@@ -40,6 +40,9 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '');
 </header>
 
 <style>
+    header {
+        border: 2px solid #eee;
+    }
     nav {
         display: flex;
         align-items: center;
@@ -64,7 +67,7 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '');
     
     ul li {
         /* margin-left: 100px; */
-        line-height: 1.25em;
+        line-height: 1.5em;
     }
 
     ul.urls li {

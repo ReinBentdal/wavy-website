@@ -3,21 +3,41 @@ import '../../styles/global.css';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../layouts/Header.astro';
 import Footer from '../../layouts/Footer.astro';
-
+import Accordion from '../../components/Accordion.astro';
 ---
 
 <Layout title="Wavy Industries: About">
 	<main>
 		<Header />
 		<div class="section-margin">
-			<div class="temp">Getting started, coming soon..</div>
+            <h1>Monkey getting started</h1>
+            <h2>Device updates</h2>
+            <p>If you are using macOS and have <i>MIDI connect</i> installed, you can update the device directly from there.</p>
+            <p>Update....</p>
+			<h2>Connecting up</h2>
+            <p>Monkey supports a variety of hosts:</p>
+            <Accordion title="macOS">
+                www
+            </Accordion>
+            <Accordion title="Windows" />
+            <Accordion title="Android" />
+            <Accordion title="ipadOS / IOS" />
+            <Accordion title="TE OP-1" />
+            <h2>Configure DAW</h2>
+            <p>By default Monkey sends on MIDI channel 1 for instruments and 16 for the drums. The instrument channel is changeable by pressing SHIFT+CH, then while keeping SHIFT pressed, press one of the numbered buttons.</p>
+            <Accordion title="Ableton Live">
+                <p>Make sure Monkey is enabled in settings</p>
+                <img width="600px" src="/assets/ableton/ableton settings.png" alt="Ableton settings" />
+                <p>Configure channel for each midi track you want to play on Monkey</p>
+                <img width="600px" src="/assets/ableton/ableton channel.png" alt="Ableton channel" />
+            </Accordion>
+            <Accordion title="FL Studio">
+                
+            </Accordion>
 		</div>
 		<Footer />
 	</main>
 </Layout>
 
 <style>
-	.temp {
-		height: 100vh;
-	}
 </style>
