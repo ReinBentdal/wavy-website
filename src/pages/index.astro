@@ -9,7 +9,7 @@ import Footer from '../layouts/Footer.astro';
 <Layout title="Wavy Industries">
 	<main>
 		<Header />
-		<section class="section-margin">
+		<section class="content">
 			<p>Based in Norway, we develop MIDI devices using low-latency, low-power Bluetooth.</p>
 		</section>
 		<Footer />
@@ -17,7 +17,10 @@ import Footer from '../layouts/Footer.astro';
 </Layout>
 
 <style>
-	p {
-		font-size: 24px;
+	.content {
+		font-size: 16px;
+		margin-left: 30px;
+		margin-top: 70px;
+		min-height: 80vh;
 	}
 </style>

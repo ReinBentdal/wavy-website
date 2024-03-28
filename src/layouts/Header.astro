@@ -3,99 +3,81 @@ import '../styles/global.css';
 
 import Tooltop from '../components/Tooltip.astro';
 
-const links = {'/monkey': 'monkey', '/k3': 'k3', '/midi-connect': 'MIDI connect'};
+const links = {'/monkey': 'monkey', '/K3': 'K3', '/midi-connect': 'MIDI connect', '/device-update': 'device update'};
 
 // find which page is currently active
 const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
 ---
 <header>
-    <section class="section-margin">
-        <nav>
-            <a class="title" href="/">
-                <img src="/assets/logo.svg" />
-            </a>
-            <div class="links">
-            <ul class="urls">
-                <!-- Loop through the links and create the nav items -->
-                {Object.entries(links).map(([link, title]) => {
-                    // console.log(link, pathname)
-                    const activeLink = pathname == link ? "active-link" : "";
-                    return <li class={`${activeLink}`}><a href={link}>{title}</a></li>
-                })}
-            </ul>
-            <ul>
-                <li><Tooltop info="Join Discord server">
-                    <a href="https://discord.gg/pxCjpFvb" target="_blank"><img alt="Discord channel link" src="/assets/Discord blue mark.svg" width="30px" /></a>
-                </Tooltop></li>
-                <li><Tooltop info="Contact us">
-                    <a href="mailto:rein.bent@gmail.com"><img alt="Contact us" src="/assets/mail.fill.svg" width="30px" /></a>
-                </Tooltop></li>
-                <li><Tooltop info="Join mailing list">
-                    <a href="http://eepurl.com/ivXTOk"><img alt="mailing list" src="/assets/mail.stack.fill.svg" width="30px" /></a>
-                </Tooltop></li>
-            </ul>
-            </div>
-        </nav>
-    </section>
+    <div class="logo-box">
+        <a href="/"><img src="/assets/logo.svg" /></a>
+    </div>
+    <nav class="nav-box">
+        <ul class="urls">
+            <!-- Loop through the links and create the nav items -->
+            {Object.entries(links).map(([link, title]) => {
+                // console.log(link, pathname)
+                const activeLink = pathname == link ? "active-link" : "";
+                return <li class={`${activeLink}`}><a href={link}>{title}</a></li>
+            })}
+        </ul>
+    </nav>
+    <div class="extern-box">
+        <span>
+            <a href="https://discord.gg/pxCjpFvb" target="_blank"><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /></a>
+            <a href="mailto:rein.bent@gmail.com"><img alt="Contact us" src="/assets/mail.fill.svg"/></a>
+            <a href="http://eepurl.com/ivXTOk"><img alt="mailing list" src="/assets/mail.stack.fill.svg"/></a>
+        </span>
+    </div>
 </header>
 
 <style>
     header {
-        border: 2px solid #eee;
-    }
-    nav {
         display: flex;
         align-items: center;
-        justify-content: start;
-        flex-wrap: wrap;
     }
 
-    .links {
+    .logo-box {
+        width: 200px;
+        height: 165px;
+        background-color: #FFEF5A;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .nav-box {
+        font-size: 16px;
+    }
+
+    /* external links */
+    .extern-box {
+        position: absolute;
+        height: 165px;
+        right: 0;
+        display: flex;
+        justify-content: end;
+        align-items: end;
+    }
+    .extern-box span {
+        margin: 5px 10px;
         display: flex;
         align-items: center;
-        justify-content: start;
-        margin-left: -40px;
+        gap: 10px;
+    }
+    .extern-box img {
+        filter: brightness(0%);
+        height: 16px;
+    }
+    .extern-box img:hover {
+        filter: brightness(100%);
     }
 
     ul {
         list-style-type: none;
-        font-size: 24px;
-        min-width: 250px;
-        /* display: inline-block; */
-    }
-
-    
-    ul li {
-        /* margin-left: 100px; */
-        line-height: 1.5em;
-    }
-
-    ul.urls li {
-        opacity: 0.7;
     }
 
     ul li.active-link {
         font-weight: bold;
-        opacity: 1;
     }
-
-    ul li.active-link::before {
-        content: "📍";
-        position: absolute;
-        margin-left: -30px;
-    }
-
-    a.title {
-        text-decoration: none;
-        font-size: 48px;
-        font-family: "Inter", sans-serif;
-        font-weight:300;
-        margin-right: 90px;
-    }
-
-    /* a.title h1 {
-        display: inline;
-    } */
-
-
 </style>
