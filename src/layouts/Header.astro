@@ -13,7 +13,7 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(
         <a href="/"><img src="/assets/logo.svg" /></a>
     </div>
     <nav class="nav-box">
-        <ul class="urls">
+        <ul>
             <!-- Loop through the links and create the nav items -->
             {Object.entries(links).map(([link, title]) => {
                 // console.log(link, pathname)
@@ -40,6 +40,7 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(
     .logo-box {
         width: 200px;
         height: 165px;
+        margin-right: 40px;
         background-color: #FFEF5A;
         display: flex;
         justify-content: center;
@@ -53,17 +54,21 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(
     /* external links */
     .extern-box {
         position: absolute;
-        height: 165px;
-        right: 0;
+        /* right: 0; */
+        min-width: calc(100% - 280px);
+        text-align: right;
+        margin-left: 240px;
         display: flex;
         justify-content: end;
         align-items: end;
+        margin-top: 140px; /* header 165px height - 20px icons height - 5px bottom padding */
+        /* height: 165px;
+        margin-bottom: 5px; */
     }
     .extern-box span {
-        margin: 5px 10px;
         display: flex;
         align-items: center;
-        gap: 10px;
+        gap: 15px;
     }
     .extern-box img {
         filter: brightness(0%);
@@ -75,6 +80,7 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(
 
     ul {
         list-style-type: none;
+        padding: 0;
     }
 
     ul li.active-link {
