@@ -33,18 +33,6 @@ import Footer from '../layouts/Footer.astro';
 				<spam class="remark">Updating is currently not implemented, coming very soon</span>
 				<button>Update now</button>
 				<p id="upload-status"></p>
-				<!-- <hr />
-				<h3>Image Upload</h3>
-				<div class="form-group">
-					<input type="file" class="form-control" id="file-image" />
-				</div>
-				<div class="image">
-					<div class="form-group">
-						<div id="file-status">Select image file (.img)</div>
-						<div id="file-info"></div>
-					</div>
-					<button class="btn btn-primary" id="file-upload" disabled><i class="bi-upload"></i> Upload</button>
-				</div> -->
 			</div>
 		</div>
 		<!-- <Footer /> -->
@@ -97,13 +85,13 @@ let file = null;
 let fileData = null;
 let images = [];
 
-function getUpdateFile(product_name, product_revision) {
-	fetch('/firmware/MONKEY/r2/app\_update\_0.6.1.bin')
-		.then(res => {
-			console.log(res)
-		})
-}
-getUpdateFile()
+// function getUpdateFile(product_name, product_revision) {
+// 	fetch('/assets/firmware/MONKEY/r2/app\_update\_0.6.1.bin')
+// 		.then(res => {
+// 			console.log(res)
+// 		})
+// }
+// getUpdateFile()
 
 const mcumgr = new MCUManager();
 mcumgr.onConnecting(() => {
