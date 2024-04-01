@@ -10,9 +10,12 @@ import Footer from '../layouts/Footer.astro';
 	<main>
 		<Header />
 		<section class="content">
-			<p>Based in Norway, we develop MIDI devices using low-latency, low-power Bluetooth.</p>
+			<p class="catch">Based in Norway, we develop music making devices.</p>
+			<div class="info">
+				<p><i><b>Core team:</b> <a href="https://www.linkedin.com/in/rein-gundersen-bentdal-201701188/">Rein Gundersen Bentdal</a></i></p>
+				<p><i><b>Special thanks to:</b> Herman Gording Hong, Erik Hognestad, Frida Gundersen Bentdal, Carsten Wulff, Eric Bezzam, Paolo Prandoni, Olve Sævik, Anton Hamer, Wilhelm Kruse Kielland, Selma Gundersen Bentdal</i></p>
+			</div>
 		</section>
-		<Footer />
 	</main>
 </Layout>
 
@@ -20,7 +23,22 @@ import Footer from '../layouts/Footer.astro';
 	.content {
 		font-size: 16px;
 		margin-left: 30px;
+		margin-right: 30px;
+		height: calc(100vh - 165px);
+		display: flex;
+		flex-direction: column;
+		justify-content: space-between;
+	}
+	.catch {
 		margin-top: 70px;
-		min-height: 80vh;
+	}
+
+	.info {
+		font-size: 14px;
+		margin-top: 120px;
+		font-family: 'Courier New', Courier, monospace;
+	}
+	.info p {
+		margin-bottom: 40px;
 	}
 </style>

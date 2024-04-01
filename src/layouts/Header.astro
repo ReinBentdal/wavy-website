@@ -24,22 +24,23 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(
     </nav>
     <div class="extern-box">
         <span>
-            <a href="https://discord.gg/pxCjpFvb" target="_blank"><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /></a>
-            <a href="mailto:rein.bent@gmail.com"><img alt="Contact us" src="/assets/mail.fill.svg"/></a>
-            <a href="http://eepurl.com/ivXTOk"><img alt="mailing list" src="/assets/mail.stack.fill.svg"/></a>
+            <a title="Discord" href="https://discord.gg/pxCjpFvb" target="_blank"><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /></a>
+            <a title="Contact" href="mailto:rein.bent@gmail.com"><img alt="Contact us" src="/assets/mail.fill.svg"/></a>
+            <a title="Newsletter" href="http://eepurl.com/ivXTOk"><img alt="mailing list" src="/assets/mail.stack.fill.svg"/></a>
         </span>
     </div>
 </header>
 
 <style>
     header {
+        height: 165px;
         display: flex;
         align-items: center;
     }
 
     .logo-box {
         width: 200px;
-        height: 165px;
+        height: 100%;
         margin-right: 40px;
         background-color: #FFEF5A;
         display: flex;
@@ -62,8 +63,6 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(
         justify-content: end;
         align-items: end;
         margin-top: 140px; /* header 165px height - 20px icons height - 5px bottom padding */
-        /* height: 165px;
-        margin-bottom: 5px; */
     }
     .extern-box span {
         display: flex;

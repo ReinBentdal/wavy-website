@@ -10,10 +10,10 @@ import Footer from '../layouts/Footer.astro';
 	<main>
 		<Header />
 		<div class="contents">
-            <div class="section-margin">
+            <div class="page-links">
                 <ul>
-                    <li><a href="" class="disabled">download for macOS (coming soon)</a></li>
-                    <li><a href="http://eepurl.com/ivXTOk" style="color: #0075FF">Subscribe to updates</a></li>
+                    <li><a href="" class="disabled">get on macOS</a></li>
+                    <li><a href="http://eepurl.com/ivXTOk" style="color: #0075FF">get updates</a></li>
                 </ul>
             </div>
         </div>
@@ -25,7 +25,7 @@ import Footer from '../layouts/Footer.astro';
 				
 				Note: For use with non Wavy devices, there is a unlimited free version. However every once in a while you will get a notification notifying you that its a free version. Upgrade to the paid version for €5.99 and you will no longer be bothered. Then you can use it with other Bluetooth MIDI devices just like with the Wavy devices.</p>
 		</div>
-		<Footer />
+		<!-- <Footer /> -->
 	</main>
 </Layout>
 
@@ -36,15 +36,14 @@ ul {
     font-style: italic;
     margin: 0.5em 0px;
     padding: 0px;
-    display: flex;
-    gap: 50px;
 }
 ul li {
     display: inline;
+    margin-left: 30px;
 }
 
 p {
-    font-size: 24px;
+    font-size: 16px;
 }
 img {
     max-width: 400px;

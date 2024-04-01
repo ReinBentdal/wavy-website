@@ -10,18 +10,17 @@ import Footer from '../layouts/Footer.astro';
 	<main>
 		<Header />
 		<div class="contents">
-            <div class="section-margin">
+            <div class="page-links">
                 <ul>
-                    <li><a href="" class="disabled">buy now (coming soon)</a></li>
-                    <li><a href="http://eepurl.com/ivXTOk" style="color: #0075FF">Subscribe to updates</a></li>
+                    <li><a href="" class="disabled">buy</a></li>
+                    <li><a href="http://eepurl.com/ivXTOk" style="color: #0075FF">get updates</a></li>
                 </ul>
             </div>
         </div>
 		<div class="section-margin">
-			<img src="/assets/k3.png" />
 			<p>More info on K3 is coming soon</p>
 		</div>
-		<Footer />
+		<!-- <Footer /> -->
 	</main>
 </Layout>
 
@@ -29,31 +28,35 @@ import Footer from '../layouts/Footer.astro';
 ul {
     list-style-type: none;
     font-size: 16px;
-    font-style: italic;
-    margin: 0.5em 0px;
-    padding: 0px;
-    display: flex;
-    gap: 50px;
+    margin: 0px;
+    padding: .5em 0px;
+}
+.page-links span {
+    min-width: 750px;
+    overflow-x: scroll;
 }
 ul li {
     display: inline;
+    margin: 0px 15px;
 }
 
 p {
-    font-size: 24px;
-}
-img {
-    max-width: 600px;
-    width: 100%;
+    font-size: 16px;
 }
 .contents {
-    border-top: 1px solid #c8c8c8;
-    border-bottom: 1px solid #c8c8c8;
     margin-bottom: 50px;
     width: 100%;
 }
 .disabled {
 	cursor: not-allowed;
 	opacity: 0.5;
+}
+.page-links {
+    background-image: url('/assets/k3.png');
+    background-size: cover;
+    background-position: center;
+    height: 400px;
+    color: black;
+    padding: 5px 15px 0px 15px;
 }
 </style>
