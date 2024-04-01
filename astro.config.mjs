@@ -4,6 +4,7 @@ import { defineConfig } from 'astro/config';
 export default defineConfig({
     build: {
         format: 'file',
+        assets: 'build_assets'
     },
     vite: {
         resolve: {
