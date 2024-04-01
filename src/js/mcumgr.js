@@ -74,6 +74,7 @@ class MCUManager {
         this._connectCallback = null;
         this._connectingCallback = null;
         this._disconnectCallback = null;
+        this._connectionLossCallback = null;
         this._messageCallback = null;
         this._imageUploadProgressCallback = null;
         this._uploadIsInProgress = false;
@@ -99,9 +100,10 @@ class MCUManager {
             this._logger.info(`Connecting to device ${this.name}...`);
             this._device.addEventListener('gattserverdisconnected', async event => {
                 this._logger.info(event);
-                if (!this._userRequestedDisconnect) {
+                if (this._userRequestedDisconnect === false) {
                     this._logger.info('Trying to reconnect');
                     await new Promise(resolve => setTimeout(resolve, 1000));
+                    if (this._connectionLossCallback) this._connectionLossCallback();
                     await this._connect();
                 } else {
                     this._disconnected();
@@ -147,6 +149,10 @@ class MCUManager {
     }
     onDisconnect(callback) {
         this._disconnectCallback = callback;
+        return this;
+    }
+    onConnectionLoss(callback) {
+        this._connectionLossCallback = callback;
         return this;
     }
     onMessage(callback) {

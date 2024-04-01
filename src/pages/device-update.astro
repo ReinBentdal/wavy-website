@@ -2,8 +2,6 @@
 import '../styles/global.css';
 import Layout from '../layouts/Layout.astro';
 import Header from '../layouts/Header.astro';
-import Footer from '../layouts/Footer.astro';
-
 ---
 
 <Layout title="Wavy Industries: device update">
@@ -11,31 +9,53 @@ import Footer from '../layouts/Footer.astro';
 		<Header />
 		<div id="screens">
 			
-			<div id="initial-screen">
-				<div id="bluetooth-is-available">
+			<div id="initial-screen" class="screen">
+				<div id="bt-unavailable-screen" class="screen">
+					<span class="error">It looks like your browser is not supported.</span><br/><br/>
 					This tool is compatible with desktops (or laptops) with the <b>latest Chrome, Opera and Edge</b> browsers, and working
 					Bluetooth connection (most laptops have them these days). You can also try it from Chrome on Android, or Bluefy on iOS/iPadOS.
 				</div>
-				<div id="connect-block" style="display: none;">
-					<span class="remark">Make sure your device is not connected to anything to be able to find it.</span><br/><br/>
+				<div id="bt-available-screen" class="screen">
+					<span class="error">Updater is in ALPHA. Don't use unless you are a tester of it.</span><br/><br/>
+					<span class="remark">Make sure your device is not connected to anything.</span><br/><br/>
 					<button id="button-connect" type="submit" class="btn btn-primary"><i class="bi-bluetooth"></i>Find device</button>
 				</div>
 			</div>
 			
-			<div id="connected-screen" style="display: none;">
+			<div id="reconnect-screen" class="screen">
+				<span class="remark">Waiting for device to reconnect..</span><br/><br/>
+			</div>
+
+			<div id="connected-screen" class="screen">
 				<button id="button-disconnect" type="submit"><i class="bi-x-square"></i> Disconnect</button>
 				<span id="device-name">unknown name</span>
 				<p>
-					Current firmware version: <span id="device-fw-version"></span><br/>
-					Latest firmware version: <span id="latest-fw-version">0.6.1</span>
+					Device firmware version: <span id="device-fw-version"></span><br/>
+					Latest firmware version: <span id="latest-fw-version"></span>
 				</p>
 				<br/>
-				<spam class="remark">Updating is currently not implemented, coming very soon</span>
-				<button>Update now</button>
-				<p id="upload-status"></p>
+
+				<div id="update-waiting-screen" class="screen">
+					<p>Waiting for device version...</p>
+				</div>
+				<div id="update-good-screen" class="screen">
+					<span class="ok">Your device is up to date!</span>
+				</div>
+				<div id="update-idle-screen" class="screen">
+					<span class="remark">Update is available!</span><br/>
+					<button id="update-button" >Update now</button>
+				</div>
+				<div id="update-prepare-screen" class="screen">
+					<span>Preparing update...</span>
+				</div>
+				<div id="update-uploading-screen" class="screen">
+					Progress: <span id="upload-status"></span>
+				</div>
+				<div id="update-complete-screen" class="screen">
+					<span class="ok">Transfer complete! Device will reboot and finish installation...</span>
+				</div>
 			</div>
 		</div>
-		<!-- <Footer /> -->
 	</main>
 </Layout>
 
@@ -52,66 +72,69 @@ p {
 .remark {
 	background-color: #E4E3DD;
 }
+.error {
+	background-color: #FFD6D6;
+}
+.ok {
+	background-color: #D6FFD6;
+}
 </style>
 
 <script>
 import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '../js/mcumgr.js';
+import {Screens} from '../js/screens.js';
 
-const screens = {
-	initial: document.getElementById('initial-screen'),
-	connected: document.getElementById('connected-screen')
-};
+const product_name = "MONKEY";
+const product_revision = "r2";
 
-const bluetoothIsAvailable = document.getElementById('bluetooth-is-available');
-const connectBlock = document.getElementById('connect-block');
+const firmwareVerions = {
+    "MONKEY": {
+        "r1": "0.6.1",
+        "r2": "0.6.2"
+    }
+}
+
+const screens = new Screens('initial-screen');
+const initialScreens = new Screens();
+const updateScreens = new Screens('update-waiting-screen');
+
 const connectButton = document.getElementById('button-connect');
 const disconnectButton = document.getElementById('button-disconnect');
 
 const deviceName = document.getElementById('device-name');
 const deviceFWVersion = document.getElementById('device-fw-version');
+const latestFWVersion = document.getElementById('latest-fw-version');
 
+const updateButton = document.getElementById('update-button');
 const uploadStatus = document.getElementById('upload-status');
-// const fileInfo = document.getElementById('file-info');
-// const fileStatus = document.getElementById('file-status');
-// const fileImage = document.getElementById('file-image');
-// const fileUpload = document.getElementById('file-upload');
 
 if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
-	bluetoothIsAvailable.style.display = 'none';
-	connectBlock.style.display = 'block';
+	initialScreens.set('bt-available-screen');
+} else {
+	initialScreens.set('bt-unavailable-screen');
 }
-
-let file = null;
-let fileData = null;
-let images = [];
-
-// function getUpdateFile(product_name, product_revision) {
-// 	fetch('/assets/firmware/MONKEY/r2/app\_update\_0.6.1.bin')
-// 		.then(res => {
-// 			console.log(res)
-// 		})
-// }
-// getUpdateFile()
 
 const mcumgr = new MCUManager();
 mcumgr.onConnecting(() => {
 	console.log('Connecting...');
 	connectButton.disabled = true;
-
+	connectButton.innerText = 'Connecting...';
 });
 mcumgr.onConnect(() => {
 	deviceName.innerText = mcumgr.name;
-	screens.initial.style.display = 'none';
-	screens.connected.style.display = 'block';
-	connectButton.disabled = true;
 	mcumgr.cmdImageState();
+	latestFWVersion.innerHTML = firmwareVerions[product_name][product_revision];
+
+	screens.set('connected-screen')
 });
 mcumgr.onDisconnect(() => {
-	deviceName.innerText = 'unknown name';
-	deviceFWVersion.innerHTML = '';
-	screens.connected.style.display = 'none';
-	screens.initial.style.display = 'block';
+	screens.set('initial-screen')
 	connectButton.disabled = false;
+	connectButton.innerText = 'Find device';
+});
+
+mcumgr.onConnectionLoss(() => {
+	screens.set('reconnect-screen')
 });
 
 mcumgr.onMessage(({ op, group, id, data, length }) => {
@@ -132,12 +155,15 @@ mcumgr.onMessage(({ op, group, id, data, length }) => {
 		case MGMT_GROUP_ID.IMAGE:
 			switch (id) {
 				// get info about the current images. Figure out current image and version
-				case IMG_MGMT_ID.STATE:
-					images = data.images;
-					
-					images.forEach(image => {
+				case IMG_MGMT_ID.STATE:					
+					data.images.forEach(image => {
 						if (image.active) {
 							deviceFWVersion.innerHTML = image.version
+							if (image.version == firmwareVerions[product_name][product_revision]) {
+								updateScreens.set('update-good-screen');
+							} else {
+								updateScreens.set('update-idle-screen');
+							}
 						}
 					})
 					break;
@@ -150,56 +176,37 @@ mcumgr.onMessage(({ op, group, id, data, length }) => {
 });
 
 mcumgr.onImageUploadProgress(({ percentage }) => {
+	if (percentage != 0 && updateScreens.get() != 'update-uploading-screen') {
+		updateScreens.set('update-uploading-screen');
+	}
 	uploadStatus.innerText = `${percentage}%`;
 });
 
 mcumgr.onImageUploadFinished(() => {
-	// fileStatus.innerText = 'Upload complete';
-	// fileInfo.innerHTML = '';
-	// fileImage.value = '';
-	mcumgr.cmdImageState();
+	// mcumgr.cmdImageState();
+	updateScreens.set('update-complete-screen');
 });
-
-// fileImage.addEventListener('change', () => {
-// 	file = fileImage.files[0];
-// 	console.log(file)
-// 	fileData = null;
-// 	const reader = new FileReader();
-// 	reader.onload = async () => {
-// 		fileData = reader.result;
-// 		try {
-// 			const info = await mcumgr.imageInfo(fileData);
-// 			let table = `<table>`
-// 			table += `<tr><th>Version</th><td>v${info.version}</td></tr>`;
-// 			table += `<tr><th>Hash</th><td>${info.hash}</td></tr>`;
-// 			table += `<tr><th>File Size</th><td>${fileData.byteLength} bytes</td></tr>`;
-// 			table += `<tr><th>Size</th><td>${info.imageSize} bytes</td></tr>`;
-// 			table += `</table>`;
-
-// 			fileStatus.innerText = 'Ready to upload';
-// 			fileInfo.innerHTML = table;
-// 			fileUpload.disabled = false;
-// 		} catch (e) {
-// 			fileInfo.innerHTML = `ERROR: ${e.message}`;
-// 		}
-// 	};
-// 	reader.readAsArrayBuffer(file);
-// });
-// fileUpload.addEventListener('click', event => {
-// 	fileUpload.disabled = true;
-// 	event.stopPropagation();
-// 	if (file && fileData) {
-// 		mcumgr.cmdUpload(fileData);
-// 	}
-// });
 
 connectButton.addEventListener('click', async () => {
 	const BT_MIDI_SERVICE_UUID = '03B80E5A-EDE8-4B33-A751-6CE34EC4C700'.toLowerCase()
-	let filters = [{namePrefix: 'WAVY', services: [BT_MIDI_SERVICE_UUID]}]
+	let filters = [{namePrefix: 'WAVY MONKEY', services: [BT_MIDI_SERVICE_UUID]}]
 	await mcumgr.connect(filters);
 });
 
 disconnectButton.addEventListener('click', async () => {
 	mcumgr.disconnect();
+});
+
+updateButton.addEventListener('click', async () => {
+	try {
+		updateScreens.set('update-prepare-screen');
+		fetch(`/assets/firmware/${product_name}/${product_revision}/app\_update.bin`)
+			.then(res => res.arrayBuffer())
+			.then(res => {
+				mcumgr.cmdUpload(res);
+			})
+	} catch (e) {
+		updateScreens.set('update-idle-screen');
+	}
 });
 </script>

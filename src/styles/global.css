@@ -26,3 +26,7 @@ a:link, a:visited {
 .section-margin {
     margin: 0 50px;
 }
+
+.screen {
+    display: none;
+}
