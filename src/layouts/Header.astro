@@ -1,12 +1,7 @@
 ---
 import '../styles/global.css';
-
-import Tooltop from '../components/Tooltip.astro';
-
 const links = {'/monkey': 'monkey', '/K3': 'K3', '/midi-connect': 'MIDI connect', '/device-update': 'device update'};
-
-// find which page is currently active
-const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
+const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
 ---
 <header>
     <div class="logo-box">
@@ -17,7 +12,7 @@ const pathname = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(
             <!-- Loop through the links and create the nav items -->
             {Object.entries(links).map(([link, title]) => {
                 // console.log(link, pathname)
-                const activeLink = pathname == link ? "active-link" : "";
+                const activeLink = currentPage == link ? "active-link" : "";
                 return <li class={`${activeLink}`}><a href={link}>{title}</a></li>
             })}
         </ul>

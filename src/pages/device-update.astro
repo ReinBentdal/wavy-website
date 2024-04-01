@@ -16,9 +16,9 @@ import Header from '../layouts/Header.astro';
 					Bluetooth connection (most laptops have them these days). You can also try it from Chrome on Android, or Bluefy on iOS/iPadOS.
 				</div>
 				<div id="bt-available-screen" class="screen">
-					<span class="error">Updater is in ALPHA. Don't use unless you are a tester of it.</span><br/><br/>
+					<span>Currently supports <b>WAVY MONKEY</b>.</span><br/><br/>
 					<span class="remark">Make sure your device is not connected to anything.</span><br/><br/>
-					<button id="button-connect" type="submit" class="btn btn-primary"><i class="bi-bluetooth"></i>Find device</button>
+					<button id="button-connect" type="submit" class="btn btn-primary"><i class="bi-bluetooth"></i>Connect via Bluetooth</button>
 				</div>
 			</div>
 			
@@ -54,6 +54,7 @@ import Header from '../layouts/Header.astro';
 				<div id="update-complete-screen" class="screen">
 					<span class="ok">Transfer complete! Device will reboot and finish installation...</span>
 				</div>
+				
 			</div>
 		</div>
 	</main>
@@ -124,15 +125,13 @@ mcumgr.onConnect(() => {
 	deviceName.innerText = mcumgr.name;
 	mcumgr.cmdImageState();
 	latestFWVersion.innerHTML = firmwareVerions[product_name][product_revision];
-
 	screens.set('connected-screen')
 });
 mcumgr.onDisconnect(() => {
-	screens.set('initial-screen')
 	connectButton.disabled = false;
-	connectButton.innerText = 'Find device';
+	connectButton.innerText = 'Conncet via Bluetooth';
+	screens.set('initial-screen')
 });
-
 mcumgr.onConnectionLoss(() => {
 	screens.set('reconnect-screen')
 });
