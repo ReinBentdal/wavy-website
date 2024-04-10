@@ -11,6 +11,7 @@
     "deploy": "npm run build && gh-pages -d dist -t true"
   },
   "dependencies": {
+    "@playform/compress": "^0.0.3",
     "astro": "^4.5.5"
   },
   "devDependencies": {

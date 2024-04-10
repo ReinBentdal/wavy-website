@@ -9,6 +9,7 @@ import Header from '../layouts/Header.astro';
 		<Header />
 		<section class="content">
 			<p class="catch">Based in Norway, we develop music making devices.</p>
+			<div id="monkey" ><img src="/assets/monkey_kok2.png" /></div>
 			<div class="info">
 				<p><i><b>Core team:</b> <a href="https://www.linkedin.com/in/rein-gundersen-bentdal-201701188/" target="_blank">Rein Gundersen Bentdal</a></i></p>
 				<p><i><b>Special thanks to:</b> Herman Gording Hong, Erik Hognestad, Frida Gundersen Bentdal, Carsten Wulff, Eric Bezzam, Paolo Prandoni, Olve Sævik, Anton Hamer, Wilhelm Kruse Kielland, Selma Gundersen Bentdal</i></p>
@@ -18,6 +19,17 @@ import Header from '../layouts/Header.astro';
 </Layout>
 
 <style>
+	@keyframes bounce {
+		0% {
+			transform: scale(0.8);
+		}
+		50% {
+			transform: scale(0.7);
+		}
+		100% {
+			transform: scale(0.8);
+		}
+	}
 	.content {
 		font-size: 16px;
 		margin-left: 30px;
@@ -26,6 +38,17 @@ import Header from '../layouts/Header.astro';
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
+	}
+	#monkey {
+		width: 100%;
+		max-width: 800px;
+		margin: 0 auto;
+	}
+	#monkey img {
+		object-fit: contain;
+		max-width: 100%;
+		animation: bounce 4s infinite;
+		animation-timing-function: ease-in-out;
 	}
 	.catch {
 		margin-top: 70px;

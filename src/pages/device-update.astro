@@ -17,7 +17,7 @@ import Header from '../layouts/Header.astro';
 				</div>
 				<div id="bt-available-screen" class="screen">
 					<span>Currently supports <b>WAVY MONKEY</b>.</span><br/><br/>
-					<span class="remark">Make sure your device is not connected to anything.</span><br/><br/>
+					<span class="remark">Make sure your device is not connected to anything before continuing. <br/>Is your device still not appearing in the list of nearby devices? Then press SHIFT + WAKE for a couple of seconds and the device will reboot.</span><br/><br/>
 					<button id="button-connect" type="submit" class="btn btn-primary"><i class="bi-bluetooth"></i>Connect via Bluetooth</button>
 				</div>
 			</div>
@@ -28,7 +28,7 @@ import Header from '../layouts/Header.astro';
 
 			<div id="connected-screen" class="screen">
 				<button id="button-disconnect" type="submit"><i class="bi-x-square"></i> Disconnect</button>
-				<span id="device-name">unknown name</span>
+				<b><span id="device-name">unknown name</span></b>
 				<p>
 					Device firmware version: <span id="device-fw-version"></span><br/>
 					Latest firmware version: <span id="latest-fw-version"></span>
