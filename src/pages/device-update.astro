@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Layout from '../layouts/Layout.astro';
 import Header from '../layouts/Header.astro';
+import DeviceUpdateSubscribe from '../components/DeviceUpdateSubscribe.astro';
 ---
 
 <Layout title="Wavy Industries: device update">
@@ -36,17 +37,17 @@ import Header from '../layouts/Header.astro';
 				<br/>
 
 				<div id="update-waiting-screen" class="screen">
-					<p>Waiting for device version...</p>
+					<p>Waiting om device information...</p>
 				</div>
 				<div id="update-good-screen" class="screen">
 					<span class="ok">Your device is up to date!</span>
 				</div>
 				<div id="update-idle-screen" class="screen">
 					<span class="remark">Update is available!</span><br/>
-					<button id="update-button" >Update now</button>
+					<button id="update-button" class="button-highlight" >Update now</button>
 				</div>
 				<div id="update-prepare-screen" class="screen">
-					<span>Preparing update...</span>
+					<span>Fetching update update and preparing device...</span>
 				</div>
 				<div id="update-uploading-screen" class="screen">
 					Progress: <span id="upload-status"></span>
@@ -55,6 +56,7 @@ import Header from '../layouts/Header.astro';
 					<span class="ok">Transfer complete! Device will reboot and finish installation...</span>
 				</div>
 				
+				<DeviceUpdateSubscribe />
 			</div>
 		</div>
 	</main>
@@ -79,6 +81,9 @@ p {
 .ok {
 	background-color: #D6FFD6;
 }
+.button-highlight {
+	background-color: #acffac;
+}
 </style>
 
 <script>
@@ -91,7 +96,7 @@ const product_revision = "r2";
 const firmwareVerions = {
     "MONKEY": {
         "r1": "0.6.1",
-        "r2": "0.6.2"
+        "r2": "0.6.4"
     }
 }
 
@@ -158,10 +163,12 @@ mcumgr.onMessage(({ op, group, id, data, length }) => {
 					data.images.forEach(image => {
 						if (image.active) {
 							deviceFWVersion.innerHTML = image.version
-							if (image.version == firmwareVerions[product_name][product_revision]) {
-								updateScreens.set('update-good-screen');
-							} else {
+							let deviceVersion = version_from_string(image.version);
+							let latestVersion = version_from_string(firmwareVerions[product_name][product_revision]);
+							if (deviceVersion[0] < latestVersion[0] || deviceVersion[1] < latestVersion[1] || deviceVersion[2] < latestVersion[2]) {
 								updateScreens.set('update-idle-screen');
+							} else {
+								updateScreens.set('update-good-screen');
 							}
 						}
 					})
@@ -182,7 +189,6 @@ mcumgr.onImageUploadProgress(({ percentage }) => {
 });
 
 mcumgr.onImageUploadFinished(() => {
-	// mcumgr.cmdImageState();
 	updateScreens.set('update-complete-screen');
 });
 
@@ -199,7 +205,7 @@ disconnectButton.addEventListener('click', async () => {
 updateButton.addEventListener('click', async () => {
 	try {
 		updateScreens.set('update-prepare-screen');
-		fetch(`/assets/firmware/${product_name}/${product_revision}/app\_update.bin`)
+		fetch(`/firmware/${product_name}/${product_revision}/app\_update_${firmwareVerions[product_name][product_revision]}.bin`)
 			.then(res => res.arrayBuffer())
 			.then(res => {
 				mcumgr.cmdUpload(res);
@@ -208,4 +214,9 @@ updateButton.addEventListener('click', async () => {
 		updateScreens.set('update-idle-screen');
 	}
 });
+
+function version_from_string(version) {
+	// return a list of major, minor and patch version numbers
+	return version.split('.').map(Number);
+}
 </script>

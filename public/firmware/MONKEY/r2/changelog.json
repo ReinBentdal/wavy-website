@@ -1,0 +1,18 @@
+{
+    "state": {
+        "stable": "0.6.4",
+        "unstable": "0.6.4"
+    },
+    "versions": [
+        {
+            "major": 0,
+            "minor": 6,
+            "patch": 4,
+            "changes": [
+                "mute/unmute multiple channels from looper when longpress SHIFT+CH",
+                "looper now starts from the beginning each time it starts playing",
+                "Fix: not all notes are released on device reset"
+            ]
+        }
+    ]
+}

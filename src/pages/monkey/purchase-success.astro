@@ -1,0 +1,68 @@
+---
+import '../../styles/global.css';
+import Layout from "../../layouts/Layout.astro";
+---
+
+<Layout title="About">
+  <section>
+    <div class="banner"><img src="/assets/logo.svg" /></div>
+    <div class="content">
+      <h4>WAVY MONKEY (preorder)</h4>
+      <p>Purchase complete!</p>
+      <p>Order ID: <b><span id="payment-id"></span></b> (make sure you keep this)</p>
+      <p>Thank you for purchasing Monkey, we hope you will have great fun with it. You will recieve an email when your order is handeled, please give is a few working days.</p>
+    </div>
+    <a href="/" class="back-link"><img height="10px" src="/assets/icons/arrow.right.svg" alt="arrow right" /> Back to website</a>
+  </section>
+</Layout>
+
+<style>  
+section {
+  margin: 75px auto;
+  width: 400px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+  
+.banner {
+  background-color: #FFEF5A;
+  padding: 20px;
+}
+
+.content {
+  background-color: #F5F5F5;
+  padding: 20px;
+  min-height: 300px;
+}
+
+#payment-id {
+  display: block;
+  word-wrap: break-word;
+  /* font-size: 8px; */
+}
+
+.back-link {
+  width: 100%;
+  font-weight: 300;
+  text-decoration: underline;
+  text-align: center;
+}
+.back-link img {
+  filter: invert(100%);
+  transform: rotate(180deg);
+}
+
+.chechout-button:hover {
+  background-color: #4378ff;
+  cursor: pointer;
+}
+</style>
+
+<script>
+
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const paymentId = urlParams.get('id');
+document.getElementById('payment-id').innerText = paymentId;
+</script>

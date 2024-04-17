@@ -14,11 +14,16 @@ import Accordion from '../../components/Accordion.astro';
             <br />
             <b>email:</b> rein.bent@gmail.com <br/>
             <b>discord:</b> @___rein<br />
+
+            <p>Before starting, insert a CR2032 battery into Monkey. Some LEDs on the device should brifely flash indicating that it has power and has booted up.</p>
+
             <h2>Device updates</h2>
             <p>It is recommended to update your device to the newest firmare version. Updates are easily handled within this website, on the <a href="/device-update"><i>device update</i></a> page. If there is a new update available, update your device with a single press of a button.</p>
-			<h2>Connecting up</h2>
+			
+            
+            <h2>Connecting up</h2>
             <p>Monkey supports a variety of hosts. Below are specific tutorials for your setup.</p>
-            <p>If you have problems finding Monkey, make sure it is not connected to anything else. You might then also reboot it by pressing SHIFt+WAKE and keeping them pressed for a couple of seconds.</p>
+            <p>If you have problems finding Monkey, make sure it is not connected to anything else. If you still can't find it, then you can rebooth it by pressing SHIFT+WAKE and keeping them pressed for a couple of seconds.</p>
             <Accordion title="macOS">
                 <p>Connecting Monkey to macOS is easy. Just follow these steps:</p>
                 <p><b>1. </b>Open up <i>Audio MIDI Setup</i></p>
@@ -33,25 +38,25 @@ import Accordion from '../../components/Accordion.astro';
                 <img width="600px" src="/assets/mac-connect/4-connect.png" alt="Connect to Monkey" />
             </Accordion>
             <Accordion title="Windows">
-                Windows currently does not have the best support for MIDI over Bluetooth. The steps below might look a bit complicated. But when it done ititialy, it should not be too bad.
+                Windows currently does not have the best support for MIDI over Bluetooth. The steps below might look a bit complicated. But when it's initially done, it should'nt be too bad.
                 <p>You will need the following programs installed</p>
                 <ol>
                     <li><b>loopMIDI:</b> <a href="https://www.tobias-erichsen.de/software/loopmidi.html">https://www.tobias-erichsen.de/software/loopmidi.html</a></li>
                     <li><b>MIDIBerry:</b> <a href="https://apps.microsoft.com/detail/9n39720h2m05">https://apps.microsoft.com/detail/9n39720h2m05</a></li>
                 </ol>
-                <p>Then follow these steps to start using Monkey</p>
-                <p><b>0. </b>Windows 11 users first have to enable <i>Advanced devices discovery</i> in system settings</p>
+                <p>Then follow these steps to start using Monkey:</p>
+                <p><b>0. </b>Windows 11 users first have to enable <i>Advanced devices discovery</i> in bluetooth system settings</p>
                 <img width="600px" src="/assets/windows/0-advanced_discovery.jpeg" alt="windows advanced bluetooth" />
-                <p><b>1. </b>Pair Monkey in Windows settings. You only need to do this step if Monkey is not paired to your Windows computer. Windows might fail to pair with your device. If so rebooth Monkey and it should now work.</p>
-                <p>After it is successfully paired, Windows will automatically disconnect. Don't worry, this is expected as Windows don's yet see any reason for being connected to it.</p>
+                <p><b>1. </b>Pair Monkey in Windows settings. You only need to do this step if Monkey is not paired to your Windows computer. Windows might fail to pair with your device. If so, reboot Monkey and try again.</p>
+                <p>After it is successfully paired, Windows will automatically disconnect Monkey. Don't worry, this is expected as Windows don's yet see any reason for being connected to it. It should then appear as a paired device.</p>
                 <img width="600px" src="/assets/windows/1-connect_pre.png" alt="windows connect" />
                 <img width="600px" src="/assets/windows/2-pairing.png" alt="windows pairing" />
                 <img width="600px" src="/assets/windows/2.1-pairing.png" alt="windows paired" />
                 <img width="600px" src="/assets/windows/3-connect_post.png" alt="windows connected" />
-                <p><b>2. </b>Configure a MIDI port using loopMIDI.</p>
+                <p><b>2. </b>Configure a MIDI port using loopMIDI. Here we name it <q>my midi port</q>.</p>
                 <img width="600px" src="/assets/windows/4-port_create.png" alt="port create" />
                 <img width="600px" src="/assets/windows/4.1-port_create.png" alt="port create" />
-                <p><b>3. </b>In MIDIBerry, select WAVY MONKEY as input device (this should result in Windows reconnecting to Monkey) and the MIDI port you created as output.</p>
+                <p><b>3. </b>Open MIDIBerry, select WAVY MONKEY as input device (this should result in Windows reconnecting to Monkey) and the MIDI port you created as output.</p>
                 <p>Now you are done! Check if it works by pressing some random keys on Monkey as seeing wether these notes are recieved in <i>INPUT MONITOR</i> in MIDIBerry.</p>
                 <img width="600px" src="/assets/windows/5-select.png" alt="select" />
                 <!-- <ol>
@@ -72,7 +77,7 @@ import Accordion from '../../components/Accordion.astro';
             <h2>Configure DAW</h2>
             <p>By default Monkey sends on MIDI channel 1 for instruments and 16 for the drums. The instrument channel is changeable by pressing SHIFT+CH, then while keeping SHIFT pressed, press one of the numbered buttons. The button 0 is channel 10, giving you the total range 1-10.</p>
             <Accordion title="Ableton Live">
-                <p><b>1. </b>Make sure Monkey is enabled in settings</p>
+                <p><b>1. </b>Make sure Monkey is enabled in settings MIDI Ports</p>
                 <img width="600px" src="/assets/ableton/ableton settings.png" alt="Ableton settings" />
                 <p><b>2. </b>Configure channel for each midi track you want to play on Monkey. Use channel 1-10 for instruments and channel 16 for your drum rack</p>
                 <img width="600px" src="/assets/ableton/ableton channel.png" alt="Ableton channel" />
