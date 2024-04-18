@@ -13,6 +13,14 @@
                 "looper now starts from the beginning each time it starts playing",
                 "Fix: not all notes are released on device reset"
             ]
+        },
+        {
+            "major": 0,
+            "minor": 6,
+            "patch": 5,
+            "changes": [
+                "power management improvements"
+            ]
         }
     ]
 }
