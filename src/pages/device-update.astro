@@ -44,10 +44,14 @@ import DeviceUpdateSubscribe from '../components/DeviceUpdateSubscribe.astro';
 				</div>
 				<div id="update-idle-screen" class="screen">
 					<span class="remark">Update is available!</span><br/>
-					<button id="update-button" class="button-highlight" >Update now</button>
+					<button id="update-button" class="button-highlight" >Start update</button>
+					<hr />
+					<h3>Changes</h3>
+					<p id="changelog"></p>
+					<hr />
 				</div>
 				<div id="update-prepare-screen" class="screen">
-					<span>Fetching update update and preparing device...</span>
+					<span>Fetching update and preparing device...</span>
 				</div>
 				<div id="update-uploading-screen" class="screen">
 					Progress: <span id="upload-status"></span>
@@ -96,13 +100,9 @@ const product_revision = "r2";
 const firmwareVerions = {
     "MONKEY": {
         "r1": "0.6.1",
-        "r2": "0.6.4"
+        "r2": "0.6.5"
     }
 }
-
-const screens = new Screens('initial-screen');
-const initialScreens = new Screens();
-const updateScreens = new Screens('update-waiting-screen');
 
 const connectButton = document.getElementById('button-connect');
 const disconnectButton = document.getElementById('button-disconnect');
@@ -113,6 +113,16 @@ const latestFWVersion = document.getElementById('latest-fw-version');
 
 const updateButton = document.getElementById('update-button');
 const uploadStatus = document.getElementById('upload-status');
+
+const changelog = document.getElementById('changelog');
+
+const screens = new Screens('initial-screen', ['initial-screen', 'connected-screen', 'reconnect-screen']);
+screens.on('connected-screen', () => {
+	changelog.innerHTML = "";
+}, "hide");
+
+const initialScreens = new Screens(null, ['bt-available-screen', 'bt-unavailable-screen']);
+const updateScreens = new Screens('update-waiting-screen', ['update-waiting-screen', 'update-good-screen', 'update-idle-screen', 'update-prepare-screen', 'update-uploading-screen', 'update-complete-screen']);
 
 if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
 	initialScreens.set('bt-available-screen');
@@ -165,8 +175,12 @@ mcumgr.onMessage(({ op, group, id, data, length }) => {
 							deviceFWVersion.innerHTML = image.version
 							let deviceVersion = version_from_string(image.version);
 							let latestVersion = version_from_string(firmwareVerions[product_name][product_revision]);
-							if (deviceVersion[0] < latestVersion[0] || deviceVersion[1] < latestVersion[1] || deviceVersion[2] < latestVersion[2]) {
+							if (compare_versions(deviceVersion, latestVersion) < 0) {
 								updateScreens.set('update-idle-screen');
+								fetch_changelog(product_name, product_revision, deviceVersion, latestVersion)
+									.then(changelog => {
+										publish_changelog(changelog);
+									})
 							} else {
 								updateScreens.set('update-good-screen');
 							}
@@ -218,5 +232,56 @@ updateButton.addEventListener('click', async () => {
 function version_from_string(version) {
 	// return a list of major, minor and patch version numbers
 	return version.split('.').map(Number);
+}
+
+// Function to compare version arrays, 1 if left is bigger, -1 if right is bigger, 0 if equal
+function compare_versions(v1, v2) {
+	for (let i = 0; i < v1.length; i++) {
+		if (v1[i] < v2[i]) return -1;
+		if (v1[i] > v2[i]) return 1;
+	}
+	return 0;
+}
+
+async function get_newest_version(product_name, product_revision) {
+	let json = await fetch(`/firmware/${product_name}/${product_revision}/changelog.json`)
+		.then(res => res.json());
+
+	// map values from string to version arrays
+	let state = json.state;
+	state.stable = version_from_string(state.stable);
+	state.unstable = version_from_string(state.unstable);
+
+	return state
+}
+
+async function fetch_changelog(product_name, product_revision, version_min, version_max) {
+	let json = await fetch(`/firmware/${product_name}/${product_revision}/changelog.json`)
+		.then(res => res.json());
+
+    // Filter versions within the specified range
+    let filteredVersions = json.versions.filter(version => {
+        let ver = [version.major, version.minor, version.patch];
+        return compare_versions(ver, version_min) > 0 && compare_versions(ver, version_max) <= 0;
+    });
+
+    // Sort the filtered versions
+    filteredVersions.sort((a, b) => {
+        return -compare_versions([a.major, a.minor, a.patch], [b.major, b.minor, b.patch]);
+    });
+
+    // Return or process the sorted and filtered list
+    return filteredVersions;
+}
+
+function publish_changelog(data) {
+	changelog.innerHTML = "";
+	data.forEach(version => {
+		changelog.innerHTML += `<b>${version.major}.${version.minor}.${version.patch}</b><br/><ul>`;
+		version.changes.forEach(change => {
+			changelog.innerHTML += `<li>${change}</li>`;
+		});
+		changelog.innerHTML += "</ul><br/>"
+	});
 }
 </script>
