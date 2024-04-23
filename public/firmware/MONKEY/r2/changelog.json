@@ -19,7 +19,7 @@
             "minor": 6,
             "patch": 5,
             "changes": [
-                "power management improvements"
+                "power management improvements. Bluetooth will now turn off after 15 minutes of inactivity. Reactivate by pressing any key"
             ]
         }
     ]

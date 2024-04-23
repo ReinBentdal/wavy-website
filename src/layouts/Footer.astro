@@ -3,22 +3,28 @@ import '../styles/global.css';
 ---
 
 <footer>
-    <section>
-        <div class="section-margin">
-            <span>Wavy Industries</span><br/>
-            <span>Lillehammer, Norway</span>
-        </div>
-    </section>
+    <span>Wavy Industries</span>
+    <span>Lillehammer, Norway</span>
+    <span id="something-special"></span>
 </footer>
 
 <style>
     footer {
         width: 100%;
-        display: flex;
-        flex-direction: column;
-        justify-content: end;
-        padding: 1rem 0;
-        background-color: black;
-        color: white;
+        font-style: italic;
+        font-size: 12px;
+        font-weight: 300;
+        margin-top: 25px;
+    }
+
+    footer span {
+        padding: 1rem;
     }
 </style>
+
+<script>
+    let special = document.getElementById('something-special');
+    let special1 = "rein"
+    let special2 = ".bent"
+    special.innerHTML = special1 + special2 + "@gmail.com";
+</script>
