@@ -6,13 +6,26 @@ import Layout from "../../layouts/Layout.astro";
 <Layout title="Wavy Industries: Monkey purchase">
   <section>
     <div class="banner"><img src="/assets/logo.svg" /></div>
-    <div class="content">
-      <h4>WAVY MONKEY (preorder)</h4>
-      <p>Price: <b>€59</b></p>
-      <p>Hardware development is finished, we are currently working hard to make sure we deliver a great customer experience.</p>
-      <p>Expected initial shipment: <b>Late August</b></p>
+    <div>
+      <div class="content">
+        <h4>WAVY MONKEY (preorder)</h4>
+        <p>Price: <b>€59</b></p>
+        <p>Hardware development is finished, we are currently working hard to make sure we deliver a great customer experience.</p>
+        <p>Expected initial shipment: <b>Late August</b></p>
+      </div>
+      <hr />
+      <div class="content">
+        <p>Select shipping method:</p>
+        <div>
+          <input type="radio" id="european-letter" name="shipping" value="letter" checked>
+          <label for="european-letter">European Letter (€10)</label>
+          <br />
+          <input type="radio" id="international-parcel" name="shipping" value="parcel">
+          <label for="international-parcel">International Parcel (€30)</label>
+        </div>
+      </div>
     </div>
-    <a href="https://buy.stripe.com/7sI9Co9Mwb8a6WIbIJ" class="chechout-button">Proceed to checkout <img height="10px" src="/assets/icons/arrow.right.svg" alt="arrow right" /></a>
+    <a href="" id="checkout-link" class="chechout-button">Proceed to checkout <img height="10px" src="/assets/icons/arrow.right.svg" alt="arrow right" /></a>
   </section>
 </Layout>
 
@@ -25,6 +38,13 @@ section {
   gap: 20px;
 }
   
+hr {
+  border: 0;
+  margin: 0;
+  height: 1px;
+  background: #d5d5d5;
+}
+
 .banner {
   background-color: #FFEF5A;
   padding: 20px;
@@ -33,8 +53,10 @@ section {
 .content {
   background-color: #F5F5F5;
   padding: 20px;
-  min-height: 300px;
+  /* min-height: 300px; */
 }
+
+
 
 .chechout-button {
   background-color: #5A88FF;
@@ -53,3 +75,33 @@ section {
   text-decoration: none;
 }
 </style>
+
+<script>
+let shippingUrl = {
+  letter: 'https://buy.stripe.com/7sI9Co9Mwb8a6WIbIJ',
+  parcel: 'https://buy.stripe.com/cN2cOAaQA2BEgxidQS'
+}
+
+let checkoutLink = document.getElementById('checkout-link');
+function updateUrl(val) {
+  // update href of a
+  console.log("updating url")
+  checkoutLink.href = shippingUrl[val];
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+  const radios = document.querySelectorAll('input[type="radio"][name="shipping"]');
+  radios.forEach(radio => {
+    radio.addEventListener('change', function(e) {
+      let shippingMethod = e.target.value;
+      updateUrl(shippingMethod);
+    });
+    // check if initially checked as well
+    if (radio.checked) {
+      let shippingMethod = radio.value;
+      updateUrl(shippingMethod);
+    }
+  });
+});
+
+</script>
