@@ -21,7 +21,7 @@ import Footer from "../layouts/Footer.astro";
         <div class="section-margin">
             <p>
                 Monkey is a pocket sized Bluetooth MIDI keyboard. It has several
-                built in unique MIDI effects, a drum machine and a looper.
+                built in unique MIDI effects, a drum machine and a looper. Each of the effects is equiped with 10 different algorithms.
                 Monkey is optimised for low latency and low power consumption,
                 enabling several months of usage without changing the battery. It connects to lots of hosts
                 including macOS, OP-1F, ipadOS, Windows and Android.
@@ -29,7 +29,7 @@ import Footer from "../layouts/Footer.astro";
             <p>
                 We believe Bluetooth has great unutilized potential. But we can
                 not tap into this without making Bluetooth very easy and
-                practical to use as well as providing high reliability. Monkey
+                practical to use, and providing high reliability. Monkey
                 is our first product which taps into this. From our perspective
                 we don't see a bunch of Bluetooth-centric MIDI devices on the
                 market. This is the core idea from where Monkey originates from:
@@ -38,9 +38,15 @@ import Footer from "../layouts/Footer.astro";
             </p>
         </div>
     </main>
+    <Footer />
 </Layout>
 
 <style>
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
     ul {
         list-style-type: none;
         font-size: 16px;

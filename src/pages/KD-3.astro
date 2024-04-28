@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Layout from '../layouts/Layout.astro';
 import Header from '../layouts/Header.astro';
+import Footer from '../layouts/Footer.astro';
 ---
 
 <Layout title="Wavy Industries: KD-3">
@@ -18,11 +19,16 @@ import Header from '../layouts/Header.astro';
 		<div class="section-margin">
 			<p>More info coming soon</p>
 		</div>
-		<!-- <Footer /> -->
 	</main>
+    <Footer />
 </Layout>
 
 <style>
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 ul {
     list-style-type: none;
     font-size: 16px;

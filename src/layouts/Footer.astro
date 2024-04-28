@@ -5,26 +5,45 @@ import '../styles/global.css';
 <footer>
     <span>Wavy Industries</span>
     <span>Lillehammer, Norway</span>
-    <span id="something-special"></span>
+    <a href="mailto:hello@wavyindustries.com"><span id="something-special"></span></a>
+    <a href="https://discord.gg/qm9ggkDzdc" target="_blank"><span><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /> Discord</span></a>
+    <a href="http://eepurl.com/ivXTOk"><img alt="mailing list" src="/assets/mail.stack.fill.svg"/> Newsletter</a>
 </footer>
 
 <style>
-    footer {
-        width: 100%;
-        font-style: italic;
-        font-size: 12px;
-        font-weight: 300;
-        margin-top: 25px;
-    }
+footer {
+    width: 100%;
+    font-style: italic;
+    font-size: 12px;
+    font-weight: 300;
+    margin-top: 25px;
+    display: flex;
+    align-items: center;
+}
 
-    footer span {
-        padding: 1rem;
-    }
+footer span {
+    padding: 1rem;
+}
+
+img {
+    filter: brightness(0%);
+    height: 12px;
+}
+
+span {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+}
+
+a:hover span {
+    text-decoration: underline;
+}
 </style>
 
 <script>
     let special = document.getElementById('something-special');
-    let special1 = "rein"
-    let special2 = ".bent"
-    special.innerHTML = special1 + special2 + "@gmail.com";
+    let special1 = "hell"
+    let special2 = "o"
+    special.innerHTML = special1 + special2 + "@wavyindustries.com";
 </script>

@@ -2,6 +2,7 @@
 import '../styles/global.css';
 import Layout from '../layouts/Layout.astro';
 import Header from '../layouts/Header.astro';
+import Footer from '../layouts/Footer.astro';
 ---
 
 <Layout title="Wavy Industries: K3">
@@ -24,9 +25,15 @@ import Header from '../layouts/Header.astro';
                 <p><i>Coming soon to macOS</i></p>
 		</div>
 	</main>
+    <Footer />
 </Layout>
 
 <style>
+body {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
 ul {
     list-style-type: none;
     font-size: 16px;

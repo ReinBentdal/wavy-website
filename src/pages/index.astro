@@ -16,11 +16,16 @@ import Footer from '../layouts/Footer.astro';
 				<p><i><b>Special thanks to:</b> Herman Gording Hong, Erik Hognestad, Frida Gundersen Bentdal, Carsten Wulff, Eric Bezzam, Paolo Prandoni, Olve Sævik, Selma Gundersen Bentdal</i></p>
 			</div>
 		</section>
-		<Footer /
 	</main>
+	<Footer />
 </Layout>
 
 <style>
+body {
+	display: flex;
+	flex-direction: column;
+	justify-content: space-between;
+}
 	@keyframes bounce {
 		0% {
 			transform: scale(0.8);
