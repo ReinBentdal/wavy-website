@@ -3,26 +3,34 @@ import '../styles/global.css';
 ---
 
 <footer>
-    <span>Wavy Industries</span>
-    <span>Lillehammer, Norway</span>
-    <a href="mailto:hello@wavyindustries.com"><span id="something-special"></span></a>
-    <a href="https://discord.gg/qm9ggkDzdc" target="_blank"><span><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /> Discord</span></a>
-    <a href="http://eepurl.com/ivXTOk"><img alt="mailing list" src="/assets/mail.stack.fill.svg"/> Newsletter</a>
+    <div>
+        <span>Wavy Industries</span>
+        <span>Lillehammer, Norway</span>
+        <a href="mailto:hello@wavyindustries.com"><span id="something-special"></span></a>
+        <a href="https://discord.gg/qm9ggkDzdc" target="_blank"><span><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /> Discord</span></a>
+        <a href="http://eepurl.com/ivXTOk"><img alt="mailing list" src="/assets/mail.stack.fill.svg"/> Newsletter</a>
+    </div>
 </footer>
 
 <style>
 footer {
-    width: 100%;
+    margin-top: 20px;
+}
+
+footer > div {
+    margin: 5px 0;
+    width: 100vw;
     font-style: italic;
     font-size: 12px;
     font-weight: 300;
-    margin-top: 25px;
     display: flex;
     align-items: center;
+    flex-wrap: wrap;
+    padding: 0.5rem;
 }
 
-footer span {
-    padding: 1rem;
+footer > div > * {
+    padding: 0.5rem 1rem;
 }
 
 img {
