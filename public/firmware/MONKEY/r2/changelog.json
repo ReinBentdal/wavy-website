@@ -1,7 +1,7 @@
 {
     "state": {
-        "stable": "0.6.4",
-        "unstable": "0.6.5"
+        "stable": "0.6.7",
+        "unstable": "0.6.7"
     },
     "versions": [
         {
@@ -20,6 +20,16 @@
             "patch": 5,
             "changes": [
                 "power management improvements. Bluetooth will now turn off after 15 minutes of inactivity. Reactivate by pressing any key"
+            ]
+        },
+        {
+            "major": 0,
+            "minor": 6,
+            "patch": 7,
+            "changes": [
+                "Minor power management improvements",
+                "Input handling improvements",
+                "Drum preset algorithm testing"
             ]
         }
     ]

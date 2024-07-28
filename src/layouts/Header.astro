@@ -1,6 +1,11 @@
 ---
 import '../styles/global.css';
-const links = {'/monkey': 'monkey', '/KD-3': 'KD-3 MIDI', '/midi-connect': 'MIDI connect', '/device-update': 'device update'};
+const links = {
+    '/monkey': 'monkey', 
+    // '/KD-3': 'KD-3 MIDI', 
+    '/midi-connect': 'MIDI connect', 
+    '/device-update': 'device update'
+};
 const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
 ---
 <header>
@@ -11,19 +16,11 @@ const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').repla
         <ul>
             <!-- Loop through the links and create the nav items -->
             {Object.entries(links).map(([link, title]) => {
-                // console.log(link, pathname)
                 const activeLink = currentPage == link ? "active-link" : "";
                 return <li class={`${activeLink}`}><a href={link}>{title}</a></li>
             })}
         </ul>
     </nav>
-    <!-- <div class="extern-box">
-        <span>
-            <a title="Discord" href="https://discord.gg/qm9ggkDzdc" target="_blank"><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /></a>
-            <a title="Contact" href="mailto:hello@wavyindustries.com"><img alt="Contact us" src="/assets/mail.fill.svg"/></a>
-            <a title="Newsletter" href="http://eepurl.com/ivXTOk"><img alt="mailing list" src="/assets/mail.stack.fill.svg"/></a>
-        </span>
-    </div> -->
 </header>
 
 <style>
@@ -31,6 +28,8 @@ const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').repla
         height: 165px;
         display: flex;
         align-items: center;
+
+        font-family: 'Courier New', Courier, monospace;
     }
 
     .logo-box {
@@ -44,37 +43,17 @@ const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').repla
     }
 
     .nav-box {
-        font-size: 16px;
-    }
-
-    /* external links */
-    .extern-box {
-        position: absolute;
-        /* right: 0; */
-        min-width: calc(100% - 280px);
-        text-align: right;
-        margin-left: 240px;
-        display: flex;
-        justify-content: end;
-        align-items: end;
-        margin-top: 140px; /* header 165px height - 20px icons height - 5px bottom padding */
-    }
-    .extern-box span {
-        display: flex;
-        align-items: center;
-        gap: 15px;
-    }
-    .extern-box img {
-        filter: brightness(0%);
-        height: 16px;
-    }
-    .extern-box img:hover {
-        filter: brightness(100%);
+        font-size: 18px;
     }
 
     ul {
         list-style-type: none;
         padding: 0;
+    }
+
+    li {
+        padding: 2px 0;
+        border: 1px solid black;
     }
 
     ul li.active-link {

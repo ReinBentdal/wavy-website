@@ -25,6 +25,7 @@ import Accordion from '../../components/Accordion.astro';
             <p>Monkey supports a variety of hosts. Below are specific tutorials for your setup.</p>
             <p>If you have problems finding Monkey, make sure it is not connected to anything else. If you still can't find it, then you can reboot it by pressing SHIFT+WAKE and keeping them pressed for a couple of seconds.</p>
             <Accordion title="macOS">
+                <p><i>We are developing our own connection management tool named <b>MIDI Connect</b>. We recommend you to check it out, its available in beta <a href="/midi-connect"><b>here</b></a></i>. We are pushing to make MIDI bluetooth devices more practical to use, and this tool is a central piece of that. If you don't want to use it, you can instead just follow the native macOS procedure below.</p>
                 <p>Connecting Monkey to macOS is easy. Just follow these steps:</p>
                 <p><b>1. </b>Open up <i>Audio MIDI Setup</i></p>
                 <img width="600px" src="/assets/mac-connect/1-search.png" alt="Search for Bluetooth" />
@@ -75,12 +76,14 @@ import Accordion from '../../components/Accordion.astro';
             <Accordion title="ipadOS / IOS">Information coming soon</Accordion>
             <Accordion title="TE OP-1">Information coming soon</Accordion>
             <h2>Configure DAW</h2>
-            <p>By default Monkey sends on MIDI channel 1 for instruments and 16 for the drums. The instrument channel is changeable by pressing SHIFT+CH, then while keeping SHIFT pressed, press one of the numbered buttons. The button 0 is channel 10, giving you the total range 1-10.</p>
+            <p>By default Monkey sends on MIDI channel 1 for instruments and 16 for the drums. The instrument channel is changeable by pressing SHIFT+CH, then while keeping SHIFT pressed, press one of the numbered buttons. Selecting channel 0 on Monkey selects MIDI channel 16.</p>
             <Accordion title="Ableton Live">
                 <p><b>1. </b>Make sure Monkey is enabled in settings MIDI Ports</p>
                 <img width="600px" src="/assets/ableton/ableton settings.png" alt="Ableton settings" />
                 <p><b>2. </b>Configure channel for each midi track you want to play on Monkey. Use channel 1-10 for instruments and channel 16 for your drum rack</p>
                 <img width="600px" src="/assets/ableton/ableton channel.png" alt="Ableton channel" />
+                <p>Make sure each track you want to use is armed</p>
+                <img width="600px" src="/assets/ableton/ableton arm.png" alt="Ableton arm" />
             </Accordion>
             <Accordion title="FL Studio">
                 <p><b>1. </b>Make sure the device is enabled in FL Studio settings</p>

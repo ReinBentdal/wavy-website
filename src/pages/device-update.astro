@@ -150,7 +150,7 @@ mcumgr.onConnect(() => {
 });
 mcumgr.onDisconnect(() => {
 	connectButton.disabled = false;
-	connectButton.innerText = 'Conncet via Bluetooth';
+	connectButton.innerText = 'Connect via Bluetooth';
 	screens.set('initial-screen')
 });
 mcumgr.onConnectionLoss(() => {
