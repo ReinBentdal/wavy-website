@@ -1,11 +1,32 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap');
+
 :root {
+    
     --font-family: "Inter", sans-serif;
-    --font-family-alt: "Inter", sans-serif;
+
+    /* colors */
+    --accent-color: rgb(8 76 207);
+    --accent-color-bg-light: #F0F5FD;
+    --accent-color-bg-dark: #DDE4F1;
+}
+
+* {
+    box-sizing: border-box;
+    -moz-box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+}
+
+html {
+    margin: 0;
+    padding: 0;
 }
 
 body {
     font-family: var(--font-family);
     -webkit-font-smoothing: antialiased;
+    margin: 0;
+    padding: 0;
+
     min-width: 400px;
     min-height: 100vh;
 }
@@ -23,10 +44,12 @@ a:link, a:visited {
     color: inherit; /* Makes the link color inherit from the parent element */
 }
 
-.section-margin {
-    margin: 0 50px;
+h1 {
+    font-weight: 300;
+    font-size: 64px;
 }
 
-.screen {
-    display: none;
+h3 {
+    font-weight: 200;
+    font-size: 16px;
 }

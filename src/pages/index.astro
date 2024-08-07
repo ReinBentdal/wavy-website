@@ -3,17 +3,26 @@ import '../styles/global.css';
 import Layout from '../layouts/Layout.astro';
 import Header from '../layouts/Header.astro';
 import Footer from '../layouts/Footer.astro';
+import LinkButton from '../components/LinkButton.astro';
 ---
 
 <Layout title="Wavy Industries">
 	<main>
 		<Header />
-		<section class="content">
-			<p class="catch">Based in Norway, we develop music making devices.</p>
-			<a href="/monkey"><div id="monkey" ><img src="/assets/monkey_kok2.png" /></div></a>
-			<div class="info">
-				<p><i><b>Core team:</b> <a href="https://www.linkedin.com/in/rein-gundersen-bentdal-201701188/" target="_blank">Rein Gundersen Bentdal</a></i></p>
-				<p><i><b>Special thanks to:</b> Herman Gording Hong, Erik Hognestad, Frida Gundersen Bentdal, Carsten Wulff, Eric Bezzam, Paolo Prandoni, Olve Sævik, Selma Gundersen Bentdal</i></p>
+		<section>
+			<h1>Introducing MON<span style="font-weight: 400;" >KEY</span></h1>
+			<p class="catch-phrase">An ultra portable Bluetooth MIDI keyboard</p>
+			<div id="monkey-present">
+				<div>
+					<img src="/assets/monkey/render.png" alt="Monkey" />
+				</div>
+				<div>
+					<p>Monkey at its simplest form is just a Bluetooth MIDI keyboard with ultra long battery life. But through the SHIFT key you get access to all of its other features. Monkey has 6 MIDI effects, each with 10 presets. Furthermore it includes a loop recorder for you to record your ideas with up to 10 instruments! </p>
+					<p class="section-links">
+						<LinkButton href="/monkey" title="Learn more" />
+						<LinkButton href="/monkey/purchase" title="Buy" type="highlight" />
+					</p>
+				</div>
 			</div>
 		</section>
 		<Footer />
@@ -21,58 +30,52 @@ import Footer from '../layouts/Footer.astro';
 </Layout>
 
 <style>
-	@keyframes bounce {
-		0% {
-			transform: scale(1);
-		}
-		50% {
-			transform: scale(0.9);
-		}
-		100% {
-			transform: scale(1);
-		}
-	}
-	/* html, body {
-		margin: 0;
-		padding: 0;
-		height: 100%;
-	} */
 
-	main {
-		min-height: 100vh;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-	.content {
-		flex-grow: 1;
-		font-size: 16px;
-		margin-left: 30px;
-		margin-right: 30px;
-		display: flex;
-		flex-direction: column;
-		justify-content: space-between;
-	}
-	#monkey {
-		width: 100%;
-		max-width: 600px;
-		margin: 0 auto;
-	}
-	#monkey img {
-		object-fit: contain;
-		max-width: 100%;
-		animation: bounce 4s infinite;
-		animation-timing-function: ease-in-out;
-	}
-	.catch {
-		margin-top: 70px;
-	}
+main {
+	/* background-color: #FFFFF5; */
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
 
-	.info {
-		font-size: 14px;
-		margin-top: 120px;
-		font-family: 'Courier New', Courier, monospace;
-		display: flex;
-		flex-direction: column;
-	}
+section {
+	width: 100%;
+	padding: 0 20px;
+}
+
+h1 {
+	margin-block-start: 0em;
+	margin-block-end: 0em;
+}
+
+.catch-phrase {
+	font-size: 20px;
+	margin-block-start: 0em;
+	margin-block-end: 0em;
+}
+
+#monkey-present {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: center;
+	gap: 30px;
+	width: 100%;
+	padding: 20px 0px;
+}
+
+#monkey-present img {
+	object-fit: contain;
+	width: 100%;
+}
+
+#monkey-present > div {
+	flex: 1 1 400px;
+}
+
+.section-links {
+	display: flex;
+	gap: 15px;
+	padding: 15px 0;
+}
 </style>

@@ -1,62 +1,88 @@
 ---
 import '../styles/global.css';
-const links = {
-    '/monkey': 'monkey', 
-    // '/KD-3': 'KD-3 MIDI', 
-    '/midi-connect': 'MIDI connect', 
-    '/device-update': 'device update'
-};
+
 const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
+
+function linkClass(link) {
+    return currentPage == link ? "active-link" : "";
+}
 ---
 <header>
-    <div class="logo-box">
+    <div class="logo">
         <a href="/"><img src="/assets/logo.svg" /></a>
     </div>
-    <nav class="nav-box">
-        <ul>
-            <!-- Loop through the links and create the nav items -->
-            {Object.entries(links).map(([link, title]) => {
-                const activeLink = currentPage == link ? "active-link" : "";
-                return <li class={`${activeLink}`}><a href={link}>{title}</a></li>
-            })}
-        </ul>
+
+    <nav>
+
+        <div>
+            <h3>Producs</h3>
+            <ul>
+                <li class={linkClass('/monkey')} ><a href="/monkey">MONKEY</a></li>
+                <li class={linkClass('/KD-3')} ><a href="/KD-3">KD-3</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h3>Connect</h3>
+            <ul>
+                <li><a href="https://discord.gg/qm9ggkDzdc" target="_blank">discord ⬀</a></li>
+                <li><a href="http://eepurl.com/ivXTOk" target="_blank">newsletter ⬀</a></li>
+                <li><a href="mailto:hello@wavyindustries.com" target="_blank">contact ⬀</a></li>
+            </ul>
+        </div>
+
+        <div>
+            <h3>Resources</h3>
+            <ul>
+                <li class={linkClass('/resources/guides')} ><a href="/resources/guides">guides</a></li>
+                <li class={linkClass('/resources/device-update')} ><a href="/resources/device-update">device update</a></li>
+
+            </ul>
+        </div>
+
     </nav>
 </header>
 
 <style>
     header {
-        height: 165px;
-        display: flex;
-        align-items: center;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        margin-left: 20px;
+        margin-right: 20px;
 
-        font-family: 'Courier New', Courier, monospace;
+        display: flex;
+        justify-content: space-between;
+        align-items: top;
+        gap: 15px;
     }
 
-    .logo-box {
+    .logo {
         width: 200px;
         height: 100%;
-        margin-right: 40px;
-        background-color: #FFEF5A;
-        display: flex;
-        justify-content: center;
-        align-items: center;
     }
 
-    .nav-box {
-        font-size: 18px;
+    nav {
+        display: flex;
+        justify-content: space-between;
+        gap: 15px;
+    }
+
+    nav h3 {
+        margin-block-start: 0em;
+        margin-block-end: 5px;
     }
 
     ul {
         list-style-type: none;
         padding: 0;
-    }
+        margin: 0;
 
-    li {
-        padding: 2px 0;
-        border: 1px solid black;
+        font-size: 14px;
+        font-weight: 400
     }
 
     ul li.active-link {
         font-weight: bold;
+        text-decoration: underline;
     }
 </style>

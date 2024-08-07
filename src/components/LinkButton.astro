@@ -1,31 +1,45 @@
 ---
-const props = Astro.props
+import '../styles/global.css';
 
-import '../styles/global.css'
+interface Props {
+  title: string;
+  href: string;
+  type: 'highlight' | 'default';
+}
+
+const { title, href, type = 'default' } = Astro.props;
 ---
 
-<a {...props}>
-    <slot />
+<a href={href} class={type}>
+  {title}
 </a>
 
-
 <style>
-    a {
-        background-color: #3366FF;
-        border: none;
-        color: white;
-        padding: 0.2rem 0.5rem;
-        text-align: center;
-        text-decoration: none;
-        display: inline-block;
-        font-size: 16px;
-        margin: 4px 2px;
-        cursor: pointer;
-        font-family: var( --font-family);
-    }
+a {
+  text-decoration: none;
+  
+  font-size: 16px;
+  font-weight: 400;
+  padding: 8px 14px;
+  border-radius: 2px;
+}
 
-    a:hover {
-        /* text-decoration: underline; */
-        background-color: #264ec5;
-    }
+.default {
+  background-color: white;
+  color: black;
+  border: 1px solid #ccc;
+}
+.default:hover {
+  background-color: #f0f0f0;
+}
+
+.highlight {
+  background-color: #DDE4F1;
+  color: rgb(8 76 207);
+  border: 1px solid #A0BEE9;
+}
+
+.highlight:hover {
+  background-color: #d7deec;
+}
 </style>
