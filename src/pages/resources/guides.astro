@@ -1,0 +1,31 @@
+---
+import '../../styles/global.css';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../layouts/Header.astro';
+import Footer from '../../layouts/Footer.astro';
+import LinkButton from '../../components/LinkButton.astro';
+---
+
+<Layout title="Wavy Industries">
+	<main>
+		<Header />
+		<section>
+			<h1>Guides</h1>
+            <LinkButton href="/guides/monkey" type="default" >MONKEY</LinkButton>
+		</section>
+		<Footer />
+	</main>
+</Layout>
+
+<style>
+main {
+	/* background-color: #FFFFF5; */
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+section {
+	width: 100%;
+	padding: 0 20px;
+}
+</style>

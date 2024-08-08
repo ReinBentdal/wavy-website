@@ -3,64 +3,64 @@ import '../styles/global.css';
 import Layout from '../layouts/Layout.astro';
 import Header from '../layouts/Header.astro';
 import Footer from '../layouts/Footer.astro';
+import LinkButton from '../components/LinkButton.astro';
 ---
 
-<Layout title="Wavy Industries: KD-3">
+<Layout title="Wavy Industries">
 	<main>
 		<Header />
-		<div class="contents">
-            <div class="page-links">
-                <ul>
-                    <li><a href="" class="disabled">buy</a></li>
-                    <li><a href="http://eepurl.com/ivXTOk" style="color: #53b6ff">get updates</a></li>
-                </ul>
-            </div>
-        </div>
-		<div class="section-margin">
-			<p>More info coming soon</p>
-		</div>
+		<section>
+			<h1>KD-3</h1>
+			<p class="catch-phrase">A portable 3-octave Bluetooth MIDI keyboard with <u>months</u> of battery life</p>
+            <img src="/assets/KD-3/render.png" alt="KD-3" />
+            <p>KD-3 results from a multi-year development effort towards a MIDI keyboard which finaly makes Bluetooth practical to use in a music making enviroment. KD-3 is deeply techically grounded, resulting in unheard of battery life (>500 hours) while still delivering very low latency. Charge for 15 minutes to get >100 hours of juice.</p>
+            <p>The hardware further reflects our passion for long lasting and thoughtful design, heavily inspired by Braun and Dieter Rams design philosophy. The design of KD-3 is simple by design. All of the controls are hands on and direct. No menu diving here. A ultra low powered screen gives you simple information like battery percentage and connection status. It's body is machined from a single piece of aluminium and anodized in natural color, resulting in a pure and matte finish. Get access to all of it's internals only through a few standard screws, making it very easy to service.</p>
+            <p>KD-3 is also capable of delivering MIDI through it's USB-C port as well as TRS.</p>
+            <p>Our companion <a href="https://apps.apple.com/no/app/midi-connect/id6476070288?mt=12">MIDI Connect</a> toolbar application for macOS makes it even simpler to manage your Bluetooth connections.</p>
+            <img src="/assets/midi_connect/screenshot.png" alt="KD-3 internals" />
+            <p><i>KD-3 is currently made on request. Please reach out if you are interested.</i></p>
+            <p class="section-links">
+                <LinkButton href="mailto:hello@wavyindustries.com" type="default" >Contact</LinkButton>
+            </p>
+		</section>
+		<Footer />
 	</main>
-    <Footer />
 </Layout>
 
 <style>
-body {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
+
+main {
+	/* background-color: #FFFFF5; */
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
 }
-ul {
-    list-style-type: none;
-    font-size: 16px;
-    margin: 0px;
-    padding: .5em 0px;
+
+section {
+	width: 100%;
+	padding: 0 20px;
 }
-.page-links span {
-    min-width: 750px;
-    overflow-x: scroll;
+
+section img {
+    object-fit: contain;
+    width: calc(100% + 40px);
+    margin-left: -20px;
+    margin-top: 20px;
 }
-ul li {
-    display: inline;
-    margin: 0px 15px;
+
+h1 {
+	margin-block-start: 0em;
+	margin-block-end: 0em;
 }
 
 p {
-    font-size: 16px;
+    max-width: 800px;
 }
-.contents {
-    margin-bottom: 50px;
-    width: 100%;
-}
-.disabled {
-	cursor: not-allowed;
-	opacity: 0.5;
-}
-.page-links {
-    background-image: url('/assets/k3.png');
-    background-size: cover;
-    background-position: center;
-    height: 400px;
-    color: white;
-    padding: 5px 15px 0px 15px;
+
+.catch-phrase {
+	font-size: 20px;
+	font-weight: 300;
+	margin-block-start: 0em;
+	margin-block-end: 0em;
 }
 </style>

@@ -1,8 +1,8 @@
 ---
-import '../styles/global.css';
-import Layout from '../layouts/Layout.astro';
-import Header from '../layouts/Header.astro';
-import DeviceUpdateSubscribe from '../components/DeviceUpdateSubscribe.astro';
+import '../../styles/global.css';
+import Layout from '../../layouts/Layout.astro';
+import Header from '../../layouts/Header.astro';
+import DeviceUpdateSubscribe from '../../components/DeviceUpdateSubscribe.astro';
 ---
 
 <Layout title="Wavy Industries: device update">
@@ -11,7 +11,7 @@ import DeviceUpdateSubscribe from '../components/DeviceUpdateSubscribe.astro';
 		<div id="screens">
 			
 			<div id="initial-screen" class="screen">
-				<h3>Bluetooth device updater directly in the browser</h3>
+				<h2>Bluetooth device updater directly in the browser</h2>
 				<div id="bt-unavailable-screen" class="screen">
 					<span class="error">It looks like your browser is not supported 🙁</span><br/><br/>
 					<p>Supported browsers (others might also work):</p>
@@ -79,6 +79,10 @@ import DeviceUpdateSubscribe from '../components/DeviceUpdateSubscribe.astro';
 	margin-right: 30px;
 }
 
+.screen {
+    display: none;
+}
+
 p {
 	font-size: 16px;
 }
@@ -97,9 +101,9 @@ p {
 </style>
 
 <script>
-import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '../js/mcumgr.js';
-import {Screens} from '../js/screens.js';
-
+import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '../../js/mcumgr.js';
+import {Screens} from '../../js/screens.js';
+console.log("test")
 const product_name = "MONKEY";
 const product_revision = "r2";
 
@@ -129,6 +133,9 @@ screens.on('connected-screen', () => {
 
 const initialScreens = new Screens(null, ['bt-available-screen', 'bt-unavailable-screen']);
 const updateScreens = new Screens('update-waiting-screen', ['update-waiting-screen', 'update-good-screen', 'update-idle-screen', 'update-prepare-screen', 'update-uploading-screen', 'update-complete-screen']);
+
+console.log("testtt")
+
 
 if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
 	initialScreens.set('bt-available-screen');

@@ -2,16 +2,16 @@
 import '../styles/global.css';
 
 interface Props {
-  title: string;
+  // title: string;
   href: string;
   type: 'highlight' | 'default';
 }
 
-const { title, href, type = 'default' } = Astro.props;
+const { href, type = 'default' } = Astro.props;
 ---
 
 <a href={href} class={type}>
-  {title}
+  <slot />
 </a>
 
 <style>

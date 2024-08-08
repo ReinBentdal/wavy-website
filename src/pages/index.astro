@@ -11,7 +11,7 @@ import LinkButton from '../components/LinkButton.astro';
 		<Header />
 		<section>
 			<h1>Introducing MON<span style="font-weight: 400;" >KEY</span></h1>
-			<p class="catch-phrase">An ultra portable Bluetooth MIDI keyboard</p>
+			<p class="catch-phrase">An ultra-portable Bluetooth MIDI keyboard</p>
 			<div id="monkey-present">
 				<div>
 					<img src="/assets/monkey/render.png" alt="Monkey" />
@@ -19,8 +19,8 @@ import LinkButton from '../components/LinkButton.astro';
 				<div>
 					<p>Monkey at its simplest form is just a Bluetooth MIDI keyboard with ultra long battery life. But through the SHIFT key you get access to all of its other features. Monkey has 6 MIDI effects, each with 10 presets. Furthermore it includes a loop recorder for you to record your ideas with up to 10 instruments! </p>
 					<p class="section-links">
-						<LinkButton href="/monkey" title="Learn more" />
-						<LinkButton href="/monkey/purchase" title="Buy" type="highlight" />
+						<LinkButton href="/monkey">Learn more</LinkButton>
+						<LinkButton href="/monkey/purchase" type="highlight" >Buy ~></LinkButton>
 					</p>
 				</div>
 			</div>
@@ -50,6 +50,7 @@ h1 {
 
 .catch-phrase {
 	font-size: 20px;
+	font-weight: 300;
 	margin-block-start: 0em;
 	margin-block-end: 0em;
 }
