@@ -31,6 +31,17 @@
                 "Input handling improvements",
                 "Drum preset algorithm testing"
             ]
+        },
+        {
+            "major": 0,
+            "minor": 9,
+            "patch": 0,
+            "changes": [
+                "Production release candidate",
+                "Support for new hardware",
+                "new STTR presets",
+                "lots of minor improvements"
+            ]
         }
     ]
 }

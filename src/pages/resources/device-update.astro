@@ -9,7 +9,6 @@ import DeviceUpdateSubscribe from '../../components/DeviceUpdateSubscribe.astro'
 	<main>
 		<Header />
 		<div id="screens">
-			
 			<div id="initial-screen" class="screen">
 				<h2>Bluetooth device updater directly in the browser</h2>
 				<div id="bt-unavailable-screen" class="screen">
@@ -25,7 +24,7 @@ import DeviceUpdateSubscribe from '../../components/DeviceUpdateSubscribe.astro'
 				<div id="bt-available-screen" class="screen">
 					<span>Currently supports <b>WAVY MONKEY</b>.</span><br/><br/>
 					<span class="remark">Make sure your device is not connected to anything before continuing. <br/>Is your device still not appearing in the list of nearby devices? Then press SHIFT + WAKE for a couple of seconds and the device will reboot.</span><br/><br/>
-					<button id="button-connect" type="submit" class="btn btn-primary"><i class="bi-bluetooth"></i>Connect via Bluetooth</button>
+					<button id="button-connect" type="submit" class="btn btn-primary button-connect"><i class="bi-bluetooth"></i>Connect via Bluetooth</button>
 				</div>
 			</div>
 			
@@ -43,7 +42,7 @@ import DeviceUpdateSubscribe from '../../components/DeviceUpdateSubscribe.astro'
 				<br/>
 
 				<div id="update-waiting-screen" class="screen">
-					<p>Waiting om device information...</p>
+					<p>Waiting on device information...</p>
 				</div>
 				<div id="update-good-screen" class="screen">
 					<span class="ok">Your device is up to date!</span>
@@ -64,10 +63,11 @@ import DeviceUpdateSubscribe from '../../components/DeviceUpdateSubscribe.astro'
 				</div>
 				<div id="update-complete-screen" class="screen">
 					<span class="ok">Transfer complete! Device will reboot and finish installation...</span>
-				</div>
-				
-				<DeviceUpdateSubscribe />
+				</div>				
 			</div>
+			<br />
+			<hr />
+			<DeviceUpdateSubscribe />
 		</div>
 	</main>
 </Layout>
@@ -98,20 +98,20 @@ p {
 .button-highlight {
 	background-color: #acffac;
 }
+.button-connect {
+	background-color: #3943d7;
+	color: white;
+}
 </style>
 
 <script>
 import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '../../js/mcumgr.js';
 import {Screens} from '../../js/screens.js';
-console.log("test")
+
 const product_name = "MONKEY";
-const product_revision = "r2";
 
 const firmwareVerions = {
-    "MONKEY": {
-        "r1": "0.6.1",
-        "r2": "0.6.5"
-    }
+    "MONKEY": "0.9.0",
 }
 
 const connectButton = document.getElementById('button-connect');
@@ -134,9 +134,6 @@ screens.on('connected-screen', () => {
 const initialScreens = new Screens(null, ['bt-available-screen', 'bt-unavailable-screen']);
 const updateScreens = new Screens('update-waiting-screen', ['update-waiting-screen', 'update-good-screen', 'update-idle-screen', 'update-prepare-screen', 'update-uploading-screen', 'update-complete-screen']);
 
-console.log("testtt")
-
-
 if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
 	initialScreens.set('bt-available-screen');
 } else {
@@ -152,7 +149,7 @@ mcumgr.onConnecting(() => {
 mcumgr.onConnect(() => {
 	deviceName.innerText = mcumgr.name;
 	mcumgr.cmdImageState();
-	latestFWVersion.innerHTML = firmwareVerions[product_name][product_revision];
+	latestFWVersion.innerHTML = firmwareVerions[product_name];
 	screens.set('connected-screen')
 });
 mcumgr.onDisconnect(() => {
@@ -187,10 +184,10 @@ mcumgr.onMessage(({ op, group, id, data, length }) => {
 						if (image.active) {
 							deviceFWVersion.innerHTML = image.version
 							let deviceVersion = version_from_string(image.version);
-							let latestVersion = version_from_string(firmwareVerions[product_name][product_revision]);
+							let latestVersion = version_from_string(firmwareVerions[product_name]);
 							if (compare_versions(deviceVersion, latestVersion) < 0) {
 								updateScreens.set('update-idle-screen');
-								fetch_changelog(product_name, product_revision, deviceVersion, latestVersion)
+								fetch_changelog(product_name, deviceVersion, latestVersion)
 									.then(changelog => {
 										publish_changelog(changelog);
 									})
@@ -232,7 +229,7 @@ disconnectButton.addEventListener('click', async () => {
 updateButton.addEventListener('click', async () => {
 	try {
 		updateScreens.set('update-prepare-screen');
-		fetch(`/firmware/${product_name}/${product_revision}/app\_update_${firmwareVerions[product_name][product_revision]}.bin`)
+		fetch(`/firmware/${product_name}/app\_update_${firmwareVerions[product_name]}.bin`)
 			.then(res => res.arrayBuffer())
 			.then(res => {
 				mcumgr.cmdUpload(res);
@@ -256,8 +253,8 @@ function compare_versions(v1, v2) {
 	return 0;
 }
 
-async function get_newest_version(product_name, product_revision) {
-	let json = await fetch(`/firmware/${product_name}/${product_revision}/changelog.json`)
+async function get_newest_version(product_name) {
+	let json = await fetch(`/firmware/${product_name}/changelog.json`)
 		.then(res => res.json());
 
 	// map values from string to version arrays
@@ -268,8 +265,8 @@ async function get_newest_version(product_name, product_revision) {
 	return state
 }
 
-async function fetch_changelog(product_name, product_revision, version_min, version_max) {
-	let json = await fetch(`/firmware/${product_name}/${product_revision}/changelog.json`)
+async function fetch_changelog(product_name, version_min, version_max) {
+	let json = await fetch(`/firmware/${product_name}/changelog.json`)
 		.then(res => res.json());
 
     // Filter versions within the specified range
