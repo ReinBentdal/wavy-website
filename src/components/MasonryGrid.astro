@@ -1,0 +1,51 @@
+---
+import '../styles/MasonryGrid.css';
+
+const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
+
+function linkClass(link) {
+    return currentPage == link ? "active-link" : "";
+}
+---
+
+
+<div class="masonry-grid">
+    <div class="grid-item w1 h2">
+        <div class="logo">
+        <a href="/"><img src="/assets/logo.svg" /></a>
+    </div>
+    </div>
+    <div class="grid-item w1 h2">
+        
+    </div>
+    <div class="grid-item w2 h2"></div>
+    <div class="grid-item w3 h2"></div>
+    <div class="grid-item w4 h2"></div>
+</div>
+
+<style>
+    nav {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 0px;
+    }
+
+    nav h3 {
+        margin-block-start: 0em;
+        margin-block-end: 5px;
+    }
+
+    ul {
+        list-style-type: none;
+        padding: 0;
+        margin: 0;
+        font-size: 14px;
+        font-weight: 400;
+    }
+
+    ul li.active-link {
+        font-weight: bold;
+        text-decoration: underline;
+    }
+</style>
