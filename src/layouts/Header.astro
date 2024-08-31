@@ -1,33 +1,42 @@
 ---
+interface Props {
+	textColor: 'black' | 'white';
+}
+
+const { textColor = 'black' } = Astro.props;
+
 import '../styles/global.css';
 
 const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
 
 function linkClass(link) {
-    return currentPage == link ? "active-link" : "";
+    // Create a regex to match the link path as a prefix, ensuring that it matches full directory segments
+    const regex = new RegExp(`^${link}(/|$)`);
+
+    // Check if the current page starts with the link path using the regex
+    return regex.test(currentPage) ? "active-link" : "";
 }
 ---
-<header>
+<header class={textColor == 'white' ? 'text-white' : 'text-black'}>
     <div class="logo">
-        <a href="/"><img src="/assets/logo.svg" /></a>
+        <a href="/"><img src=`/assets/${textColor == 'white' ? 'logo-white.svg' : 'logo.svg'}` /></a>
     </div>
 
     <nav>
 
         <div>
-            <h3>Producs</h3>
+            <h3>Products</h3>
             <ul>
-                <li class={linkClass('/monkey')} ><a href="/monkey">MONKEY</a></li>
-                <li class={linkClass('/KD-3')} ><a href="/KD-3">KD-3</a></li>
+                <li class={linkClass('/monkey')}><a href="/monkey">MONKEY</a></li>
+                <li class={linkClass('/KD-3')}><a href="/KD-3">KD-3</a></li>
             </ul>
         </div>
         
         <div>
             <h3>Resources</h3>
             <ul>
-                <li class={linkClass('/resources/guides')} ><a href="/resources/guides">guides</a></li>
-                <li class={linkClass('/resources/device-update')} ><a href="/resources/device-update">device update</a></li>
-
+                <li class={linkClass('/resources/guides')}><a href="/resources/guides">guides</a></li>
+                <li class={linkClass('/resources/device-update')}><a href="/resources/device-update">device update</a></li>
             </ul>
         </div>
 
@@ -54,6 +63,13 @@ function linkClass(link) {
         justify-content: space-between;
         align-items: top;
         gap: 15px;
+    }
+
+    .text-black {
+        color: black;
+    }
+    .text-white {
+        color: rgba(255, 255, 255, 0.8);
     }
 
     .logo {

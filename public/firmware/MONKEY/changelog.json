@@ -42,6 +42,16 @@
                 "new STTR presets",
                 "lots of minor improvements"
             ]
+        },
+        {
+            "major": 1,
+            "minor": 0,
+            "patch": 0,
+            "changes": [
+                "Support for new hardware",
+                "new STTR presets",
+                "lots of minor improvements"
+            ]
         }
     ]
 }

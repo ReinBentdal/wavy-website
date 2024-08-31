@@ -1,17 +1,23 @@
 ---
 import '../styles/global.css';
+import {routes} from '../routes.js'
 import Layout from '../layouts/Layout.astro';
 import Header from '../layouts/Header.astro';
 import Footer from '../layouts/Footer.astro';
 import LinkButton from '../components/LinkButton.astro';
+import TagContainer from '../components/TagContainer.astro';
+import Tag from '../components/Tag.astro';
 ---
 
 <Layout title="Wavy Industries">
 	<main>
-		<Header />
-		<section>
+		<Header textColor='white' />
+		<section class="text-white">
 			<h1>MON<span style="font-weight: 400;" >KEY</span></h1>
-			<p>Tags here: Getting started, Manual</p>
+			<TagContainer>
+				<Tag href={routes['monkey-getting-started']}>Getting started</Tag>
+				<Tag href={routes['monkey-manual']}>Manual</Tag>
+			</TagContainer>
 			<p class="catch-phrase">An ultra-portable Bluetooth MIDI keyboard</p>
 			<div id="monkey-present">
 				<div>
@@ -20,7 +26,7 @@ import LinkButton from '../components/LinkButton.astro';
 				<div>
 					<p>Monkey at its simplest form is just a Bluetooth MIDI keyboard with ultra long battery life. But through the SHIFT key you get access to all of its other features. Monkey has 6 MIDI effects, each with 10 presets. Furthermore it includes a loop recorder for you to record your ideas with up to 10 instruments! </p>
 					<p class="section-links">
-						<LinkButton href="/monkey/purchase" type="highlight" >Buy ~></LinkButton>
+						<LinkButton href="/monkey/purchase" type="highlight" >Buy now €59</LinkButton>
 					</p>
 				</div>
 			</div>
@@ -32,10 +38,14 @@ import LinkButton from '../components/LinkButton.astro';
 <style>
 
 main {
-	/* background-color: #FFFFF5; */
+	background-color: black;
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+}
+
+.text-white {
+	color: rgba(255, 255, 255, 0.8);
 }
 
 section {

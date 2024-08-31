@@ -28,15 +28,15 @@ import Accordion from '../../components/Accordion.astro';
                 <p><i>We are developing our own connection management tool named <b>MIDI Connect</b>. We recommend you to check it out, its available in beta <a href="/midi-connect"><b>here</b></a></i>. We are pushing to make MIDI bluetooth devices more practical to use, and this tool is a central piece of that. If you don't want to use it, you can instead just follow the native macOS procedure below.</p>
                 <p>Connecting Monkey to macOS is easy. Just follow these steps:</p>
                 <p><b>1. </b>Open up <i>Audio MIDI Setup</i></p>
-                <img width="600px" src="/assets/mac-connect/1-search.png" alt="Search for Bluetooth" />
+                <img width="600px" src="/assets/resources/mac-connect/1-search.png" alt="Search for Bluetooth" />
                 <p><b>2. </b>Open MIDI studio</p>
-                <img width="600px" src="/assets/mac-connect/2-open_midi_studio.png" alt="Open MIDI studio" />
+                <img width="600px" src="/assets/resources/mac-connect/2-open_midi_studio.png" alt="Open MIDI studio" />
                 <p><b>3. </b>Open the bluetooth panel</p>
-                <img width="600px" src="/assets/mac-connect/3-open_bluetooth.png" alt="Open Bluetooth window" />
+                <img width="600px" src="/assets/resources/mac-connect/3-open_bluetooth.png" alt="Open Bluetooth window" />
                 <p>Or alternatively if you don't see the bluetooth icon</p>
-                <img width="600px" src="/assets/mac-connect/3-alt_open_bluetooth.png" alt="Open Bluetooth window" />
+                <img width="600px" src="/assets/resources/mac-connect/3-alt_open_bluetooth.png" alt="Open Bluetooth window" />
                 <p><b>4. </b>Find your device in the list and connect</p>
-                <img width="600px" src="/assets/mac-connect/4-connect.png" alt="Connect to Monkey" />
+                <img width="600px" src="/assets/resources/mac-connect/4-connect.png" alt="Connect to Monkey" />
             </Accordion>
             <Accordion title="Windows">
                 Windows currently does not have the best support for MIDI over Bluetooth. The steps below might look a bit complicated. But when it's initially done, it should'nt be too bad.
@@ -47,19 +47,19 @@ import Accordion from '../../components/Accordion.astro';
                 </ol>
                 <p>Then follow these steps to start using Monkey:</p>
                 <p><b>0. </b>Windows 11 users first have to enable <i>Advanced devices discovery</i> in bluetooth system settings</p>
-                <img width="600px" src="/assets/windows/0-advanced_discovery.jpeg" alt="windows advanced bluetooth" />
+                <img width="600px" src="/assets/resources/windows/0-advanced_discovery.jpeg" alt="windows advanced bluetooth" />
                 <p><b>1. </b>Pair Monkey in Windows settings. You only need to do this step if Monkey is not paired to your Windows computer. Windows might fail to pair with your device. If so, reboot Monkey and try again.</p>
                 <p>After it is successfully paired, Windows will automatically disconnect Monkey. Don't worry, this is expected as Windows don's yet see any reason for being connected to it. It should then appear as a paired device.</p>
-                <img width="600px" src="/assets/windows/1-connect_pre.png" alt="windows connect" />
-                <img width="600px" src="/assets/windows/2-pairing.png" alt="windows pairing" />
-                <img width="600px" src="/assets/windows/2.1-pairing.png" alt="windows paired" />
-                <img width="600px" src="/assets/windows/3-connect_post.png" alt="windows connected" />
+                <img width="600px" src="/assets/resources/windows/1-connect_pre.png" alt="windows connect" />
+                <img width="600px" src="/assets/resources/windows/2-pairing.png" alt="windows pairing" />
+                <img width="600px" src="/assets/resources/windows/2.1-pairing.png" alt="windows paired" />
+                <img width="600px" src="/assets/resources/windows/3-connect_post.png" alt="windows connected" />
                 <p><b>2. </b>Configure a MIDI port using loopMIDI. Here we name it <q>my midi port</q>.</p>
-                <img width="600px" src="/assets/windows/4-port_create.png" alt="port create" />
-                <img width="600px" src="/assets/windows/4.1-port_create.png" alt="port create" />
+                <img width="600px" src="/assets/resources/windows/4-port_create.png" alt="port create" />
+                <img width="600px" src="/assets/resources/windows/4.1-port_create.png" alt="port create" />
                 <p><b>3. </b>Open MIDIBerry, select WAVY MONKEY as input device (this should result in Windows reconnecting to Monkey) and the MIDI port you created as output.</p>
                 <p>Now you are done! Check if it works by pressing some random keys on Monkey as seeing wether these notes are recieved in <i>INPUT MONITOR</i> in MIDIBerry.</p>
-                <img width="600px" src="/assets/windows/5-select.png" alt="select" />
+                <img width="600px" src="/assets/resources/windows/5-select.png" alt="select" />
                 <!-- <ol>
                     <li><b>Connect Monkey to Windows through Bluetooth settings: </b>Skip this step if Monkey is already a paired device (stored under <i>Other devices</i>). If you are using Windows 11, you need to first enable <i>advanced Bluetooth scanning</i> in Bluetooth settings. Now try to connect to pair with Monkey. If Widnows fails to connect, then reboot Monkey and try again. Just after it is paired it will automatically disconnect, and this is expected behaviour. Windows will then store it as a paired device</li>
                     <li><b>Create a virtual MIDI port:</b>Now we need to create a virtual MIDI port which we can connect together with our physical MIDI device.</li>
@@ -68,38 +68,41 @@ import Accordion from '../../components/Accordion.astro';
             </Accordion>
             <Accordion title="Android">
                 <p><b>1. </b>You can use the application <i>MIDI BLE Connect</i> to connect to your device</p>
-                <img width="300px" src="/assets/android/1-find.jpeg" alt="Connect to Monkey" />
-                <img width="300px" src="/assets/android/2-connected.jpeg" alt="Connect to Monkey" />
+                <img width="300px" src="/assets/resources/android/1-find.jpeg" alt="Connect to Monkey" />
+                <img width="300px" src="/assets/resources/android/2-connected.jpeg" alt="Connect to Monkey" />
                 <p><b>2. </b>Now it is connected and ready to be used, for example using the application <i>MIDI Keyboard</i> or full fledged DAWs</p>
-                <img width="600px" src="/assets/android/3-use.jpeg" alt="Use Monkey" />
+                <img width="600px" src="/assets/resources/android/3-use.jpeg" alt="Use Monkey" />
             </Accordion>
             <Accordion title="ipadOS / IOS">Information coming soon</Accordion>
             <Accordion title="TE OP-1">Information coming soon</Accordion>
             <h2>Configure DAW</h2>
-            <p>By default Monkey sends on MIDI channel 1 for instruments and 16 for the drums. The instrument channel is changeable by pressing SHIFT+CH, then while keeping SHIFT pressed, press one of the numbered buttons. Selecting channel 0 on Monkey selects MIDI channel 16.</p>
+            <p>By default Monkey sends on MIDI channel 1 for instruments and 10 for the drums. The instrument channel is changeable by pressing SHIFT+CH, then while keeping SHIFT pressed, press one of the numbered buttons. Selecting channel 0 on Monkey selects MIDI channel 10.</p>
             <Accordion title="Ableton Live">
                 <p><b>1. </b>Make sure Monkey is enabled in settings MIDI Ports</p>
-                <img width="600px" src="/assets/ableton/ableton settings.png" alt="Ableton settings" />
-                <p><b>2. </b>Configure channel for each midi track you want to play on Monkey. Use channel 1-10 for instruments and channel 16 for your drum rack</p>
-                <img width="600px" src="/assets/ableton/ableton channel.png" alt="Ableton channel" />
+                <img width="600px" src="/assets/resources/ableton/ableton settings.png" alt="Ableton settings" />
+                <p><b>2. </b>Configure channel for each midi track you want to play on Monkey. Use channel 1-10 for instruments and channel 10 for your drum rack</p>
+                <img width="600px" src="/assets/resources/ableton/ableton channel.png" alt="Ableton channel" />
                 <p>Make sure each track you want to use is armed</p>
-                <img width="600px" src="/assets/ableton/ableton arm.png" alt="Ableton arm" />
+                <img width="600px" src="/assets/resources/ableton/ableton arm.png" alt="Ableton arm" />
             </Accordion>
             <Accordion title="FL Studio">
                 <p><b>1. </b>Make sure the device is enabled in FL Studio settings</p>
-                <img width="600px" src="/assets/fl-studio/1-enable.png" alt="FL Studio settings" />
+                <img width="600px" src="/assets/resources/fl-studio/1-enable.png" alt="FL Studio settings" />
                 <p><b>2. </b>Lock any instrument to the keyboard, to be able to recieve specific MIDI channels</p>
-                <img width="600px" src="/assets/fl-studio/2-assign.png" alt="FL Studio assign to keyboard" />
-                <p><b>3. </b>Now you can assign as many instruments as you desire, through channel 1-10. And a drum rack to channel 16</p>
-                <img width="600px" src="/assets/fl-studio/3-ch1_select.png" alt="FL Studio configure channel" />
-                <img width="600px" src="/assets/fl-studio/4-ch16_select.png" alt="FL Studio configure channel" />
+                <img width="600px" src="/assets/resources/fl-studio/2-assign.png" alt="FL Studio assign to keyboard" />
+                <p><b>3. </b>Now you can assign as many instruments as you desire, through channel 1-10. And a drum rack to channel 10</p>
+                <img width="600px" src="/assets/resources/fl-studio/3-ch1_select.png" alt="FL Studio configure channel" />
+                <img width="600px" src="/assets/resources/fl-studio/4-ch16_select.png" alt="FL Studio configure channel" />
             </Accordion>
 		</div>
 	</main>
 </Layout>
 
 <style>
-    p a {
-        text-decoration: underline;
-    }
+main {
+    margin: 0 20px;
+}
+p a {
+    text-decoration: underline;
+}
 </style>
