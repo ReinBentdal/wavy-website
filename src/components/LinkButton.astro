@@ -1,16 +1,15 @@
 ---
 import '../styles/global.css';
+import type { HTMLAttributes } from 'astro/types';
 
-interface Props {
-  // title: string;
-  href: string;
+interface Props extends HTMLAttributes<'a'> {
   type?: 'highlight' | 'default';
 }
 
-const { href, type = 'default' } = Astro.props;
+const { href, type = 'default', ...rest } = Astro.props;
 ---
 
-<a href={href} class={type}>
+<a href={href} class={type} {...rest}>
   <slot />
 </a>
 

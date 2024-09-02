@@ -11,24 +11,20 @@ import LinkButton from '../../components/LinkButton.astro';
 	<main>
 		<Header />
 		<div class="section-margin">
-            <h1>Monkey getting started</h1>
-            <i>NOTE: This page is a work in progress. Don't hesitate to contact for any reason. Please request information which you feel should be available:</i>
-            <br />
-            <b>email:</b> hello@wavyindustries.com <br/>
-            <b>discord:</b> @___rein<br />
-
-            <p>Before starting, insert a CR2032 battery into Monkey. The LEDs in the light house as well as the LEDs in the eyes of the monkey will brifely blink indicating it has power and ready to use.</p>
+            <h1>Getting started with MON<b>KEY</b></h1>
+            <p>Before starting, insert a CR2032 battery into Monkey. The LEDs in the light house as well as the LEDs in the eyes of the monkey will brifely blink indicating it has booted successfully.</p>
 
             <h2>Device updates</h2>
-            <p>It is recommended to update your device to the newest firmare version. Updates are easily handled within this website, on the <a href="/device-update"><i>device update</i></a> page. If there is a new update available, update your device with a single press of a button.</p>
-			
-            
+            <p>Please make sure your device is up to date before continuing. This is easily done on this website.</p>
+            <LinkButton href={routes.deviceUpdate}>Device update page</LinkButton>
+
             <h2>Connecting up</h2>
-            <p>Monkey supports a variety of hosts. Below are specific tutorials for your setup.</p>
-            <p>If you have problems finding Monkey, make sure it is not connected to anything else. If you still can't find it, then you can reboot it by pressing SHIFT+WAKE and keeping them pressed for a couple of seconds.</p>
+            <p>Monkey supports a variety of hosts. We provide some guides to get going below.</p>
+
+            <p><i>If you have problems finding Monkey, make sure it is not connected to anything else. If you still can't find it, then you can reboot it by pressing SHIFT+WAKE and keeping them pressed for a couple of seconds.</i></p>
             <Accordion title="macOS">
-                <p>We have developed an app named MIDI Connect which simplifies connections on macOS. And its not limited to Wavy devices.</p>
-                <LinkButton href={routes['midi-connect-app-store']}>MIDI Conncet on App Store</LinkButton>
+                <p>We have developed an app named MIDI Connect which simplifies connections on macOS. And its not limited to Wavy devices. This is how we would recommend you to connect to MONKEY on macOS.</p>
+                <LinkButton target="_blank" href={routes.midiConnectAppStore}>MIDI Conncet on App Store</LinkButton>
                 <p>If you do not want to download this app, please follow the proceeding instructions.</p>
                 <p><b>1. </b>Open up <i>Audio MIDI Setup</i></p>
                 <img width="600px" src="/assets/resources/mac-connect/1-search.png" alt="Search for Bluetooth" />
