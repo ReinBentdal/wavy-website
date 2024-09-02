@@ -20,7 +20,7 @@ import LinkButton from '../components/LinkButton.astro';
             <img src="/assets/midi_connect/screenshot.png" alt="KD-3 internals" />
             <p><i>KD-3 is currently made on request. Please reach out if you are interested.</i></p>
             <p class="section-links">
-                <LinkButton href="mailto:hello@wavyindustries.com" type="default" >Contact</LinkButton>
+                <LinkButton id="something-special-kd3" type="default" >Contact</LinkButton>
             </p>
 		</section>
 		<Footer />
@@ -64,3 +64,14 @@ p {
 	margin-block-end: 0em;
 }
 </style>
+
+<script>
+
+function doSomethingSpecial() {
+	let special = document.getElementById('something-special-kd3');
+	let special1 = "hell"
+	let special2 = "o"
+	special.href = "mai" + "lto:" + special1 + special2 + "@"+ "wavyindustries.com";
+}
+setTimeout(doSomethingSpecial, 1000);
+</script>
