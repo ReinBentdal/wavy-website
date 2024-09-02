@@ -1,0 +1,1 @@
+function l(){document.getElementById("something-special-header").href="mailto:hello@wavyindustries.com"}setTimeout(l,1e3);

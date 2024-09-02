@@ -1,0 +1,1 @@
+import"./hoisted.DIkDqo22.js";function l(){let e=document.getElementById("something-special-footer"),t=document.getElementById("something-special-footer-a"),o="hell";e.innerHTML=o+"o@wavyindustries.com",t.href="mailto:hello@wavyindustries.com"}setTimeout(l,1e3);
