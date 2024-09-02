@@ -1,11 +1,13 @@
 ---
 import '../../styles/global.css';
+import {routes} from '../../routes.js';
 import Layout from '../../layouts/Layout.astro';
 import Header from '../../layouts/Header.astro';
 import Accordion from '../../components/Accordion.astro';
+import LinkButton from '../../components/LinkButton.astro';
 ---
 
-<Layout title="Wavy Industries: Monkey getting started">
+<Layout title="Wavy Industries: MONKEY getting started">
 	<main>
 		<Header />
 		<div class="section-margin">
@@ -25,8 +27,9 @@ import Accordion from '../../components/Accordion.astro';
             <p>Monkey supports a variety of hosts. Below are specific tutorials for your setup.</p>
             <p>If you have problems finding Monkey, make sure it is not connected to anything else. If you still can't find it, then you can reboot it by pressing SHIFT+WAKE and keeping them pressed for a couple of seconds.</p>
             <Accordion title="macOS">
-                <p><i>We are developing our own connection management tool named <b>MIDI Connect</b>. We recommend you to check it out, its available in beta <a href="/midi-connect"><b>here</b></a></i>. We are pushing to make MIDI bluetooth devices more practical to use, and this tool is a central piece of that. If you don't want to use it, you can instead just follow the native macOS procedure below.</p>
-                <p>Connecting Monkey to macOS is easy. Just follow these steps:</p>
+                <p>We have developed an app named MIDI Connect which simplifies connections on macOS. And its not limited to Wavy devices.</p>
+                <LinkButton href={routes['midi-connect-app-store']}>MIDI Conncet on App Store</LinkButton>
+                <p>If you do not want to download this app, please follow the proceeding instructions.</p>
                 <p><b>1. </b>Open up <i>Audio MIDI Setup</i></p>
                 <img width="600px" src="/assets/resources/mac-connect/1-search.png" alt="Search for Bluetooth" />
                 <p><b>2. </b>Open MIDI studio</p>
@@ -67,13 +70,16 @@ import Accordion from '../../components/Accordion.astro';
                 </ol> -->
             </Accordion>
             <Accordion title="Android">
+                <p>How you should connect depends on the music app you are using with MONKEY. Many apps have a integrated way of connecting to Bluetooth MIDI devices, such as with <i>N-Track for Mobile</i>. Then you should use this method.</p>
                 <p><b>1. </b>You can use the application <i>MIDI BLE Connect</i> to connect to your device</p>
                 <img width="300px" src="/assets/resources/android/1-find.jpeg" alt="Connect to Monkey" />
                 <img width="300px" src="/assets/resources/android/2-connected.jpeg" alt="Connect to Monkey" />
                 <p><b>2. </b>Now it is connected and ready to be used, for example using the application <i>MIDI Keyboard</i> or full fledged DAWs</p>
                 <img width="600px" src="/assets/resources/android/3-use.jpeg" alt="Use Monkey" />
             </Accordion>
-            <Accordion title="ipadOS / IOS">Information coming soon</Accordion>
+            <Accordion title="ipadOS / IOS">
+                <p>Most music apps have an integrated way of connecting to Bluetooth MIDI devices. You should then use this method for connecting to MONKEY.</p>
+            </Accordion>
             <Accordion title="TE OP-1">Information coming soon</Accordion>
             <h2>Configure DAW</h2>
             <p>By default Monkey sends on MIDI channel 1 for instruments and 10 for the drums. The instrument channel is changeable by pressing SHIFT+CH, then while keeping SHIFT pressed, press one of the numbered buttons. Selecting channel 0 on Monkey selects MIDI channel 10.</p>

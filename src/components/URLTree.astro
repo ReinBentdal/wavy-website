@@ -1,0 +1,29 @@
+---
+// gets the URL and splits it by /. Displays this path as a string where each part is clickable as a link
+
+const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
+
+const pathParts = currentPage.split('/').filter(Boolean);
+
+const pathLinks = pathParts.map((part, index) => {
+    const path = '/'+pathParts.slice(0, index + 1).join('/');
+    return [path, part];
+});
+---
+
+<div>
+    <a href="/"><b>Wavy Industries</b></a> /
+    {pathLinks.map((value, index) => {
+        return (
+            <>
+            <a href
+                ={value[0]}
+                class={index === pathLinks.length - 1 ? 'active-link' : ''}
+            >
+                {value[1]}
+            </a>
+            {index < pathLinks.length - 1 && '/'}
+            </>
+        );
+    })}
+</div>

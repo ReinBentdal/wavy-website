@@ -1,7 +1,7 @@
 ---
 interface Props {
   href: string;
-  type: 'highlight' | 'default';
+  type?: 'highlight' | 'default';
 }
 
 const { href, type = 'default' } = Astro.props;

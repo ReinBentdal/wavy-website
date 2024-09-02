@@ -1,6 +1,6 @@
 ---
 interface Props {
-	textColor: 'black' | 'white';
+	textColor?: 'black' | 'white';
 }
 
 const { textColor = 'black' } = Astro.props;
@@ -29,6 +29,7 @@ function linkClass(link) {
             <ul>
                 <li class={linkClass('/monkey')}><a href="/monkey">MONKEY</a></li>
                 <li class={linkClass('/KD-3')}><a href="/KD-3">KD-3</a></li>
+                <li class={linkClass('/MIDI-connect')}><a href="/MIDI-connect">MIDI connect</a></li>
             </ul>
         </div>
         
