@@ -15,19 +15,19 @@ import Tag from '../components/Tag.astro';
 		<section class="text-white">
 			<h1>MON<span style="font-weight: 400;" >KEY</span></h1>
 			<TagContainer>
-				<Tag href={routes['monkey-getting-started']}>Getting started</Tag>
-				<Tag href={routes['monkey-manual']}>Manual</Tag>
+				<Tag href={routes.monkeyGettingStarted}>Getting started</Tag>
+				<Tag href={routes.monkeyManual}>Manual</Tag>
 			</TagContainer>
 			<div class="sub-title-block" >
 				<p class="catch-phrase">An ultra-portable Bluetooth MIDI keyboard</p>
-				<LinkButton href="/monkey/purchase" type="highlight" >Buy now €59</LinkButton>
+				<LinkButton href={routes.monkeyPurchase} type="highlight" >Buy now €59</LinkButton>
 			</div>
 
 			<video id="monkey-reveal-video" width="100%" autoplay muted playsinline onended="this.pause()">
 				<source src="/assets/monkey/monkey_front_reveal_compressed.mp4" type="video/mp4">
 				Your browser does not support the video tag.
 			</video>
-			<p>MON<b>KEY</b> is a two octave Bluetooth MIDI keyboard which literaly fits in your pocket. Bluetooth in MIDI keybaords is nothing new. But ultra long battery life of several months is. This is what enables Bluetooth to actually be practical to use, and complimented with low latency communication.</p>
+			<p>MON<b>KEY</b> is a two octave Bluetooth MIDI keyboard which literaly fits in your pocket. Bluetooth in MIDI keybaords is nothing new. But ultra long battery life of several months is. This is what enables Bluetooth to actually be practical to use, together with low latency communication.</p>
 			<p>Through the SHIFT key on MON<b>KEY</b> you get access to all the features written under and above the keys. Monkey has 6 MIDI effects, each with 10 presets. Furthermore it includes a loop recorder for you to record your ideas with up to 10 instruments! </p>
 			<p>
 				<h3>Features</h3>
@@ -43,11 +43,8 @@ import Tag from '../components/Tag.astro';
 			</p>
 			<p>
 				<h3>What users have to say</h3>
-				<blockquote>Jakob Haq - <i>"It’s a fun and portable keyboard and the graphics on it is a huge plus. I haven’t had any problems connecting it to my devices and the battery drain is impressively low which is very nice."</i></blockquote>
-				<blockquote>Jakob Haq - <i>"So far performance of the Monkey has been pretty spot on. It just works, which is super nice."</i></blockquote>
-				<!-- <blockquote><span class="profile-ref"><img src="/assets/monkey/profiles/floyd_steinberg.jpg"><span><b>Floyd Steinberg</b> - <i>"I can full heartedly recommend this. It’s the most fun I have had in a very long time with a new piece of gear." <sup><a href="#footnote-floyd-steinberg">[1]</a></sup></i></span></span></blockquote> -->
+				<blockquote><span class="profile-ref"><img src="/assets/monkey/profiles/floyd_steinberg.jpg"><span><b>Floyd Steinberg</b> - <i>"I can full heartedly recommend this. It’s the most fun I have had in a very long time with a new piece of gear." <sup><a href="#footnote-floyd-steinberg">[1]</a></sup></i></span></span></blockquote>
 				<blockquote><span class="profile-ref"><img src="/assets/monkey/profiles/jakob_haq.jpg" /><span><b>Jakob Haq</b> - <i>"I’ve been using the Monkey for many hours every day since I got it delivered. The biggest user case has been “on the run” when working on presets/patches." <sup><a href="#footnote-jakob-haq">[2]</a></sup></i></span></span></blockquote>
-				
 			</p>
 			<p>
 				<h3>Additional resources</h3>
@@ -62,7 +59,8 @@ import Tag from '../components/Tag.astro';
 		</section>
 		<section class="footnotes">
 			<p id="#footnote-floyd-steinberg">[1] Mentioned on his YouTube channel <i>Floyd Steinberg</i> in video titeled <a target="_blank" href="https://youtu.be/V6iA643FbLM?si=EDgtCntUDnTKQBLL&t=657">"The Wavy Industries Monkey is the tiniest MIDI master keyboard"</a> at 10:57, published Apr 28, 2024</p>
-			<!-- <p id="#footnote-jakob-haq">[2] Written in <a href={routes['wavy-discord']}>Wavy discord</a> in channel "General" at 06/17/2024 7:15 PM</p> -->
+			<p id="#footnote-jakob-haq">[2] Written in <a href={routes['wavy-discord']}>Wavy discord</a> in channel "General" at 06/17/2024 7:15 PM</p>
+			<p>Thanks to Glenn Frey for doing the graphics on this page</p>
 		</section>
 		<Footer />
 	</main>

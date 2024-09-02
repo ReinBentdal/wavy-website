@@ -5,11 +5,12 @@ interface Props {
 
 const { textColor = 'black' } = Astro.props;
 
+import { routes } from '../routes';
 import '../styles/global.css';
 
 const currentPage = new URL(Astro.request.url).pathname.replace(/\/$/, '').replace(/\.html$/, "");
 
-function linkClass(link) {
+function currentPageCheck(link) {
     // Create a regex to match the link path as a prefix, ensuring that it matches full directory segments
     const regex = new RegExp(`^${link}(/|$)`);
 
@@ -19,7 +20,7 @@ function linkClass(link) {
 ---
 <header class={textColor == 'white' ? 'text-white' : 'text-black'}>
     <div class="logo">
-        <a href="/"><img src=`/assets/${textColor == 'white' ? 'logo-white.svg' : 'logo.svg'}` /></a>
+        <a href={routes.home}><img src=`/assets/${textColor == 'white' ? 'logo-white.svg' : 'logo.svg'}` /></a>
     </div>
 
     <nav>
@@ -27,26 +28,26 @@ function linkClass(link) {
         <div>
             <h3>Products</h3>
             <ul>
-                <li class={linkClass('/monkey')}><a href="/monkey">MONKEY</a></li>
-                <li class={linkClass('/KD-3')}><a href="/KD-3">KD-3</a></li>
-                <li class={linkClass('/MIDI-connect')}><a href="/MIDI-connect">MIDI connect</a></li>
+                <li class={currentPageCheck(routes.monkey)}><a href={routes.monkey}>MONKEY</a></li>
+                <li class={currentPageCheck(routes.kd3)}><a href={routes.kd3}>KD-3</a></li>
+                <li class={currentPageCheck(routes.midiConnect)}><a href={routes.midiConnect}>MIDI connect</a></li>
             </ul>
         </div>
         
         <div>
             <h3>Resources</h3>
             <ul>
-                <li class={linkClass('/resources/guides')}><a href="/resources/guides">guides</a></li>
-                <li class={linkClass('/resources/device-update')}><a href="/resources/device-update">device update</a></li>
+                <li class={currentPageCheck(routes.guides)}><a href={routes.guides}>guides</a></li>
+                <li class={currentPageCheck(routes.deviceUpdate)}><a href={routes.deviceUpdate}>device update</a></li>
             </ul>
         </div>
 
         <div>
             <h3>Connect</h3>
             <ul>
-                <li><a href="https://discord.gg/qm9ggkDzdc" target="_blank">discord ⬀</a></li>
-                <li><a href="http://eepurl.com/ivXTOk" target="_blank">newsletter ⬀</a></li>
-                <li><a href="mailto:hello@wavyindustries.com" target="_blank">contact ⬀</a></li>
+                <li><a href={routes.wavyDiscord} target="_blank">discord ⬀</a></li>
+                <li><a href={routes.newsletter} target="_blank">newsletter ⬀</a></li>
+                <li><a id="something-special-header" target="_blank">contact ⬀</a></li>
             </ul>
         </div>
 
@@ -103,3 +104,14 @@ function linkClass(link) {
         text-decoration: underline;
     }
 </style>
+
+<script>
+
+function doSomethingSpecial() {
+    let special = document.getElementById('something-special-header');
+    let special1 = "hell"
+    let special2 = "o"
+    special.href = "mai" + "lto:" + special1 + special2 + "@"+ "wavyindustries.com";
+}
+setTimeout(doSomethingSpecial, 1000);
+</script>

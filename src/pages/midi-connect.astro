@@ -1,5 +1,6 @@
 ---
 import '../styles/global.css';
+import { routes } from '../routes';
 import Layout from '../layouts/Layout.astro';
 import Header from '../layouts/Header.astro';
 import Footer from '../layouts/Footer.astro';
@@ -13,7 +14,7 @@ import LinkButton from '../components/LinkButton.astro';
 			<h1>MIDI Connect for macOS</h1>
             <div class="sub-title-block" >
 				<p class="catch-phrase">🛑✋ STOP menu-diving each time you want to connect to a Bluetooth MIDI device on macOS</p>
-				<LinkButton href="https://apps.apple.com/no/app/midi-toolbar/id6476070288?mt=12" type="highlight" >Download on App Store</LinkButton>
+				<LinkButton href={routes.midiConnectAppStore} type="highlight" >Download on App Store</LinkButton>
 			</div>
             <img src="/assets/midi_connect/screenshot 2.png" alt="MIDI connect view" />
 		</section>

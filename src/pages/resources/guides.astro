@@ -4,6 +4,7 @@ import Layout from '../../layouts/Layout.astro';
 import Header from '../../layouts/Header.astro';
 import Footer from '../../layouts/Footer.astro';
 import LinkButton from '../../components/LinkButton.astro';
+import { routes } from '../../routes';
 ---
 
 <Layout title="Wavy Industries">
@@ -11,7 +12,7 @@ import LinkButton from '../../components/LinkButton.astro';
 		<Header />
 		<section>
 			<h1>Guides</h1>
-            <LinkButton href="/resources/guides/monkey-manual" type="default" >MONKEY manual</LinkButton>
+            <LinkButton href={routes.monkeyManual} type="default" >MONKEY manual</LinkButton>
 		</section>
 		<Footer />
 	</main>

@@ -1,14 +1,15 @@
 ---
 import '../styles/global.css';
+import { routes } from '../routes';
 ---
 
 <footer>
     <div>
         <span>Wavy Industries</span>
         <span>📍Norway</span>
-        <a href="mailto:hello@wavyindustries.com"><span id="something-special"></span></a>
-        <a href="https://discord.gg/qm9ggkDzdc" target="_blank"><span><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /> Discord</span></a>
-        <a href="http://eepurl.com/ivXTOk"><img alt="mailing list" src="/assets/mail.stack.fill.svg"/> Newsletter</a>
+        <a id="something-special-footer-a"><span id="something-special-footer"></span></a>
+        <a href={routes.wavyDiscord} target="_blank"><span><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /> Discord</span></a>
+        <a href={routes.newsletter} target="_blank"><img alt="newsletter" src="/assets/mail.stack.fill.svg"/> Newsletter</a>
     </div>
 </footer>
 
@@ -58,8 +59,13 @@ a:hover span {
 </style>
 
 <script>
-    let special = document.getElementById('something-special');
+function doSomethingSpecial() {
+    let special = document.getElementById('something-special-footer');
+    let specialA = document.getElementById('something-special-footer-a');
     let special1 = "hell"
     let special2 = "o"
-    special.innerHTML = special1 + special2 + "@wavyindustries.com";
+    special.innerHTML = special1 + special2 + "@"+ "wavyindustries.com";
+    specialA.href = "mai" + "lto:" + special1 + special2 + "@" + "wavyindustries.com";
+}
+setTimeout(doSomethingSpecial, 1000);
 </script>
