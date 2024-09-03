@@ -1,0 +1,41 @@
+---
+interface Header {
+  depth: number;
+  slug: string;
+  text: string;
+}
+
+export interface Props {
+  headings: Header[];
+}
+
+const props: Props = Astro.props;
+---
+
+<nav>
+  <ul>
+    {
+      props.headings.map((header) => (
+        <li
+          style={`margin-left: ${(header.depth - 1) * 20}px;`}
+          key={header.slug}
+        >
+          <a href={`#${header.slug}`}>{header.text}</a>
+        </li>
+      ))
+    }
+  </ul>
+</nav>
+
+<style>
+  nav {
+    padding: 20px;
+    min-width: 300px;
+    background-color: #f0f0f0;
+  }
+  @media screen and (max-width: 768px) {
+    nav {
+      display: none;
+    }
+  }
+</style>

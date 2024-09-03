@@ -4,20 +4,23 @@ import Layout from "./Layout.astro";
 import Header from "./Header.astro";
 import Footer from "./Footer.astro";
 import URLTree from '../components/URLTree.astro';
+import SidebarMenu from './SidebarMenu.astro';
 
-const {frontmatter} = Astro.props;
-
+const {frontmatter, headings} = Astro.props;
 ---
 
 <Layout title={frontmatter.title}>
     <main>
         <Header />
+        <div class="wrapper">
+        <SidebarMenu headings={headings} />
         <article>
             <section>
                 <URLTree />
                 <slot />
             </section>
         </article>
+        </div>
         <Footer />
     </main>
 </Layout>
@@ -33,6 +36,11 @@ main {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+}
+
+.wrapper {
+    display: flex;
+    flex-direction: row-reverse;
 }
 
 </style>

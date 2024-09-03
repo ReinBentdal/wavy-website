@@ -5,7 +5,7 @@ title: MONKEY manual - Wavy Industries
 
 # MON**KEY** manual
 
-***Manual is a work in progress.***
+**_Manual is a work in progress._**
 
 We recommend gradually exploring Monkey's concepts through hands-on testing to familiarize yourself with the workflow. When you see the symbol (☛), we recommend checking out what was described.
 
@@ -28,6 +28,7 @@ There are two remaining keys to the left of the MIDI effects which are not yet d
 The loop recorder is controlled using the PLAY, REC, and UNDO keys. It is fixed with a length of 16 beats. By pressing the REC key the looper becomes armed to record. The monkey eyes will light up. Then when you start playing on the keys, the looper will automatically start the looper. Blinking monkey eyes indicate the looper is playing. While the looper is playing, you may turn on or off recording by pressing the REC key. The monkey LED will indicate whether it’s recording or not (☛). Use the PLAY key to turn on and off loop playback. Press the UNDO key to undo your last recording. Each time you stop the recording, an UNDO checkpoint is created. To remove all recordings from a specific MIDI channel, long press the UNDO key, then press the number key corresponding to the desired MIDI channel.
 
 ## Device Recover
+
 Needing to recover the device should be extremely unlikely. First make sure this is actually the case. But if you think it is the case, we would recommend you to contact us either by email or discord to troubleshoot the issue.
 
-MON**KEY** keeps a backup of the previous update in case the current one is faulty, and gives you the option to revert back to it. Do not try to revert back if the fault is not likely to be caused by a new update. To revert back to the previous update, reboot MONKEY by pressing SHIFT + long press WAKE. As soon as you see the LED in the light tower light up, switch over to holding down SHIFT + UNDO and keep them pressed during boot. You should notice the LEDs not blinking, indicating it did not boot and instead entered rollback mode. Please wait for it to complete this task and it should boot into this older update. 
+MON**KEY** keeps a backup of the previous update in case the current one is faulty, and gives you the option to revert back to it. Do not try to revert back if the fault is not likely to be caused by a new update. To revert back to the previous update, reboot MONKEY by pressing SHIFT + long press WAKE. As soon as you see the LED in the light tower light up, switch over to holding down SHIFT + UNDO and keep them pressed during boot. You should notice the LEDs not blinking, indicating it did not boot and instead entered rollback mode. Please wait for it to complete this task and it should boot into this older update.
