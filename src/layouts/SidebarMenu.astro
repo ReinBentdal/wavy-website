@@ -13,13 +13,11 @@ const props: Props = Astro.props;
 ---
 
 <nav>
+  <span>Contents:</span>
   <ul>
     {
       props.headings.map((header) => (
-        <li
-          style={`margin-left: ${(header.depth - 1) * 20}px;`}
-          key={header.slug}
-        >
+        <li style={`margin-left: ${(header.depth - 1) * 20}px;`}>
           <a href={`#${header.slug}`}>{header.text}</a>
         </li>
       ))
@@ -37,5 +35,8 @@ const props: Props = Astro.props;
     nav {
       display: none;
     }
+  }
+  span {
+    font-size: 30px;
   }
 </style>

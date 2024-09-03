@@ -1,46 +1,44 @@
 ---
-import '../styles/global.css';
+import "../styles/global.css";
 import Layout from "./Layout.astro";
 import Header from "./Header.astro";
 import Footer from "./Footer.astro";
-import URLTree from '../components/URLTree.astro';
-import SidebarMenu from './SidebarMenu.astro';
+import URLTree from "../components/URLTree.astro";
+import SidebarMenu from "./SidebarMenu.astro";
 
-const {frontmatter, headings} = Astro.props;
+const { frontmatter, headings } = Astro.props;
 ---
 
-<Layout title={frontmatter.title}>
-    <main>
-        <Header />
-        <div class="wrapper">
-        <SidebarMenu headings={headings} />
-        <article>
-            <section>
-                <URLTree />
-                <slot />
-            </section>
-        </article>
-        </div>
-        <Footer />
-    </main>
+<Layout title={frontmatter.title} description={frontmatter.description}>
+  <main>
+    <Header />
+    <div class="wrapper">
+      <SidebarMenu headings={headings} />
+      <article>
+        <section>
+          <URLTree />
+          <slot />
+        </section>
+      </article>
+    </div>
+    <Footer />
+  </main>
 </Layout>
 
 <style>
-
-section {
+  section {
     width: 100%;
-	padding: 0 20px;
-}
+    padding: 0 20px;
+  }
 
-main {
-	min-height: 100vh;
-	display: flex;
-	flex-direction: column;
-}
+  main {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
 
-.wrapper {
+  .wrapper {
     display: flex;
     flex-direction: row-reverse;
-}
-
+  }
 </style>

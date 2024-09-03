@@ -1,6 +1,7 @@
 ---
 layout: ../../../layouts/ManualLayout.astro
 title: MONKEY manual - Wavy Industries
+description: This manual will guide you through the basic operations of MONKEY. MONKEY is a MIDI controller with a built-in looper and MIDI effects.
 ---
 
 # MON**KEY** manual
