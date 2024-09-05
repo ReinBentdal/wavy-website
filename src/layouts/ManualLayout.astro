@@ -10,11 +10,11 @@ const {frontmatter} = Astro.props;
 ---
 
 <Layout title={frontmatter.title}>
-    <main>
+    <main id="markdown-manual">
         <Header />
         <article>
             <section>
-                <URLTree />
+                <!-- <URLTree /> -->
                 <slot />
             </section>
         </article>
@@ -22,17 +22,27 @@ const {frontmatter} = Astro.props;
     </main>
 </Layout>
 
-<style>
+<style is:global>
 
-section {
+#markdown-manual section {
     width: 100%;
 	padding: 0 20px;
 }
 
-main {
+#markdown-manual {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+}
+
+#markdown-manual article {
+    margin: 0 auto;
+    max-width: 800px;
+}
+
+#markdown-manual img {
+    width: 100%;
+    object-fit: contain;
 }
 
 </style>

@@ -105,28 +105,15 @@ p {
 </style>
 
 <script>
-import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '../../js/mcumgr.js';
-import {Screens} from '../../js/screens.js';
-
 const product_name = "MONKEY";
 
 // infer from changelog
 const firmwareVerions = {
-    "MONKEY": "1.0.0",
+	"MONKEY": "1.0.0",
 }
 
-const connectButton = document.getElementById('button-connect');
-const disconnectButton = document.getElementById('button-disconnect');
-
-const deviceName = document.getElementById('device-name');
-const deviceFWVersion = document.getElementById('device-fw-version');
-const latestFWVersion = document.getElementById('latest-fw-version');
-
-const updateButton = document.getElementById('update-button');
-const uploadStatus = document.getElementById('upload-status');
-
-const changelog = document.getElementById('changelog');
-
+/* initialise the view */
+import {Screens} from '../../js/screens.js';
 const screens = new Screens('initial-screen', ['initial-screen', 'connected-screen', 'reconnect-screen']);
 screens.on('connected-screen', () => {
 	changelog.innerHTML = "";
@@ -141,6 +128,20 @@ if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
 	initialScreens.set('bt-unavailable-screen');
 }
 
+/* all elements used */ 
+const connectButton = document.getElementById('button-connect');
+const disconnectButton = document.getElementById('button-disconnect');
+
+const deviceName = document.getElementById('device-name');
+const deviceFWVersion = document.getElementById('device-fw-version');
+const latestFWVersion = document.getElementById('latest-fw-version');
+
+const updateButton = document.getElementById('update-button');
+const uploadStatus = document.getElementById('upload-status');
+
+const changelog = document.getElementById('changelog');
+	
+import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '../../js/mcumgr.js';
 const mcumgr = new MCUManager();
 mcumgr.onConnecting(() => {
 	console.log('Connecting...');
