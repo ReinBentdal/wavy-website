@@ -1,1 +1,0 @@
-import"./hoisted.DIkDqo22.js";import"./hoisted.DpxQG_fp.js";function l(){document.getElementById("something-special-kd3").href="mailto:hello@wavyindustries.com"}setTimeout(l,1e3);
