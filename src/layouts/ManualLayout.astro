@@ -3,21 +3,19 @@ import '../styles/global.css';
 import Layout from "./Layout.astro";
 import Header from "./Header.astro";
 import Footer from "./Footer.astro";
-import URLTree from '../components/URLTree.astro';
 
 const {frontmatter} = Astro.props;
 
 ---
 
 <Layout title={frontmatter.title}>
-    <main id="markdown-manual">
+    <main>
         <Header />
-        <article>
-            <section>
-                <!-- <URLTree /> -->
+        <section id="markdown-manual">
+            <article>
                 <slot />
-            </section>
-        </article>
+            </article>
+        </section>
         <Footer />
     </main>
 </Layout>
@@ -37,12 +35,16 @@ const {frontmatter} = Astro.props;
 
 #markdown-manual article {
     margin: 0 auto;
-    max-width: 800px;
+    max-width: 1000px;
 }
 
 #markdown-manual img {
     width: 100%;
     object-fit: contain;
+}
+
+#monkey-manual a {
+    text-decoration: underline;
 }
 
 #markdown-manual blockquote {

@@ -1,0 +1,16 @@
+---
+import '../styles/global.css';
+import type { HTMLAttributes } from 'astro/types';
+
+interface Props extends HTMLAttributes<'img'> {
+  caption?: string;
+}
+
+const { caption, ...rest } = Astro.props;
+---
+
+<figure>
+    <img {...rest}>
+    <figcaption>{caption}</figcaption>
+</figure>
+  
