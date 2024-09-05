@@ -4,7 +4,11 @@ title: MONKEY manual - Wavy Industries
 ---
 
 # MON**KEY** Manual
+> Work in progress. Feel free to reach out if anything is unclear.
+
 MON**KEY** is an ultra portable and versatile 2-octave Bluetooth MIDI keyboard.
+
+For further support, please email at: hello@wavyindustries.com or [join our discord server](https://discord.gg/4HQHERUW5K).
 
 ## Hardware overview
 MON**KEY** features a 2-octave keybed starting on the F-key. Play it as a typical MIDI keyboard, or access its extended capabilities thorugh the SHIFT key. While SHIFT is pressed down, you will get access to the labeled functions.
