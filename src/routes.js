@@ -11,5 +11,6 @@ export const routes = {
     'deviceUpdate': '/resources/device-update',
     'wavyDiscord': 'https://discord.gg/4HQHERUW5K',
     'newsletter': 'http://eepurl.com/ivXTOk',
-    'midiConnectAppStore': 'https://apps.apple.com/no/app/midi-toolbar/id6476070288?mt=12'
+    'midiConnectAppStore': 'https://apps.apple.com/no/app/midi-toolbar/id6476070288?mt=12',
+    'wavyIndstagram': 'https://www.instagram.com/wavyindustries_/',
 }
