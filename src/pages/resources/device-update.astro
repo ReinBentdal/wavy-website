@@ -23,7 +23,7 @@ import DeviceUpdateSubscribe from '../../components/DeviceUpdateSubscribe.astro'
 				</div>
 				<div id="bt-available-screen" class="screen">
 					<span>Currently supports <b>WAVY MONKEY</b>.</span><br/><br/>
-					<span class="remark">Make sure your device is not connected to anything before continuing. <br/>Is your device still not appearing in the list of nearby devices? Then press SHIFT + WAKE for a couple of seconds and the device will reboot.</span><br/><br/>
+					<span class="remark">Note: Your device will not appear if it is connected to something. If your device is stil not appearing, reboot the device.</span><br/><br/>
 					<button id="button-connect" type="submit" class="btn btn-primary button-connect"><i class="bi-bluetooth"></i>Connect via Bluetooth</button>
 				</div>
 			</div>
@@ -53,7 +53,6 @@ import DeviceUpdateSubscribe from '../../components/DeviceUpdateSubscribe.astro'
 					<hr />
 					<h3>Changes</h3>
 					<p id="changelog"></p>
-					<hr />
 				</div>
 				<div id="update-prepare-screen" class="screen">
 					<span>Fetching update and preparing device...</span>

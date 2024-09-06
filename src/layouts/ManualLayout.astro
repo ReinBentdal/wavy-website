@@ -20,9 +20,9 @@ const {frontmatter} = Astro.props;
     </main>
 </Layout>
 
+<!-- Style is global to be able to effect the underlying markdown content. Thus keep reference to ID to prevent global scope bloat -->
 <style is:global>
-
-section {
+#markdown-manual {
     width: 100%;
 	padding: 0 20px;
 }

@@ -1,0 +1,60 @@
+---
+interface Props {
+    src: string;
+    alt: string;
+    label: string;
+    text?: string;
+}
+
+const { src, alt, label, text } = Astro.props;
+
+const id = "GIFDemo-" + src.replace(/\W/g, '-');
+---
+
+<style>
+  .hidden {
+    display: none;
+  }
+
+  .visible {
+    display: block;
+  }
+</style>
+
+<div id={id} class="gif-demo">
+    <button>{"Show - " + label}</button>
+    <div class="hidden">
+        <span>{text}</span>
+        <img id="gif" loading="lazy" src={src} alt={alt} />
+    </div>
+</div>
+
+<style>
+.gif-demo div {
+    margin-top: 10px;
+    background-color: #eee;
+}
+
+.gif-demo span {
+    padding: 10px;
+    display: block;
+    font-style: italic;
+    font-size: 12px;
+    color: #666;
+}
+</style>
+
+<script define:vars={{ label, id }}>
+    const container = document.getElementById(id);
+    const button = container.querySelector('button');
+    const gif = container.querySelector('div');
+    button.addEventListener('click', () => {
+        gif.classList.toggle('hidden');
+        const isVisible = gif.classList.toggle('visible');
+        if (isVisible) {
+            button.textContent = "Hide - " + label;
+        } else {
+            button.textContent = "Show - " + label;
+        }
+    });
+</script>

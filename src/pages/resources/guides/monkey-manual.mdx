@@ -1,0 +1,83 @@
+---
+layout: ../../../layouts/ManualLayout.astro
+title: MONKEY manual - Wavy Industries
+---
+
+import GIFDemo from '../../../components/GIFDemo.astro';
+
+
+# MON**KEY** Manual
+> Work in progress. Feel free to reach out if anything is unclear.
+
+MONKEY is an ultra portable and versatile 2-octave Bluetooth MIDI keyboard.
+
+For further support, please email at: hello@wavyindustries.com or [join our discord server](https://discord.gg/4HQHERUW5K).
+
+## Hardware overview
+MONKEY features a 2-octave keybed starting on the F-key. Play it as a typical MIDI keyboard, or access its extended capabilities thorugh the SHIFT key.
+
+![monkey 2d function](/assets/resources/monkey_manual/monkey_2d_overview.svg)
+
+MONKEY gives feedback to the user through its LEDs. The light tower LED will give general feedback from function manipulations. The monkey LEDs will give feedback related to the loop recorder functionality.
+
+The lock switch is used to disable the keybed. Note, it does not turn off the unit, but it prevents unwanted key presses. You do not need to turn off MONKEY. It will go to sleep by itself.
+
+Communication is only through Bluetooth.
+
+Insert a CR2032 battery to get doing.
+
+## Getting started
+To get started, we refer to the [getting started](/monkey/getting-started) guide. We recommend to have MONKEY powered up and connected to a host while going through the rest of the manual.
+
+## Functions
+The functions are devided into a few sections. The functions highlighted with a white circle are the MIDI effects, going from ARP to DRM. The functions to the left of these effects are general settings and to the right we have the loop recorder + WAKE.
+
+![monkey 2d function](/assets/resources/monkey_manual/monkey_2d_sections.svg)
+
+![monkey 2d function](/assets/resources/monkey_manual/monkey_2d_functions.svg)
+
+### WAKE
+The first function you should get familiar with is the WAKE key. Pressing **SHIFT**+**WAKE** will reset the device and pressing **SHIFT** + **long pressing WAKE** will reboot the device. MONKEY have a workflow which you might not be familiar with. If you ever get lost, WAKE is by your side!
+
+<GIFDemo src="/assets/resources/monkey_manual/gifs/reset.gif" alt="reset demo" label="reset demo" text="WAKE brief press to reset." />
+<GIFDemo src="/assets/resources/monkey_manual/gifs/reboot.gif" alt="reboot demo" label="reboot demo" text="WAKE long press to reboot." />
+
+### OCT- and OCT+
+Starting from the left we have OCT- and OCT+. These are the most straight forward functions as they only change the octave range of the keybed.
+
+<GIFDemo src="/assets/resources/monkey_manual/gifs/octave.gif" alt="Octave select demo" label="octave select demo" text="First adjust octave up, then adjust down." />
+
+### BPM
+Furthermore we have the BPM function which lets you set the global BPM. Do so by pressing SHIFT+BPM. Keep the SHIFT key pressed followed by typing in the BPM you want using the keys labeled with numbers. Notice the feedback you get from the light tower LED.
+
+<GIFDemo src="/assets/resources/monkey_manual/gifs/bpm.gif" alt="BPM select demo" label="BPM select demo" text="Setting tempo to 120BPM." />
+
+### CH
+Change the MIDI channel using the CH function. Similarly to BPM, press SHIFT+CH. THen release CH followed by selecting one of the labeled number keys corresponding to the channel you would like to select. Selecting 0 will select MIDI channel 10. Notice the feedback you get from the light tower LED.
+**CAUTION**: **SHIFT** + **long pressing CH** is another function which will be described later.
+
+<GIFDemo src="/assets/resources/monkey_manual/gifs/channel.gif" alt="Channel select demo" label="channel select demo" text="Changing to MIDI channel 2." />
+
+### HOLD
+Toggle on and off note hold using the HOLD function. Notice the light house LED blinking once if the function was enabled and twice if it was disabled.
+
+<GIFDemo src="/assets/resources/monkey_manual/gifs/hold.gif" alt="Hold toggle demo" label="hold demo" text="Toggling hold first on, then off." />
+
+## MIDI effects
+Similarly to **HOLD** they are toggled. And only one effect might be enabled at once. Once an effect is enabled you can change between its presets. Do this på pressing **SHIFT**+**one of the numbered keys**.
+
+<GIFDemo src="/assets/resources/monkey_manual/gifs/effect-select.gif" alt="effect select demo" label="effect select demo" text="1 - Enabling ARP effect. 2 - Disabling ARP effect. 3 - Enabling STTR effect." />
+<GIFDemo src="/assets/resources/monkey_manual/gifs/effect-preset.gif" alt="effect preset select demo" label="effect preset select demo" text="Assuming a MIDI effect is selected. Changing to preset 6 within effect." />
+
+## Loop recorder
+The loop recorder is your payground to combine recordings from multiple instruments into an idea. Currently, the loop recorder is fixed with a length of 16 beats. The loop recorder uses the following keys:
+- PLAY: Toggle on and off loop playback. The monkey LEDs will blink in tempo during playback
+- REC: Toggle on and off loop recording. The behaviour of this key depends on if the loop is currently playing or not. If it is not playing it will toggle on and off "arm to record". The monkey LEDs will then be solid. As soon as you start playing on the keys the looper will start playing and recording. If the looper is already playing, then recording will be toggled on and off. Notice how the monkey LEDs blink differently between only playback and playback with recording. When recording the LEDs will stay on for a longer time.
+- UNDO: Each time you stop recording a new record checkpoint is generated. Pressing UNDO will then erase the last checkpoint. Long pressing on UNDO will let you choose an entire MIDI channel to erase. For example **SHIFT + long press UNDO** then while keeping SHIFT pressed, press on number 1 will erase everything from MIDI channel 1 in the loop recorder. As always, the number 0 is MIDI channel 10 and is reserved for the drums.
+
+### Recommendations
+Its a good idea to record something rhythmical initially such that you keep track of the tempo and know when the loop recorder loops back on itself. If you dont want to have rhythmical elements in your loop you might initially first record something rhythmical such as drums. Then when you have recorded something on top of the drums, erase the drums from the loop.
+
+It is also possible to create simple arrangement using the *channel mute* functionality (long press on CH function and toggle mute/unmute MIDI channels). Record a bunch of different elements on the different MIDI channels. Then you can arrange your idea by changing which channels are muted and not.
+
+When recording drums into the looper, you might keep recording for a bit after it wraps back to the beginning. You dont need to time a perfect key release as the looper wraps back to the start. The loop recorder will identify that you are recording something identical on top of the current recording and prevent duplicate notes.
