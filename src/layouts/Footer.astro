@@ -1,11 +1,14 @@
 ---
 import '../styles/global.css';
 import { routes } from '../routes';
+
+// get the current year
+let year = new Date().getFullYear();
 ---
 
 <footer>
     <div>
-        <span>Wavy Industries</span>
+        <span>Wavy Industries © {year}</span>
         <span>📍Norway</span>
         <a id="something-special-footer-a"><span id="something-special-footer"></span></a>
         <a href={routes.wavyDiscord} target="_blank"><span><img alt="Discord channel link" src="/assets/Discord blue mark.svg" /> Discord</span></a>
