@@ -1,1 +1,1 @@
-import"./Header.astro_astro_type_script_index_0_lang.DIkDqo22.js";import"./hoisted.DOSPlSLB.js";function l(){document.getElementById("something-special-kd3").href="mailto:hello@wavyindustries.com"}setTimeout(l,1e3);
+import"./Header.astro_astro_type_script_index_0_lang.DIkDqo22.js";import"./hoisted.DOSPlSLB.js";function l(){let e=document.getElementById("something-special-kd3"),t="hell",i="o";e.href="mailto:"+t+i+"@wavyindustries.com"}setTimeout(l,1e3);
