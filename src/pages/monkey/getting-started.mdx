@@ -1,0 +1,136 @@
+---
+layout: ~/layouts/MarkdownArticleLayout.astro
+---
+
+import Accordion from '../../components/Accordion.astro';
+import LinkButton from '../../components/LinkButton.astro';
+import {routes} from '../../routes.js';
+
+# Getting started with MON**KEY**
+
+<img alt="monkey overview" src="/assets/resources/monkey_manual/monkey_2d_overview.svg" />
+
+Before starting, insert a CR2032 battery into Monkey. The LEDs in the light house as well as the LEDs in the eyes of the monkey will briefly blink indicating it has booted successfully.
+
+## Device updates
+
+Please make sure your device is up to date before continuing. This is easily done on this website.
+
+<a href={routes.deviceUpdate}>Go to device update page</a>
+
+## Connecting up
+
+MONKEY supports a variety of hosts and works just as great with super mobile configurations as with a typical DAW. On mobile devices, it's typical for the apps to handle connections themselves. This is contrary to desktop operating systems such as Windows and macOS, where you typically handle the connection through the OS.
+
+### Connecting to mobile apps
+
+There is a bunch of fun apps to try out. We recommend checking out _N-Track Studio_ which is available on both iOS, iPadOS, and Android. We specifically recommend this app because:
+
+- It has a usable free version
+- It’s relatively easy to get going with
+- You can assign MIDI channels to the instruments
+- For more advanced users, it has depth
+
+[Check out N-Track Studio](https://ntrack.com/ios.php)
+
+### Connecting to desktop operating systems
+
+<Accordion title="macOS">
+  We have developed _MIDI Connect_ which simplifies connections on macOS. And it's not limited to Wavy devices. This is how we recommend you connect to MONKEY on macOS.
+
+  <LinkButton target="_blank" href={routes.midiConnectAppStore}>MIDI Connect on App Store</LinkButton>
+
+  If you do not want to download this app, please follow the proceeding instructions.
+
+  **1.** Open up _Audio MIDI Setup_
+
+  ![Search for Bluetooth](/assets/resources/mac-connect/1-search.png)
+
+  **2.** Open MIDI studio
+
+  ![Open MIDI studio](/assets/resources/mac-connect/2-open_midi_studio.png)
+
+  **3.** Open the Bluetooth panel
+
+  ![Open Bluetooth window](/assets/resources/mac-connect/3-open_bluetooth.png)
+
+  If you don't see the Bluetooth icon:
+
+  ![Alternative Bluetooth option](/assets/resources/mac-connect/3-alt_open_bluetooth.png)
+
+  **4.** Find your device in the list and connect
+
+  ![Connect to Monkey](/assets/resources/mac-connect/4-connect.png)
+</Accordion>
+
+<Accordion title="Windows">
+  Windows currently does not have the best support for MIDI over Bluetooth. The steps below might look a bit complicated. But once it's initially done, it shouldn’t be too bad.
+
+  You will need the following programs installed:
+
+  1. **loopMIDI:** [https://www.tobias-erichsen.de/software/loopmidi.html](https://www.tobias-erichsen.de/software/loopmidi.html)
+  2. **MIDIBerry:** [https://apps.microsoft.com/detail/9n39720h2m05](https://apps.microsoft.com/detail/9n39720h2m05)
+
+  Then follow these steps to start using Monkey:
+
+  **0.** Windows 11 users first have to enable _Advanced devices discovery_ in Bluetooth system settings.
+
+  ![Windows advanced Bluetooth](/assets/resources/windows/0-advanced_discovery.jpeg)
+
+  **1.** Pair Monkey in Windows settings. You only need to do this step if Monkey is not paired with your Windows computer.
+
+  ![Windows connect](/assets/resources/windows/1-connect_pre.png)
+  ![Windows pairing](/assets/resources/windows/2-pairing.png)
+  ![Windows paired](/assets/resources/windows/2.1-pairing.png)
+
+  **2.** Configure a MIDI port using loopMIDI and name it "my midi port."
+
+  ![Port create](/assets/resources/windows/4-port_create.png)
+
+  **3.** Open MIDIBerry, select WAVY MONKEY as the input device and the MIDI port you created as the output.
+
+  Now you are done! Test it by pressing random keys on Monkey and check if the notes are received in the _INPUT MONITOR_ of MIDIBerry.
+
+  ![MIDIBerry input](/assets/resources/windows/5-select.png)
+</Accordion>
+
+### Configure desktop DAW
+
+We provide guides for some DAWs though MONKEY should work with most of them. The gist is to assign instruments in your DAW to different MIDI channels, with a drum rack on MIDI channel 10.
+
+<Accordion title="Ableton Live">
+  **1.** Make sure Monkey is enabled in MIDI Ports settings.
+
+  ![Ableton settings](/assets/resources/ableton/ableton_settings.png)
+
+  **2.** Configure the MIDI channel for each track. Use channels 1-10 for instruments, and channel 10 for your drum rack.
+
+  ![Ableton channel](/assets/resources/ableton/ableton_channel.png)
+
+  Ensure each track is armed for recording.
+
+  ![Ableton arm](/assets/resources/ableton/ableton_arm.png)
+</Accordion>
+
+<Accordion title="FL Studio">
+  **1.** Enable the device in FL Studio settings.
+
+  ![FL Studio settings](/assets/resources/fl-studio/1-enable.png)
+
+  **2.** Lock instruments to the keyboard to receive specific MIDI channels.
+
+  ![FL Studio assign to keyboard](/assets/resources/fl-studio/2-assign.png)
+
+  **3.** Assign instruments to channels 1-10, and a drum rack to channel 10.
+
+  ![FL Studio configure channel](/assets/resources/fl-studio/3-ch1_select.png)
+  ![FL Studio configure channel](/assets/resources/fl-studio/4-ch10_select.png)
+</Accordion>
+
+<br/>
+<br/>
+<LinkButton href={routes.monkeyManual} type="highlight">Next: Manual</LinkButton>
+<br/>
+<br/>
+<br/>
+<br/>
