@@ -9,6 +9,8 @@ import TagContainer from '~/components/TagContainer.astro';
 import Tag from '~/components/Tag.astro';
 
 import monkeyRevealVideo from '~/assets/monkey/monkey_front_reveal_LED_compressed.mp4';
+import monkeyPackagingImg from '~/assets/monkey/monkey_packaging.jpg';
+
 import steinbergProfile from '~/assets/monkey/profiles/floyd_steinberg.jpg';
 import haqProfile from '~/assets/monkey/profiles/jakob_haq.jpg';
 import sonicstateProfile from '~/assets/monkey/profiles/sonicstate.jpg';
@@ -59,8 +61,7 @@ import sonicstateProfile from '~/assets/monkey/profiles/sonicstate.jpg';
 					<li>Demo usage together with Mobile/Tablet app N-track for Mobile: <a target="_blank" href="https://www.youtube.com/watch?v=dwjfR09K39M">https://www.youtube.com/watch?v=dwjfR09K39M</a></li>
 				</ul>
 			</p>
-			<br/>
-			<br/>
+			<img id="packaging-image" src={monkeyPackagingImg.src} alt="Monkey packaging" />
 		</section>
 		<section class="footnotes">
 			<p id="#footnote-floyd-steinberg">[1] Mentioned on his YouTube channel <i>Floyd Steinberg</i> in video titeled <a target="_blank" href="https://youtu.be/V6iA643FbLM?si=EDgtCntUDnTKQBLL&t=657">"The Wavy Industries Monkey is the tiniest MIDI master keyboard"</a> at 10:57, published Apr 28, 2024</p>
@@ -78,6 +79,10 @@ main {
 	min-height: 100vh;
 	display: flex;
 	flex-direction: column;
+}
+
+img {
+	width: 100%;
 }
 
 #monkey-reveal-video {
@@ -131,5 +136,9 @@ p {
 .profile-ref img {
 	width: 30px;
 	border-radius: 50%;
+}
+
+#packaging-image {
+	padding: 100px 25%;
 }
 </style>
