@@ -1,8 +1,8 @@
 ---
-import '../../styles/global.css';
-import Layout from '../../layouts/Layout.astro';
-import Header from '../../layouts/Header.astro';
-import DeviceUpdateSubscribe from '../../components/DeviceUpdateSubscribe.astro';
+import '~/styles/global.css';
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/layouts/Header.astro';
+import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 ---
 
 <Layout title="Wavy Industries: device update">
@@ -112,7 +112,7 @@ const firmwareVerions = {
 }
 
 /* initialise the view */
-import {Screens} from '../../js/screens.js';
+import {Screens} from '~/js/screens.js';
 const screens = new Screens('initial-screen', ['initial-screen', 'connected-screen', 'reconnect-screen']);
 screens.on('connected-screen', () => {
 	changelog.innerHTML = "";
@@ -140,7 +140,7 @@ const uploadStatus = document.getElementById('upload-status');
 
 const changelog = document.getElementById('changelog');
 	
-import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '../../js/mcumgr.js';
+import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '~/js/mcumgr.js';
 const mcumgr = new MCUManager();
 mcumgr.onConnecting(() => {
 	console.log('Connecting...');

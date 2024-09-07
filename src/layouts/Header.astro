@@ -17,10 +17,13 @@ function currentPageCheck(link) {
     // Check if the current page starts with the link path using the regex
     return regex.test(currentPage) ? "active-link" : "";
 }
+
+import logoImg from '../assets/logo.svg';
+import logoWhiteImg from '../assets/logo-white.svg';
 ---
 <header class={textColor == 'white' ? 'text-white' : 'text-black'}>
     <div class="logo">
-        <a href={routes.home}><img src=`/assets/${textColor == 'white' ? 'logo-white.svg' : 'logo.svg'}` /></a>
+        <a href={routes.home}><img src={textColor == 'white' ? logoWhiteImg.src : logoImg.src} /></a>
     </div>
 
     <nav>

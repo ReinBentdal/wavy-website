@@ -4,6 +4,11 @@ import { routes } from '../routes';
 
 // get the current year
 let year = new Date().getFullYear();
+
+// images
+import discordImg from '../assets/icons/Discord blue mark.svg';
+import instagramImg from '../assets/icons/instagram_black.svg';
+import mailImg from '../assets/icons/mail.stack.fill.svg';
 ---
 
 <footer>
@@ -11,9 +16,9 @@ let year = new Date().getFullYear();
         <span>Wavy Industries © {year}</span>
         <span>📍Norway</span>
         <a id="something-special-footer-a"><span id="something-special-footer"></span></a>
-        <a href={routes.wavyDiscord} target="_blank"><span><img alt="Discord channel link" src="/assets/icons/Discord blue mark.svg" /> Discord</span></a>
-        <a href={routes.wavyIndstagram} target="_blank"><span><img alt="Instagram link" src="/assets/icons/instagram_black.svg" /> Instagram</span></a>
-        <a href={routes.newsletter} target="_blank"><img alt="newsletter" src="/assets/icons/mail.stack.fill.svg"/> Newsletter</a>
+        <a href={routes.wavyDiscord} target="_blank"><span><img alt="Discord channel link" src={discordImg.src} /> Discord</span></a>
+        <a href={routes.wavyIndstagram} target="_blank"><span><img alt="Instagram link" src={instagramImg.src} /> Instagram</span></a>
+        <a href={routes.newsletter} target="_blank"><img alt="newsletter" src={mailImg.src} /> Newsletter</a>
     </div>
 </footer>
 

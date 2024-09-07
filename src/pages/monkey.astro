@@ -1,12 +1,17 @@
 ---
-import '../styles/global.css';
-import {routes} from '../routes.js'
-import Layout from '../layouts/Layout.astro';
-import Header from '../layouts/Header.astro';
-import Footer from '../layouts/Footer.astro';
-import LinkButton from '../components/LinkButton.astro';
-import TagContainer from '../components/TagContainer.astro';
-import Tag from '../components/Tag.astro';
+import '~/styles/global.css';
+import {routes} from '~/routes.js'
+import Layout from '~/layouts/Layout.astro';
+import Header from '~/layouts/Header.astro';
+import Footer from '~/layouts/Footer.astro';
+import LinkButton from '~/components/LinkButton.astro';
+import TagContainer from '~/components/TagContainer.astro';
+import Tag from '~/components/Tag.astro';
+
+import monkeyRevealVideo from '~/assets/monkey/monkey_front_reveal_LED_compressed.mp4';
+import steinbergProfile from '~/assets/monkey/profiles/floyd_steinberg.jpg';
+import haqProfile from '~/assets/monkey/profiles/jakob_haq.jpg';
+import sonicstateProfile from '~/assets/monkey/profiles/sonicstate.jpg';
 ---
 
 <Layout title="Wavy Industries: MONKEY">
@@ -24,7 +29,7 @@ import Tag from '../components/Tag.astro';
 			</div>
 
 			<video id="monkey-reveal-video" width="100%" autoplay muted playsinline onended="this.pause()">
-				<source src="/assets/monkey/monkey_front_reveal_LED_compressed.mp4" type="video/mp4">
+				<source src={monkeyRevealVideo} type="video/mp4">
 				Your browser does not support the video tag.
 			</video>
 			<p>MON<b>KEY</b> is a two octave Bluetooth MIDI keyboard which literaly fits in your pocket. Bluetooth in MIDI keybaords is nothing new. But ultra long battery life of several months is. This is what enables Bluetooth to actually be practical to use, together with low latency communication.</p>
@@ -43,14 +48,14 @@ import Tag from '../components/Tag.astro';
 			</p>
 			<p>
 				<h3>What users have to say</h3>
-				<blockquote><span class="profile-ref"><img src="/assets/monkey/profiles/floyd_steinberg.jpg"><span><b>Floyd Steinberg</b> - <i>"I can full heartedly recommend this. It’s the most fun I have had in a very long time with a new piece of gear." <sup><a href="#footnote-floyd-steinberg">[1]</a></sup></i></span></span></blockquote>
-				<blockquote><span class="profile-ref"><img src="/assets/monkey/profiles/jakob_haq.jpg" /><span><b>Jakob Haq</b> - <i>"I’ve been using the Monkey for many hours every day since I got it delivered. The biggest user case has been “on the run” when working on presets/patches." <sup><a href="#footnote-jakob-haq">[2]</a></sup></i></span></span></blockquote>
+				<blockquote><span class="profile-ref"><img src={steinbergProfile.src} alt="Floyd Steinberg profile"><span><b>Floyd Steinberg</b> - <i>"I can full heartedly recommend this. It’s the most fun I have had in a very long time with a new piece of gear." <sup><a href="#footnote-floyd-steinberg">[1]</a></sup></i></span></span></blockquote>
+				<blockquote><span class="profile-ref"><img src={haqProfile.src} alt="Jakob Haq profile" /><span><b>Jakob Haq</b> - <i>"I’ve been using the Monkey for many hours every day since I got it delivered. The biggest user case has been “on the run” when working on presets/patches." <sup><a href="#footnote-jakob-haq">[2]</a></sup></i></span></span></blockquote>
 			</p>
 			<p>
 				<h3>Additional resources</h3>
 				<ul>
-					<li><span class="profile-ref"><img src="/assets/monkey/profiles/sonicstate.jpg" /><span>Sonicstate Superbooth 2024: <a target="_blank" href="https://www.youtube.com/watch?v=HYZFWqDJWl8">https://www.youtube.com/watch?v=HYZFWqDJWl8</a></span></li>
-					<li><span class="profile-ref"><img src="/assets/monkey/profiles/sonicstate.jpg" /><span>Sonicstate, receiving the award <i>"Value for Monkey"</i> at Superbooth 2024: <a target="_blank" href="https://youtu.be/m3RDgtmtsr4?si=SrmAbmbCPwTN3bLH&t=422">https://youtu.be/m3RDgtmtsr4?si=SrmAbmbCPwTN3bLH&t=422</a></span></span></li>
+					<li><span class="profile-ref"><img src={sonicstateProfile.src} alt="Sonicstate profile" /><span>Sonicstate Superbooth 2024: <a target="_blank" href="https://www.youtube.com/watch?v=HYZFWqDJWl8">https://www.youtube.com/watch?v=HYZFWqDJWl8</a></span></li>
+					<li><span class="profile-ref"><img src={sonicstateProfile.src} alt="Sonicstate profile" /><span>Sonicstate, receiving the award <i>"Value for Monkey"</i> at Superbooth 2024: <a target="_blank" href="https://youtu.be/m3RDgtmtsr4?si=SrmAbmbCPwTN3bLH&t=422">https://youtu.be/m3RDgtmtsr4?si=SrmAbmbCPwTN3bLH&t=422</a></span></span></li>
 					<li>Demo usage together with Mobile/Tablet app N-track for Mobile: <a target="_blank" href="https://www.youtube.com/watch?v=dwjfR09K39M">https://www.youtube.com/watch?v=dwjfR09K39M</a></li>
 				</ul>
 			</p>

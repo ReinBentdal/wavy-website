@@ -1,11 +1,14 @@
 ---
-import '../../styles/global.css';
-import Layout from "../../layouts/Layout.astro";
+import '~/styles/global.css';
+import Layout from "~/layouts/Layout.astro";
+
+import logoImg from '~/assets/logo.svg';
+import arrowRightImg from '~/assets/icons/arrow.right.svg';
 ---
 
 <Layout title="Wavy Industries: Monkey purchase">
   <section>
-    <div class="banner"><img src="/assets/logo.svg" /></div>
+    <div class="banner"><img src={logoImg.src} /></div>
     <div>
       <div class="content">
         <h4>WAVY MONKEY</h4>
@@ -24,7 +27,7 @@ import Layout from "../../layouts/Layout.astro";
         </div>
       </div>
     </div>
-    <a href="" id="checkout-link" class="chechout-button">Proceed to checkout <img height="10px" src="/assets/icons/arrow.right.svg" alt="arrow right" /></a>
+    <a href="" id="checkout-link" class="chechout-button">Proceed to checkout <img height="10px" src={arrowRightImg.src} alt="arrow right" /></a>
   </section>
 </Layout>
 

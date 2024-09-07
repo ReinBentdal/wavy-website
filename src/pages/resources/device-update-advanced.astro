@@ -1,7 +1,7 @@
 ---
-import Layout from "../../layouts/Layout.astro"
-import Header from "../../layouts/Header.astro"
-import Footer from "../../layouts/Footer.astro"
+import Layout from "~/layouts/Layout.astro"
+import Header from "~/layouts/Header.astro"
+import Footer from "~/layouts/Footer.astro"
 ---
 
 <Layout title="Device update adv - Wavy Industries">
@@ -76,7 +76,7 @@ main {
 </style>
 
 <script>
-import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '../../js/mcumgr.js';
+import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '~/js/mcumgr.js';
 const screens = {
     initial: document.getElementById('initial-screen'),
     connecting: document.getElementById('connecting-screen'),
