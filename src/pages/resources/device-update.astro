@@ -121,6 +121,7 @@ screens.on('connected-screen', () => {
 const initialScreens = new Screens(null, ['bt-available-screen', 'bt-unavailable-screen']);
 const updateScreens = new Screens('update-waiting-screen', ['update-waiting-screen', 'update-good-screen', 'update-idle-screen', 'update-prepare-screen', 'update-uploading-screen', 'update-complete-screen']);
 
+// @ts-ignore: Ignore TypeScript error for bluetooth property because its not yet part of linter
 if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
 	initialScreens.set('bt-available-screen');
 } else {
@@ -128,15 +129,15 @@ if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
 }
 
 /* all elements used */ 
-const connectButton = document.getElementById('button-connect');
-const disconnectButton = document.getElementById('button-disconnect');
+const connectButton = document.getElementById('button-connect') as HTMLButtonElement;
+const disconnectButton = document.getElementById('button-disconnect') as HTMLButtonElement;
 
 const deviceName = document.getElementById('device-name');
 const deviceFWVersion = document.getElementById('device-fw-version');
 const latestFWVersion = document.getElementById('latest-fw-version');
 
-const updateButton = document.getElementById('update-button');
-const uploadStatus = document.getElementById('upload-status');
+const updateButton = document.getElementById('update-button') as HTMLButtonElement;
+const uploadStatus = document.getElementById('upload-status') as HTMLButtonElement;
 
 const changelog = document.getElementById('changelog');
 	

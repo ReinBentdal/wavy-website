@@ -70,7 +70,7 @@ a:hover span {
 <script>
 function doSomethingSpecial() {
     let special = document.getElementById('something-special-footer');
-    let specialA = document.getElementById('something-special-footer-a');
+    let specialA = document.getElementById('something-special-footer-a') as HTMLAnchorElement;
     let special1 = "hell"
     let special2 = "o"
     special.innerHTML = special1 + special2 + "@"+ "wavyindustries.com";

@@ -92,7 +92,7 @@ let shippingUrl = {
   parcel: 'https://buy.stripe.com/cN2cOAaQA2BEgxidQS'
 }
 
-let checkoutLink = document.getElementById('checkout-link');
+let checkoutLink = document.getElementById('checkout-link') as HTMLAnchorElement;
 function updateUrl(val) {
   // update href of a
   console.log("updating url")
@@ -100,12 +100,15 @@ function updateUrl(val) {
 }
 
 document.addEventListener('DOMContentLoaded', function() {
-  const radios = document.querySelectorAll('input[type="radio"][name="shipping"]');
+  const radios = document.querySelectorAll('input[type="radio"][name="shipping"]') as NodeListOf<HTMLInputElement>;
+  
   radios.forEach(radio => {
     radio.addEventListener('change', function(e) {
-      let shippingMethod = e.target.value;
+      const target = e.target as HTMLInputElement;  // Cast target as HTMLInputElement
+      let shippingMethod = target.value;
       updateUrl(shippingMethod);
     });
+    
     // check if initially checked as well
     if (radio.checked) {
       let shippingMethod = radio.value;
@@ -113,5 +116,6 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   });
 });
+
 
 </script>

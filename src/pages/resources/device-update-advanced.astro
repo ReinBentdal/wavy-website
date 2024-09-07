@@ -84,23 +84,24 @@ const screens = {
 };
 
 const deviceName = document.getElementById('device-name');
-const connectButton = document.getElementById('button-connect');
-const echoButton = document.getElementById('button-echo');
-const disconnectButton = document.getElementById('button-disconnect');
-const resetButton = document.getElementById('button-reset');
+const connectButton = document.getElementById('button-connect') as HTMLButtonElement;
+const echoButton = document.getElementById('button-echo') as HTMLButtonElement;
+const disconnectButton = document.getElementById('button-disconnect') as HTMLButtonElement;
+const resetButton = document.getElementById('button-reset') as HTMLButtonElement;
 const imageStateButton = document.getElementById('button-image-state');
-const eraseButton = document.getElementById('button-erase');
-const testButton = document.getElementById('button-test');
-const confirmButton = document.getElementById('button-confirm');
+const eraseButton = document.getElementById('button-erase') as HTMLButtonElement;
+const testButton = document.getElementById('button-test') as HTMLButtonElement;
+const confirmButton = document.getElementById('button-confirm') as HTMLButtonElement;
 const imageList = document.getElementById('image-list');
 const fileInfo = document.getElementById('file-info');
 const fileStatus = document.getElementById('file-status');
-const fileImage = document.getElementById('file-image');
-const fileUpload = document.getElementById('file-upload');
+const fileImage = document.getElementById('file-image') as HTMLInputElement;
+const fileUpload = document.getElementById('file-upload')as HTMLButtonElement;
 const bluetoothIsAvailable = document.getElementById('bluetooth-is-available');
 const bluetoothIsAvailableMessage = document.getElementById('bluetooth-is-available-message');
 const connectBlock = document.getElementById('connect-block');
 
+// @ts-ignore: Ignore TypeScript error for bluetooth property because its not yet part of linter
 if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
     bluetoothIsAvailableMessage.innerText = 'Bluetooth is available in your browser.';
     bluetoothIsAvailable.className = 'alert alert-success';
@@ -160,7 +161,7 @@ mcumgr.onMessage(({ op, group, id, data, length }) => {
                         imagesHTML += `<div class="image ${image.active ? 'active' : 'standby'}">`;
                         imagesHTML += `<h2>Slot #${image.slot} ${image.active ? 'active' : 'standby'}</h2>`;
                         imagesHTML += '<table>';
-                        const hashStr = Array.from(image.hash).map(byte => byte.toString(16).padStart(2, '0')).join('');
+                        const hashStr = Array.from(image.hash).map(byte => (byte as number).toString(16).padStart(2, '0')).join('');
                         imagesHTML += `<tr><th>Version</th><td>v${image.version}</td></tr>`;
                         imagesHTML += `<tr><th>Bootable</th><td>${image.bootable}</td></tr>`;
                         imagesHTML += `<tr><th>Confirmed</th><td>${image.confirmed}</td></tr>`;
