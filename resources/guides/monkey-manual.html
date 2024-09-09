@@ -10,13 +10,13 @@ footer[data-astro-cid-mtxgg6pp]{flex-grow:2;display:flex;align-items:end}footer[
 <p>MONKEY features a 2-octave keybed starting on the F-key. Play it as a typical MIDI keyboard, or access its extended capabilities through the SHIFT key.</p>
 <img alt="monkey 2d function" src="/build_assets/monkey_2d_overview.DPNA_A_q.svg"/>
 <p>MONKEY gives feedback to the user through its LEDs. The light tower LED will give general feedback from function manipulations. The monkey LEDs will give feedback related to the loop recorder functionality.</p>
-<p>The lock switch is used to disable the keybed. Note, it does not turn off the unit, but it prevents unwanted key presses. You do not need to turn off MONKEY. It will go to sleep by itself.</p>
+<p>The lock switch is used to disable the keybed. Note that it does not turn off the unit, but it prevents unwanted key presses. You do not need to turn off MONKEY. It will go to sleep by itself.</p>
 <p>Communication is only through Bluetooth.</p>
 <p>Insert a CR2032 battery to get going.</p>
 <h2 id="getting-started">Getting started</h2>
-<p>To get started, we refer to the <a href="/monkey/getting-started">getting started</a> guide. We recommend having MONKEY powered up and connected to a host while going through the rest of the manual.</p>
+<p>To get started, we refer to the <a href="/monkey/getting-started">Getting Started guide</a>. We recommend having MONKEY powered up and connected to a host while going through the rest of the manual.</p>
 <h2 id="functions">Functions</h2>
-<p>The functions are divided into a few sections. The functions highlighted with a white circle are the MIDI effects, going from ARP to DRM. The functions to the left of these effects are general settings, and to the right, we have the loop recorder + WAKE.</p>
+<p>The functions are organized into several sections. The functions highlighted with a white circle are the MIDI effects, going from ARP to DRM. The functions to the left of these effects are general settings, and to the right, we have the loop recorder + WAKE.</p>
 <img alt="monkey 2d sections" src="/build_assets/monkey_2d_sections.Cn54d_DJ.svg"/>
 <img alt="monkey 2d functions" src="/build_assets/monkey_2d_functions.D7OBromu.svg"/>
 <h3 id="wake">WAKE</h3>
@@ -90,8 +90,9 @@ const id = "GIFDemo--build_assets-bpm-D7hSq36T-gif";
     });
 })();</script>
 <h3 id="ch">CH</h3>
-<p>Change the MIDI channel using the CH function. Similarly to BPM, press SHIFT + CH. Then release CH, followed by selecting one of the labeled number keys corresponding to the channel you would like to select. Selecting 0 will select MIDI channel 10. Notice the feedback you get from the light tower LED.</p>
-<p><strong>CAUTION</strong>: <strong>SHIFT</strong> + <strong>long pressing CH</strong> is another function. This lets you mute and unmute MIDI channels, which is especially useful paired with the loop recorder.</p>
+<p>Change the MIDI channel using the CH function. Similarly to BPM, press SHIFT + CH. Then release CH, followed by selecting one of the labeled number keys corresponding to the channel you would like to select. Selecting 0 corresponds to MIDI channel 10. Notice the feedback you get from the light tower LED.</p>
+<p><strong>CATUION</strong>: Make sure to distinguish between a short press and long press on CH key. Long pressing CH allows you to mute/unmute specific MIDI channels. Use the numbered keys to select a channel.
+<strong>CAUTION</strong>: <strong>SHIFT</strong> + <strong>long pressing CH</strong> is another function. This lets you mute and unmute MIDI channels, which is especially useful paired with the loop recorder.</p>
 <div id="GIFDemo--build_assets-channel-D1pfwieE-gif" class="gif-demo" data-astro-cid-ylqbirf4> <button data-astro-cid-ylqbirf4>Show - channel select demo</button> <div class="hidden" data-astro-cid-ylqbirf4> <span data-astro-cid-ylqbirf4>Changing to MIDI channel 2.</span> <img id="gif" loading="lazy" src="/build_assets/channel.D1pfwieE.gif" alt="Channel select demo" data-astro-cid-ylqbirf4> </div> </div>  <script>(function(){const label = "channel select demo";
 const id = "GIFDemo--build_assets-channel-D1pfwieE-gif";
 
@@ -109,7 +110,7 @@ const id = "GIFDemo--build_assets-channel-D1pfwieE-gif";
     });
 })();</script>
 <h3 id="hold">HOLD</h3>
-<p>Toggle on and off note hold using the HOLD function. Notice the light tower LED blinking once if the function was enabled and twice if it was disabled.</p>
+<p>Toggle note hold using the HOLD function. Notice the light tower LED blinking once if the function was enabled and twice if it was disabled.</p>
 <div id="GIFDemo--build_assets-hold-794dKCxL-gif" class="gif-demo" data-astro-cid-ylqbirf4> <button data-astro-cid-ylqbirf4>Show - hold demo</button> <div class="hidden" data-astro-cid-ylqbirf4> <span data-astro-cid-ylqbirf4>Toggling hold first on, then off.</span> <img id="gif" loading="lazy" src="/build_assets/hold.794dKCxL.gif" alt="Hold toggle demo" data-astro-cid-ylqbirf4> </div> </div>  <script>(function(){const label = "hold demo";
 const id = "GIFDemo--build_assets-hold-794dKCxL-gif";
 
@@ -165,10 +166,10 @@ const id = "GIFDemo--build_assets-effect-preset-BXLF7ZRw-gif";
 <p>The loop recorder is your playground to combine recordings from multiple instruments into an idea. Currently, the loop recorder is fixed with a length of 16 beats. The loop recorder uses the following keys:</p>
 <ul>
 <li>PLAY: Toggle on and off loop playback. The monkey LEDs will blink in tempo during playback.</li>
-<li>REC: Toggle on and off loop recording. The behavior of this key depends on if the loop is currently playing or not. If it is not playing, it will toggle on and off “arm to record.” The monkey LEDs will then be solid. As soon as you start playing on the keys, the looper will start playing and recording. If the looper is already playing, then recording will be toggled on and off. Notice how the monkey LEDs blink differently between only playback and playback with recording. When recording, the LEDs will stay on for a longer time.</li>
-<li>UNDO: Each time you stop recording, a new record checkpoint is generated. Pressing UNDO will erase the last checkpoint. Long pressing on UNDO will let you choose an entire MIDI channel to erase. For example, <strong>SHIFT</strong> + <strong>long press UNDO</strong> then while keeping SHIFT pressed, pressing on number 1 will erase everything from MIDI channel 1 in the loop recorder. As always, the number 0 is MIDI channel 10 and is reserved for the drums.</li>
+<li>REC: Toggle on and off loop recording. The behavior of this key depends on if the loop is currently playing or not. If it is not playing, it will toggle on and off “arm to record.” The monkey LEDs will then be solid. As soon as you start playing on the keys, the looper will start playing and recording. If the looper is already playing, then recording will be toggled on and off. Notice how the monkey LEDs blink differently between only playback and playback with recording. When recording, the LEDs will remain lit longer.</li>
+<li>UNDO: Each time you stop recording, a new record checkpoint is generated. Pressing UNDO will erase the last checkpoint. Long pressing UNDO will allow you to select an entire MIDI channel to erase. After SHIFT + long press UNDO, while keeping SHIFT pressed, select the MIDI channel to erase by pressing a corresponding numbered key. As always, the number 0 is MIDI channel 10 and is reserved for the drums.</li>
 </ul>
 <h3 id="recommendations">Recommendations</h3>
-<p>It’s a good idea to record something rhythmical initially so that you keep track of the tempo and know when the loop recorder loops back on itself. If you don’t want to have rhythmical elements in your loop, you might initially first record something rhythmical such as drums. Then, when you have recorded something on top of the drums, erase the drums from the loop.</p>
-<p>It is also possible to create a simple arrangement using the <em>channel mute</em> functionality (long press on CH function and toggle mute/unmute MIDI channels). Record a bunch of different elements on the different MIDI channels. Then you can arrange your idea by changing which channels are muted and not.</p>
+<p>It’s a good idea to record something rhythmical initially so that you keep track of the tempo and know when the loop recorder loops back on itself. If you don’t want to have rhythmical elements in your loop, you might first record something rhythmical such as drums. Then, when you have recorded something on top of the drums, erase the drums from the loop.</p>
+<p>It is also possible to create a simple arrangement using the <em>channel mute</em> functionality (long press on CH function and toggle mute/unmute MIDI channels). Record various elements on different MIDI channels. Then you can arrange your idea by changing which channels are muted and not.</p>
 <p>When recording drums into the looper, you might keep recording for a bit after it wraps back to the beginning. You don’t need to time a perfect key release as the looper wraps back to the start. The loop recorder will identify that you are recording something identical on top of the current recording and prevent duplicate notes.</p> </article> </section> <footer data-astro-cid-mtxgg6pp> <div data-astro-cid-mtxgg6pp> <span data-astro-cid-mtxgg6pp>Wavy Industries © 2024</span> <span data-astro-cid-mtxgg6pp>📍Norway</span> <a id="something-special-footer-a" data-astro-cid-mtxgg6pp><span id="something-special-footer" data-astro-cid-mtxgg6pp></span></a> <a href="https://discord.gg/4HQHERUW5K" target="_blank" data-astro-cid-mtxgg6pp><span data-astro-cid-mtxgg6pp><img alt="Discord channel link" src="/build_assets/Discord blue mark.DwRGSswJ.svg" data-astro-cid-mtxgg6pp> Discord</span></a> <a href="https://www.instagram.com/wavyindustries_/" target="_blank" data-astro-cid-mtxgg6pp><span data-astro-cid-mtxgg6pp><img alt="Instagram link" src="/build_assets/instagram.bFdsq0UL.svg" data-astro-cid-mtxgg6pp> Instagram</span></a> <a href="http://eepurl.com/ivXTOk" target="_blank" data-astro-cid-mtxgg6pp><img alt="newsletter" src="/build_assets/mail.stack.fill.BfmMn8D5.svg" data-astro-cid-mtxgg6pp> Newsletter</a> </div> </footer>   </main>  </body></html> <!-- Style is global to be able to effect the underlying markdown content. Thus keep reference to ID to prevent global scope bloat --> 
