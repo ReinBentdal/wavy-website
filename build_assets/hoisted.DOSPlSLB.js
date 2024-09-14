@@ -1,1 +1,0 @@
-import"./Header.astro_astro_type_script_index_0_lang.DIkDqo22.js";function l(){let i=document.getElementById("something-special-footer"),o=document.getElementById("something-special-footer-a"),e="hell",t="o";i.innerHTML=e+t+"@wavyindustries.com",o.href="mailto:"+e+t+"@wavyindustries.com"}setTimeout(l,1e3);
