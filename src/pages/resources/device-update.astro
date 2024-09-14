@@ -2,15 +2,17 @@
 import '~/styles/global.css';
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/layouts/Header.astro';
+import Footer from '~/layouts/Footer.astro';
 import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 ---
 
 <Layout title="Wavy Industries: device update">
 	<main>
 		<Header />
-		<div id="screens">
+		<section id="screens">
 			<div id="initial-screen" class="screen">
-				<h2>Bluetooth device updater directly in the browser</h2>
+				<h1>Device updater</h1>
+				<span class="catch-phrase">Bluetooth device updater directly in the browser</span><br/><br/>
 				<div id="bt-unavailable-screen" class="screen">
 					<p>It looks like your browser is not supported 🙁</p>
 					<p>Supported browsers (others might also work):</p>
@@ -22,9 +24,8 @@ import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 					</ul>
 				</div>
 				<div id="bt-available-screen" class="screen">
-					<span>Currently supports <b>WAVY MONKEY</b>.</span><br/><br/>
-					<span class="remark">Note: Your device will not appear if it is connected to something. If your device is stil not appearing, reboot the device.</span><br/><br/>
-					<button id="button-connect" type="submit" class="btn btn-primary button-connect"><i class="bi-bluetooth"></i>Connect via Bluetooth</button>
+					<span class="remark">Note: Make sure your Wavy device isn't already connected to this or another device. If it is, this app won’t be able to find it.</span><br/><br/>
+					<button id="button-connect" type="submit" class="btn btn-primary button-connect"><i class="bi-bluetooth"></i>Find device via Bluetooth</button>
 				</div>
 			</div>
 			
@@ -67,15 +68,32 @@ import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 			<br />
 			<hr />
 			<DeviceUpdateSubscribe />
-		</div>
+		</section>
+		<Footer />
 	</main>
 </Layout>
 
 <style>
-#screens {
-	margin-top: 50px;
-	margin-left: 30px;
-	margin-right: 30px;
+main {
+	min-height: 100vh;
+	display: flex;
+	flex-direction: column;
+}
+section {
+	width: 100%;
+	padding: 0 20px;
+}
+
+h1 {
+	margin-block-start: 0em;
+	margin-block-end: 0em;
+}
+
+.catch-phrase {
+	font-size: 20px;
+	font-weight: 300;
+	margin-block-start: 0em;
+	margin-block-end: 0em;
 }
 
 .screen {
@@ -98,8 +116,8 @@ p {
 	background-color: #acffac;
 }
 .button-connect {
-	background-color: #3943d7;
-	color: white;
+	/* background-color: #3943d7;
+	color: white; */
 }
 </style>
 
@@ -154,9 +172,10 @@ mcumgr.onConnect(() => {
 	latestFWVersion.innerHTML = firmwareVerions[product_name];
 	screens.set('connected-screen')
 });
+const defaultButtonText = connectButton.innerText;
 mcumgr.onDisconnect(() => {
 	connectButton.disabled = false;
-	connectButton.innerText = 'Connect via Bluetooth';
+	connectButton.innerText = defaultButtonText;
 	screens.set('initial-screen')
 });
 mcumgr.onConnectionLoss(() => {

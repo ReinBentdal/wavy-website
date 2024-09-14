@@ -63,8 +63,8 @@ Furthermore, we have the BPM function which lets you set the global BPM. Do so b
 ### CH
 Change the MIDI channel using the CH function. Similarly to BPM, press SHIFT + CH. Then release CH, followed by selecting one of the labeled number keys corresponding to the channel you would like to select. Selecting 0 corresponds to MIDI channel 10. Notice the feedback you get from the light tower LED.
 
-**CATUION**: Make sure to distinguish between a short press and long press on CH key. Long pressing CH allows you to mute/unmute specific MIDI channels. Use the numbered keys to select a channel. 
-**CAUTION**: **SHIFT** + **long pressing CH** is another function. This lets you mute and unmute MIDI channels, which is especially useful paired with the loop recorder.
+**CAUTION**: Make sure to distinguish between a short press and long press on CH key. Long pressing CH allows you to mute/unmute specific MIDI channels. Use the numbered keys to select the channels which you would like to mute/unmute. This is useful paired together with the loop recorder, muting parts of your loop.
+{/* **CAUTION**: **SHIFT** + **long pressing CH** is another function. This lets you mute and unmute MIDI channels, which is especially useful paired with the loop recorder. */}
 
 <GIFDemo src={channelGif.src} alt="Channel select demo" label="channel select demo" text="Changing to MIDI channel 2." />
 
@@ -81,6 +81,9 @@ Similarly to **HOLD**, they are toggled, and only one effect might be enabled at
 Once an effect is enabled, you can change between its presets. Do this by pressing **SHIFT** + **one of the numbered keys**.
 
 <GIFDemo src={effectPresetGif.src} alt="effect preset select demo" label="effect preset select demo" text="Assuming a MIDI effect is selected. Changing to preset 6 within effect." />
+
+### ECHO
+The ECHO effect will repeat the notes you play in a feedback loop. The presets of ECHO are varied and sometimes not so easy to understand. Some presets removes the note from the feedback loop when you release it and some does not.
 
 ## Loop recorder
 The loop recorder is your playground to combine recordings from multiple instruments into an idea. Currently, the loop recorder is fixed with a length of 16 beats. The loop recorder uses the following keys:
