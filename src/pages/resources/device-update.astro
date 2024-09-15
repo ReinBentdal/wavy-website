@@ -15,12 +15,12 @@ import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 				<span class="catch-phrase">Bluetooth device updater directly in the browser</span><br/><br/>
 				<div id="bt-unavailable-screen" class="screen">
 					<p>It looks like your browser is not supported 🙁</p>
-					<p>Supported browsers (others might also work):</p>
+					<p>Notably <b>Safari</b> and <b>Firefox</b> is not supported. Here are some suggested alternatives:</p>
 					<ul>
 						<li><b>macOS: </b>Chrome, Arc, Opera, Edge</li>
-						<li><b>Windows: </b>Chrome, Opera, Edge</li>
+						<li><b>iOS/iPadOS: </b><a href="https://apps.apple.com/us/app/bluefy-web-ble-browser/id1492822055">Bluefy</a></li>
 						<li><b>Android: </b>Chrome</li>
-						<li><b>iOS/iPadOS: </b>Bluefy</li>
+						<li><b>Windows: </b>Chrome, Opera, Edge</li>
 					</ul>
 				</div>
 				<div id="bt-available-screen" class="screen">
@@ -131,8 +131,8 @@ const firmwareVerions = {
 
 /* initialise the view */
 import {Screens} from '~/js/screens.js';
-const screens = new Screens('initial-screen', ['initial-screen', 'connected-screen', 'reconnect-screen']);
-screens.on('connected-screen', () => {
+const mainScreens = new Screens('initial-screen', ['initial-screen', 'connected-screen', 'reconnect-screen']);
+mainScreens.on('connected-screen', () => {
 	changelog.innerHTML = "";
 }, "hide");
 
@@ -158,7 +158,8 @@ const updateButton = document.getElementById('update-button') as HTMLButtonEleme
 const uploadStatus = document.getElementById('upload-status') as HTMLButtonElement;
 
 const changelog = document.getElementById('changelog');
-	
+/* elements end */ 
+
 import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '~/js/mcumgr.js';
 const mcumgr = new MCUManager();
 mcumgr.onConnecting(() => {
@@ -170,16 +171,16 @@ mcumgr.onConnect(() => {
 	deviceName.innerText = mcumgr.name;
 	mcumgr.cmdImageState();
 	latestFWVersion.innerHTML = firmwareVerions[product_name];
-	screens.set('connected-screen')
+	mainScreens.set('connected-screen')
 });
 const defaultButtonText = connectButton.innerText;
 mcumgr.onDisconnect(() => {
 	connectButton.disabled = false;
 	connectButton.innerText = defaultButtonText;
-	screens.set('initial-screen')
+	mainScreens.set('initial-screen')
 });
 mcumgr.onConnectionLoss(() => {
-	screens.set('reconnect-screen')
+	mainScreens.set('reconnect-screen')
 });
 
 mcumgr.onMessage(({ op, group, id, data, length }) => {
