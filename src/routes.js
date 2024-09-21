@@ -1,6 +1,7 @@
 // make it easier to change routes by defining them in one place
 export const routes = {
-    'home': '/',
+    // 'home': '/',
+    'home': '/monkey',
     'monkey': '/monkey',
     'monkeyGettingStarted': '/monkey/getting-started',
     'monkeyPurchase': '/monkey/purchase',
