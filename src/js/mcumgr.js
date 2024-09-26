@@ -21,6 +21,24 @@
 // SOFTWARE.
 
 import { CBOR } from './cbor.js'
+import { assert, imageHash, Log } from './utilities.js'
+
+let log = new Log('MCUManager', Log.LEVEL_DEBUG);
+
+export const SMP_ERR_RC = {
+    0: 'No error, OK.',
+    1: 'Unknown error.',
+    2: 'Not enough memory; this error is reported when there is not enough memory to complete response.',
+    3: 'Invalid value; a request contains an invalid value.',
+    4: 'Timeout; the operation for some reason could not be completed in assumed time.',
+    5: 'No entry; the error means that request frame has been missing some information that is required to perform action. It may also mean that requested information is not available.',
+    6: 'Bad state; the error means that application or device is in a state that would not allow it to perform or complete a requested action.',
+    7: 'Response too long; this error is issued when buffer assigned for gathering response is not big enough.',
+    8: 'Not supported; usually issued when requested Group ID or Command ID is not supported by application.',
+    9: 'Corrupted payload received.',
+    10: 'Device is busy with processing previous SMP request and may not process incoming one. Client should re-try later.',
+    256: 'This is base error number of user defined error codes.'
+};
 
 // Define groups as objects
 export const MGMT_OP = {
@@ -29,6 +47,10 @@ export const MGMT_OP = {
     WRITE: 2,
     WRITE_RSP: 3,
 };
+
+export const MGMT_OP_REVERSE = Object.fromEntries(
+    Object.entries(MGMT_OP).map(([key, value]) => [value, key])
+);
 
 export const MGMT_GROUP_ID = {
     OS: 0,
@@ -64,26 +86,46 @@ export const IMG_MGMT_ID = {
 };
 
 class MCUManager {
+    #userRequestedDisconnect;
+    #mtu;
+    #device;
+    #service;
+    #characteristic;
+    #connectCallback;
+    #connectingCallback;
+    #disconnectCallback;
+    #connectionLossCallback;
+    #messageCallback;
+    #imageUploadProgressCallback;
+    #uploadIsInProgress;
+    #buffer;
+    #smp_sequence_number;
+    #uploadOffset;
+    #uploadImage;
+    #uploadSlot;
+    #imageUploadFinishedCallback;
+
     constructor(di = {}) {
         this.SMP_SERVICE_UUID = '8d53dc1d-1db7-4cd3-868b-8a527460aa84';
         this.SMP_CHARACTERISTIC_UUID = 'da2e7828-fbce-4e01-ae9e-261174997c48';
-        this._mtu = 140;
-        this._device = null;
-        this._service = null;
-        this._characteristic = null;
-        this._connectCallback = null;
-        this._connectingCallback = null;
-        this._disconnectCallback = null;
-        this._connectionLossCallback = null;
-        this._messageCallback = null;
-        this._imageUploadProgressCallback = null;
-        this._uploadIsInProgress = false;
-        this._buffer = new Uint8Array();
-        this._logger = di.logger || { info: console.log, error: console.error };
-        this._seq = 0;
-        this._userRequestedDisconnect = false;
+        this.SMP_HEADER_SIZE = 8;
+        this.#mtu = 140;
+        this.#device = null;
+        this.#service = null;
+        this.#characteristic = null;
+        this.#connectCallback = null;
+        this.#connectingCallback = null;
+        this.#disconnectCallback = null;
+        this.#connectionLossCallback = null;
+        this.#messageCallback = null;
+        this.#imageUploadProgressCallback = null;
+        this.#uploadIsInProgress = false;
+        this.#buffer = new Uint8Array();
+        this.#smp_sequence_number = 0;
+        this.#userRequestedDisconnect = false;
     }
-    async _requestDevice(filters) {
+
+    async #requestDevice(filters) {
         const params = {
             acceptAllDevices: false,
             optionalServices: [this.SMP_SERVICE_UUID]
@@ -94,236 +136,236 @@ class MCUManager {
         }
         return navigator.bluetooth.requestDevice(params);
     }
+
     async connect(filters) {
         try {
-            this._device = await this._requestDevice(filters);
-            this._logger.info(`Connecting to device ${this.name}...`);
-            this._device.addEventListener('gattserverdisconnected', async event => {
-                this._logger.info(event);
-                if (this._userRequestedDisconnect === false) {
-                    this._logger.info('Trying to reconnect');
+            this.#device = await this.#requestDevice(filters);
+            log.debug(`Connecting to device ${this.name}...`);
+            this.#device.addEventListener('gattserverdisconnected', async event => {
+                log.debug(event);
+                if (this.#userRequestedDisconnect === false) {
+                    log.debug('Trying to reconnect');
                     await new Promise(resolve => setTimeout(resolve, 1000));
-                    if (this._connectionLossCallback) this._connectionLossCallback();
-                    await this._connect();
+                    if (this.#connectionLossCallback) this.#connectionLossCallback();
+                    await this.#connect();
                 } else {
-                    this._disconnected();
+                    this.#disconnected();
                 }
             });
-            await this._connect();
+            await this.#connect();
         } catch (error) {
-            this._logger.error(error);
-            await this._disconnected();
+            log.error(error);
+            await this.#disconnected();
             return;
         }
     }
-    async _connect() {
+
+    async #connect() {
         try {
-            if (this._connectingCallback) this._connectingCallback();
-            const server = await this._device.gatt.connect();
-            this._logger.info(`Server connected.`);
-            this._service = await server.getPrimaryService(this.SMP_SERVICE_UUID);
-            this._logger.info(`Service connected.`);
-            this._characteristic = await this._service.getCharacteristic(this.SMP_CHARACTERISTIC_UUID);
-            this._characteristic.addEventListener('characteristicvaluechanged', this._notification.bind(this));
-            await this._characteristic.startNotifications();
-            await this._connected();
-            if (this._uploadIsInProgress) {
-                this._uploadNext();
+            if (this.#connectingCallback) this.#connectingCallback();
+            const server = await this.#device.gatt.connect();
+            log.debug(`Server connected. Awaiting SMP service...`);
+            this.#service = await server.getPrimaryService(this.SMP_SERVICE_UUID);
+            log.debug(`Service connected.`);
+            this.#characteristic = await this.#service.getCharacteristic(this.SMP_CHARACTERISTIC_UUID);
+            this.#characteristic.addEventListener('characteristicvaluechanged', this.#notification.bind(this));
+            await this.#characteristic.startNotifications();
+            await this.#connected();
+            if (this.#uploadIsInProgress) {
+                this.#uploadNext();
             }
         } catch (error) {
-            this._logger.error(error);
-            await this._disconnected();
+            log.error(error);
+            await this.#disconnected();
         }
     }
+
     disconnect() {
-        this._userRequestedDisconnect = true;
-        return this._device.gatt.disconnect();
+        this.#userRequestedDisconnect = true;
+        return this.#device.gatt.disconnect();
     }
+
     onConnecting(callback) {
-        this._connectingCallback = callback;
+        this.#connectingCallback = callback;
         return this;
     }
+    
     onConnect(callback) {
-        this._connectCallback = callback;
+        this.#connectCallback = callback;
         return this;
     }
+    
     onDisconnect(callback) {
-        this._disconnectCallback = callback;
+        this.#disconnectCallback = callback;
         return this;
     }
+    
     onConnectionLoss(callback) {
-        this._connectionLossCallback = callback;
+        this.#connectionLossCallback = callback;
         return this;
     }
+    
     onMessage(callback) {
-        this._messageCallback = callback;
+        this.#messageCallback = callback;
         return this;
     }
+    
     onImageUploadProgress(callback) {
-        this._imageUploadProgressCallback = callback;
+        this.#imageUploadProgressCallback = callback;
         return this;
     }
+
     onImageUploadFinished(callback) {
-        this._imageUploadFinishedCallback = callback;
+        this.#imageUploadFinishedCallback = callback;
         return this;
     }
-    async _connected() {
-        if (this._connectCallback) this._connectCallback();
+
+    async #connected() {
+        if (this.#connectCallback) this.#connectCallback();
     }
-    async _disconnected() {
-        this._logger.info('Disconnected.');
-        if (this._disconnectCallback) this._disconnectCallback();
-        this._device = null;
-        this._service = null;
-        this._characteristic = null;
-        this._uploadIsInProgress = false;
-        this._userRequestedDisconnect = false;
+
+    async #disconnected() {
+        log.debug('Disconnected.');
+        if (this.#disconnectCallback) this.#disconnectCallback();
+        this.#device = null;
+        this.#service = null;
+        this.#characteristic = null;
+        this.#uploadIsInProgress = false;
+        this.#userRequestedDisconnect = false;
     }
+
     get name() {
-        return this._device && this._device.name;
+        return this.#device && this.#device.name;
     }
-    async _sendMessage(op, group, id, data) {
-        const _flags = 0;
-        let encodedData = [];
-        if (typeof data !== 'undefined') {
-            encodedData = [...new Uint8Array(CBOR.encode(data))];
+
+    /* commands */
+    cmdReset() {
+        return this.#sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.OS, OS_MGMT_ID.RESET);
+    }
+    smpEcho(message) {
+        return this.#sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.OS, OS_MGMT_ID.ECHO, { d: message });
+    }
+    cmdImageState() {
+        return this.#sendMessage(MGMT_OP.READ, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.STATE);
+    }
+    cmdImageErase() {
+        return this.#sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.ERASE, {});
+    }
+    cmdImageTest(hash) {
+        return this.#sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.STATE, { hash, confirm: false });
+    }
+    cmdImageConfirm(hash) {
+        return this.#sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.STATE, { hash, confirm: true });
+    }
+    cmdCustom(group, id, op, data, cborEncodeed = true) {
+        return this.#sendMessage(op, group, id, data, cborEncodeed);
+    }
+
+    async cmdUpload(image, slot = 0) {
+        if (this.#uploadIsInProgress) {
+            log.error('Upload is already in progress.');
+            return;
         }
-        const length_lo = encodedData.length & 255;
-        const length_hi = encodedData.length >> 8;
-        const group_lo = group & 255;
-        const group_hi = group >> 8;
-        const message = [op, _flags, length_hi, length_lo, group_hi, group_lo, this._seq, id, ...encodedData];
-        // console.log('>'  + message.map(x => x.toString(16).padStart(2, '0')).join(' '));
-        await this._characteristic.writeValueWithoutResponse(Uint8Array.from(message));
-        this._seq = (this._seq + 1) % 256;
+        this.#uploadIsInProgress = true;
+
+        this.#uploadOffset = 0;
+        this.#uploadImage = image;
+        this.#uploadSlot = slot;
+
+        this.#uploadNext();
     }
-    _notification(event) {
-        // console.log('message received');
+
+    #notification(event) {
         const message = new Uint8Array(event.target.value.buffer);
-        // console.log(message);
-        // console.log('<'  + [...message].map(x => x.toString(16).padStart(2, '0')).join(' '));
-        this._buffer = new Uint8Array([...this._buffer, ...message]);
-        const messageLength = this._buffer[2] * 256 + this._buffer[3];
-        if (this._buffer.length < messageLength + 8) return;
-        this._processMessage(this._buffer.slice(0, messageLength + 8));
-        this._buffer = this._buffer.slice(messageLength + 8);
+        this.#buffer = new Uint8Array([...this.#buffer, ...message]);
+        const messageLength = this.#buffer[2] * 256 + this.#buffer[3];
+        if (this.#buffer.length < messageLength + 8) return;
+        this.#processMessage(this.#buffer.slice(0, messageLength + 8));
+        this.#buffer = this.#buffer.slice(messageLength + 8);
     }
-    _processMessage(message) {
+    
+    async #uploadNext() {
+        if (this.#uploadOffset >= this.#uploadImage.byteLength) {
+            this.#uploadIsInProgress = false;
+            this.#imageUploadFinishedCallback();
+            return;
+        }
+        
+        const message = { data: new Uint8Array(), off: this.#uploadOffset };
+        if (this.#uploadOffset === 0) {
+            message.len = this.#uploadImage.byteLength;
+            message.sha = new Uint8Array(await imageHash(this.#uploadImage));
+        }
+        
+        /* workaround to get length before encoding */
+        const length = this.#mtu - CBOR.encode(message).byteLength - this.SMP_HEADER_SIZE;
+        
+        message.data = new Uint8Array(this.#uploadImage.slice(this.#uploadOffset, this.#uploadOffset + length));
+        
+        this.#uploadOffset += length;
+        
+        this.#sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.UPLOAD, message);
+
+        if (this.#imageUploadProgressCallback) {
+            this.#imageUploadProgressCallback({ percentage: Math.floor(this.#uploadOffset / this.#uploadImage.byteLength * 100) });
+        }
+    }
+
+    #processMessage(message) {
         const [op, _flags, length_hi, length_lo, group_hi, group_lo, _seq, id] = message;
         const data = CBOR.decode(message.slice(8).buffer);
         const length = length_hi * 256 + length_lo;
         const group = group_hi * 256 + group_lo;
+
+        /* automatically upload next block if peripheral returns it successfully processed previous block */ 
         if (group === MGMT_GROUP_ID.IMAGE && id === IMG_MGMT_ID.UPLOAD && (data.rc === 0 || data.rc === undefined) && data.off) {
-            this._uploadOffset = data.off;
-            this._uploadNext();
+            log.debug(`Block uploaded successfully, offset: ${data.off}`);
+            this.#uploadOffset = data.off;
+            this.#uploadNext();
             return;
         }
-        if (this._messageCallback) this._messageCallback({ op, group, id, data, length });
+        
+        if (this.#messageCallback) this.#messageCallback({ op, group, id, data, length });
     }
-    cmdReset() {
-        return this._sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.OS, OS_MGMT_ID.RESET);
+
+    // data must be of type Uint8Array
+    async #sendMessage(op, group, group_cmd_id, data, cborEncode = true) {    
+        /* SMP currently does not use flags. Keep empty */
+        let data_provided = typeof data !== 'undefined';
+        
+        var encodedData = [];
+        if (data_provided) {
+            if (cborEncode) {
+                encodedData = [...new Uint8Array(CBOR.encode(data))];
+            } else {
+                encodedData = data;
+            }
+        }
+        let header = this.#smpHeaderConstruct(op, group, group_cmd_id, encodedData);
+
+        /* Message in bytes, see info here: https://docs.zephyrproject.org/latest/services/device_mgmt/smp_protocol.html */
+        const message = [...header, ...encodedData];
+        this.#smp_sequence_number = (this.#smp_sequence_number + 1) % 256;
+
+        log.debug(`Sending message:`);
+        let log_message = {
+            header: header,
+            data: encodedData,
+        }
+        log.debug(log_message);
+
+        await this.#characteristic.writeValueWithoutResponse(Uint8Array.from(message));
     }
-    smpEcho(message) {
-        return this._sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.OS, OS_MGMT_ID.ECHO, { d: message });
-    }
-    cmdImageState() {
-        return this._sendMessage(MGMT_OP.READ, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.STATE);
-    }
-    cmdImageErase() {
-        return this._sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.ERASE, {});
-    }
-    cmdImageTest(hash) {
-        return this._sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.STATE, { hash, confirm: false });
-    }
-    cmdImageConfirm(hash) {
-        return this._sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.STATE, { hash, confirm: true });
-    }    
-    _hash(image) {
-        return crypto.subtle.digest('SHA-256', image);
-    }
-    async _uploadNext() {
-        if (this._uploadOffset >= this._uploadImage.byteLength) {
-            this._uploadIsInProgress = false;
-            this._imageUploadFinishedCallback();
-            return;
-        }
 
-        const nmpOverhead = 8;
-        const message = { data: new Uint8Array(), off: this._uploadOffset };
-        if (this._uploadOffset === 0) {
-            message.len = this._uploadImage.byteLength;
-            message.sha = new Uint8Array(await this._hash(this._uploadImage));
-        }
-        this._imageUploadProgressCallback({ percentage: Math.floor(this._uploadOffset / this._uploadImage.byteLength * 100) });
-
-        const length = this._mtu - CBOR.encode(message).byteLength - nmpOverhead;
-
-        message.data = new Uint8Array(this._uploadImage.slice(this._uploadOffset, this._uploadOffset + length));
-
-        this._uploadOffset += length;
-
-        this._sendMessage(MGMT_OP.WRITE, MGMT_GROUP_ID.IMAGE, IMG_MGMT_ID.UPLOAD, message);
-    }
-    async cmdUpload(image, slot = 0) {
-        if (this._uploadIsInProgress) {
-            this._logger.error('Upload is already in progress.');
-            return;
-        }
-        this._uploadIsInProgress = true;
-
-        this._uploadOffset = 0;
-        this._uploadImage = image;
-        this._uploadSlot = slot;
-
-        this._uploadNext();
-    }
-    async imageInfo(image) {
-        // https://interrupt.memfault.com/blog/mcuboot-overview#mcuboot-image-binaries
-
-        const info = {};
-        const view = new Uint8Array(image);
-
-        // check header length
-        if (view.length < 32) {
-            throw new Error('Invalid image (too short file)');
-        }
-
-        // check MAGIC bytes 0x96f3b83d
-        if (view[0] !== 0x3d || view[1] !== 0xb8 || view[2] !== 0xf3 || view[3] !== 0x96) {
-            throw new Error('Invalid image (wrong magic bytes)');
-        }
-
-        // check load address is 0x00000000
-        if (view[4] !== 0x00 || view[5] !== 0x00 || view[6] !== 0x00 || view[7] !== 0x00) {
-            throw new Error('Invalid image (wrong load address)');
-        }
-
-        const headerSize = view[8] + view[9] * 2 ** 8;
-
-        // check protected TLV area size is 0
-        if (view[10] !== 0x00 || view[11] !== 0x00) {
-            throw new Error('Invalid image (wrong protected TLV area size)');
-        }
-
-        const imageSize = view[12] + view[13] * 2 ** 8 + view[14] * 2 ** 16 + view[15] * 2 ** 24;
-        info.imageSize = imageSize;
-
-        // check image size is correct
-        if (view.length < imageSize + headerSize) {
-            throw new Error('Invalid image (wrong image size)');
-        }
-
-        // check flags is 0x00000000
-        if (view[16] !== 0x00 || view[17] !== 0x00 || view[18] !== 0x00 || view[19] !== 0x00) {
-            throw new Error('Invalid image (wrong flags)');
-        }
-
-        const version = `${view[20]}.${view[21]}.${view[22] + view[23] * 2 ** 8}`;
-        info.version = version;
-
-        info.hash = [...new Uint8Array(await this._hash(image.slice(0, imageSize + 32)))].map(b => b.toString(16).padStart(2, '0')).join('');
-
-        return info;
+    #smpHeaderConstruct(op, group, group_cmd_id, encodedData) {
+        const smp_flags = 0;
+        const data_size_lo = encodedData.length & 255; // lower 8 bit
+        const data_size_hi = encodedData.length >> 8; // upper 8 bit
+        assert(data_size_hi < 256, 'Message too long');
+        const group_lo = group & 255;
+        const group_hi = group >> 8;
+        assert(group_hi < 256, 'Group too high');
+        return [op, smp_flags, data_size_hi, data_size_lo, group_hi, group_lo, this.#smp_sequence_number, group_cmd_id];
     }
 }
 

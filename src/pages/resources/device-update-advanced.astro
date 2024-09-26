@@ -47,6 +47,19 @@ import Footer from "~/layouts/Footer.astro"
                             <button id="button-confirm" type="submit" class="btn btn-success" disabled><i class="bi-check2-square"></i> Confirm</button>
                         </div>
                         <hr />
+                        <h3>SMP mcumgr custom command</h3>
+                        <input type="number" id="smp-group" placeholder="Group ID" />
+                        <input type="number" id="smp-command" placeholder="Command ID" />
+                        <!-- select drop down -->
+                        <select id="smp-select">
+                            <option value="0">Read</option>
+                            <option value="1">Read w/ response</option>
+                            <option value="2">Write</option>
+                            <option value="3">Write w/ response</option>
+                        </select>
+                        <input type="text" id="smp-data" placeholder="Data" />
+                        <button id="button-smp" type="submit" class="btn btn-primary"><i class="bi-gear"></i> Send</button>
+                        <hr />
                         <h3>Image Upload</h3>
                         <div class="form-group">
                             <input type="file" class="form-control" id="file-image" />
@@ -76,7 +89,11 @@ main {
 </style>
 
 <script>
-import {MCUManager, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID} from '~/js/mcumgr.js';
+import {MCUManager, MGMT_OP_REVERSE, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID, SMP_ERR_RC} from '~/js/mcumgr.js';
+import {imageInfo,  Log} from '~/js/utilities.js';
+
+let log = new Log('main', Log.LEVEL_DEBUG);
+
 const screens = {
     initial: document.getElementById('initial-screen'),
     connecting: document.getElementById('connecting-screen'),
@@ -101,6 +118,13 @@ const bluetoothIsAvailable = document.getElementById('bluetooth-is-available');
 const bluetoothIsAvailableMessage = document.getElementById('bluetooth-is-available-message');
 const connectBlock = document.getElementById('connect-block');
 
+// SMP elements
+const smpGroup = document.getElementById('smp-group') as HTMLInputElement;
+const smpCommand = document.getElementById('smp-command') as HTMLInputElement;
+const smpSelect = document.getElementById('smp-select') as HTMLSelectElement;
+const smpData = document.getElementById('smp-data') as HTMLInputElement;
+const smpButton = document.getElementById('button-smp') as HTMLButtonElement;
+
 // @ts-ignore: Ignore TypeScript error for bluetooth property because its not yet part of linter
 if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
     bluetoothIsAvailableMessage.innerText = 'Bluetooth is available in your browser.';
@@ -117,7 +141,7 @@ let images = [];
 
 const mcumgr = new MCUManager();
 mcumgr.onConnecting(() => {
-    console.log('Connecting...');
+    log.debug('Connecting...');
     screens.initial.style.display = 'none';
     screens.connected.style.display = 'none';
     screens.connecting.style.display = 'block';
@@ -128,7 +152,6 @@ mcumgr.onConnect(() => {
     screens.initial.style.display = 'none';
     screens.connected.style.display = 'block';
     imageList.innerHTML = '';
-    mcumgr.cmdImageState();
 });
 mcumgr.onDisconnect(() => {
     deviceName.innerText = 'Connect your device';
@@ -138,6 +161,13 @@ mcumgr.onDisconnect(() => {
 });
 
 mcumgr.onMessage(({ op, group, id, data, length }) => {
+    log.debug(`Received SMP: op ${MGMT_OP_REVERSE[op]}, group ${group}, id ${id}, length ${length}`);
+    if (data.rc !== undefined && data.rc !== 0) {
+        log.error(`Error: ${SMP_ERR_RC[data.rc]}`);
+        log.error(data);
+        return;
+    }
+
     switch (group) {
         case MGMT_GROUP_ID.OS:
             switch (id) {
@@ -148,7 +178,7 @@ mcumgr.onMessage(({ op, group, id, data, length }) => {
                     console.table(data.tasks);
                     break;
                 case OS_MGMT_ID.MPSTAT:
-                    console.log(data);
+                    log.info(data);
                     break;
             }
             break;
@@ -178,7 +208,8 @@ mcumgr.onMessage(({ op, group, id, data, length }) => {
             }
             break;
         default:
-            console.log('Unknown group');
+            log.warning(`Unknown SMP response: group ${group}, id ${id}, op ${op}`);
+            log.warning(data);
             break;
     }
 });
@@ -201,7 +232,7 @@ fileImage.addEventListener('change', () => {
     reader.onload = async () => {
         fileData = reader.result;
         try {
-            const info = await mcumgr.imageInfo(fileData);
+            const info = await imageInfo(fileData);
             let table = `<table>`
             table += `<tr><th>Version</th><td>v${info.version}</td></tr>`;
             table += `<tr><th>Hash</th><td>${info.hash}</td></tr>`;
@@ -264,4 +295,23 @@ confirmButton.addEventListener('click', async () => {
         await mcumgr.cmdImageConfirm(images[0].hash);
     }
 });
+
+smpButton.addEventListener('click', async () => {
+    const group = parseInt(smpGroup.value);
+    const command = parseInt(smpCommand.value);
+    const op = parseInt(smpSelect.value);
+    /* load data */
+    const data_raw = smpData.value.split(' ').map(Number);
+    // const message = {
+    //     data: new Uint8Array(data_raw),
+    //     len: 8,
+    //     off: 0,
+    // }
+    const message = [8, 0, ...data_raw];
+    log.debug(`Sending SMP custom command: group group ${group}, command ${command}, op ${op}`);
+    log.debug(message);
+
+    await mcumgr.cmdCustom(group, command, op, message, false);
+});
+
 </script>

@@ -51,15 +51,29 @@
     </div>
 </div>
 
-<script
-    type="text/javascript"
-    src="//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js"
-></script><script type="text/javascript">
-    (function ($) {
-        window.fnames = new Array();
-        window.ftypes = new Array();
-        fnames[0] = "EMAIL";
-        ftypes[0] = "email";
-    })(jQuery);
-    var $mcj = jQuery.noConflict(true);
+<script type="text/javascript">
+
+    function loadMailchimpScript() {
+        // Load script
+        var script = document.createElement("script");
+        script.type = "text/javascript";
+        script.src = "//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js";
+        document.head.appendChild(script);
+        
+        // Run it
+        script.onload = function() {
+            (function ($) {
+                window.fnames = new Array();
+                window.ftypes = new Array();
+                fnames[0] = "EMAIL";
+                ftypes[0] = "email";
+            })(jQuery);
+            var $mcj = jQuery.noConflict(true);
+        };
+    }
+
+    // Load script when page is loaded. Give it a little delay to prioritize other scripts
+    window.addEventListener('load', function() {
+        setTimeout(loadMailchimpScript, 100);
+    });
 </script>
