@@ -8,6 +8,7 @@ import GIFDemo from '~/components/GIFDemo.astro';
 import monkeyOverviewImg from '~/assets/resources/monkey_manual/monkey_2d_overview.svg';
 import monkeySectionsImg from '~/assets/resources/monkey_manual/monkey_2d_sections.svg';
 import monkeyFunctionsImg from '~/assets/resources/monkey_manual/monkey_2d_functions.svg';
+import monkeyFunctionTypesImg from '~/assets/resources/monkey_manual/monkey_function_types.svg';
 import resetGif from '~/assets/resources/monkey_manual/gifs/reset.gif';
 import rebootGif from '~/assets/resources/monkey_manual/gifs/reboot.gif';
 import octaveGif from '~/assets/resources/monkey_manual/gifs/octave.gif';
@@ -44,27 +45,47 @@ The functions are organized into several sections. The functions highlighted wit
 <img alt="monkey 2d sections" src={monkeySectionsImg.src} />
 <img alt="monkey 2d functions" src={monkeyFunctionsImg.src} />
 
+MONKEY has a system wide note polyphony of 20 notes.
+
+### The SHIFT key
+Use the SHIFT key to access all the functions. While holding down SHIFT you gain access to all the functions printed below the bottom keys. As soon as you release the SHIFT key, MONKEY will exit *function mode* and you are back to playing the keys as normal. Thus while you are applying functions, keep the SHIFT key pressed for the entire duration. Releasing the SHIFT key will cancel the current operation.
+
+Each of the functions have a simple interface. There are two types of functions:
+1. Function is directly applied by pressing the key
+2. Function is applied after pressing the key followed by a sequence of numbers using the numbered keys
+
+Furthermore each function might also have a long press function. When prompted to type in numbers for a long press function, the light tower will blink but with a different blink pattern than with a normal press blink pattern. This way you can distinguish wether you are about to do a normal press action or a long press action. The long press action is activated if you keep a function key pressed for more than 1 second.
+
+Below you can see a table of how each of the functions behave, according to the two function types listed above.
+
+<img alt="monkey function types table"  src={monkeyFunctionTypesImg.src} />
+
+Some of the type 1 functions are toggled on and off (HOLD and EFFECTS). Notice the light tower LED then blinking once when the function is activated and blinking twice when the function is deactivated.
+
 ### WAKE
-The first function you should get familiar with is the WAKE key. Pressing **SHIFT** + **WAKE** will reset the device, and pressing **SHIFT** + **long pressing WAKE** will reboot the device. MONKEY has a workflow that you might not be familiar with. If you ever get lost, WAKE is by your side!
+The first function you should get familiar with is the WAKE key. Pressing **SHIFT** + **WAKE** will reset the device, and **SHIFT** + **long pressing WAKE** will reboot the device. If you ever get lost, use WAKE to quickly reset the device state back to it's default state.
 
 <GIFDemo src={resetGif.src} alt="reset demo" label="reset demo" text="WAKE brief press to reset." />
 <GIFDemo src={rebootGif.src} alt="reboot demo" label="reboot demo" text="WAKE long press to reboot." />
 
 ### OCT- and OCT+
-Starting from the left, we have OCT- and OCT+. These are the most straightforward functions as they only change the octave range of the keybed.
+OCT- and OCT+ are the most straightforward functions as they only change the octave range of the keybed. OCT- decrements the current octave while OCT+ increments the current octave. The light tower will blink once when you change the octave. When you hit the octave limits it will blink 4 times indicating it is unable to increment or decrement any further.
 
 <GIFDemo src={octaveGif.src} alt="Octave select demo" label="octave select demo" text="First adjust octave up, then adjust down." />
 
 ### BPM
-Furthermore, we have the BPM function which lets you set the global BPM. Do so by pressing SHIFT + BPM. Keep the SHIFT key pressed, followed by typing in the BPM you want using the keys labeled with numbers. Notice the feedback you get from the light tower LED.
+BPM stands for *beats per minute* and let's you change the global tempo of MONKEY. WHile pressing SHIFT, press BPM followed by typing your desired BPM using the numbered keys.
+
+By defauly the BPM on MONKEY is 120.
 
 <GIFDemo src={bpmGif.src} alt="BPM select demo" label="BPM select demo" text="Setting tempo to 120BPM." />
 
 ### CH
-Change the MIDI channel using the CH function. Similarly to BPM, press SHIFT + CH. Then release CH, followed by selecting one of the labeled number keys corresponding to the channel you would like to select. Selecting 0 corresponds to MIDI channel 10. Notice the feedback you get from the light tower LED.
+To use MONKEY with multiple instruments at the same time, you can configure each instrument to receive notes on different channels. Then you can use the CH function on MONKEY to change betweeen these instruments.
+
+While pressing SHIFT, press CH followed by your desired channel. Selecting 0 corresponds to MIDI channel 10.
 
 **CAUTION**: Make sure to distinguish between a short press and long press on CH key. Long pressing CH allows you to mute/unmute specific MIDI channels. Use the numbered keys to select the channels which you would like to mute/unmute. This is useful paired together with the loop recorder, muting parts of your loop.
-{/* **CAUTION**: **SHIFT** + **long pressing CH** is another function. This lets you mute and unmute MIDI channels, which is especially useful paired with the loop recorder. */}
 
 <GIFDemo src={channelGif.src} alt="Channel select demo" label="channel select demo" text="Changing to MIDI channel 2." />
 
@@ -74,16 +95,34 @@ Toggle note hold using the HOLD function. Notice the light tower LED blinking on
 <GIFDemo src={holdGif.src} alt="Hold toggle demo" label="hold demo" text="Toggling hold first on, then off." />
 
 ## MIDI effects
-Similarly to **HOLD**, they are toggled, and only one effect might be enabled at a time.
+MONKEY has in total 6 MIDI effects each with 10 presets. Similarly to HOLD, the effects are toggled on and off. Only one effect might be enabled at once. 
+
+- If you enable a new effect and a previous effect was enabled, this new effect will be enabled and the previous disabled.
+- If you press on the effect which is already enabled, it will disable and no effects will be enabled. 
+
+Once an effect is enabled, you can change its preset. This is simply done by directly pressing the numbered keys while in SHIFT mode.
 
 <GIFDemo src={effectSelectGif.src} alt="effect select demo" label="effect select demo" text="1 - Enabling ARP effect. 2 - Disabling ARP effect. 3 - Enabling STTR effect." />
 
-Once an effect is enabled, you can change between its presets. Do this by pressing **SHIFT** + **one of the numbered keys**.
-
 <GIFDemo src={effectPresetGif.src} alt="effect preset select demo" label="effect preset select demo" text="Assuming a MIDI effect is selected. Changing to preset 6 within effect." />
 
+### ARP
+Arpeggio effect. Presets change the arpeggio algorithm.
+
+### DBL
+Double effect. For each key you press, this effect will add extra notes. The presets change which notes are added and with what delay.
+
+### STTR
+Stutter effect. Plays the notes which are pressed in a rythmic pattern. The presets change the pattern.
+
 ### ECHO
-The ECHO effect will repeat the notes you play in a feedback loop. The presets of ECHO are varied and sometimes not so easy to understand. Some presets removes the note from the feedback loop when you release it and some does not.
+The echo effect will repeat the notes you play in a feedback loop. The behaviour of each preset are varied and unconventional by design. Some presets have a infinite feedback loop where the note is not removed from the loop until the velocity of the key reaches 0.
+
+### PAT
+Pattern effect. Pre-made note patterns. Preset changes the swing.
+
+### DRM
+Drum effect. The bottom keys are drum loops and the upper keys are drum fills. You can dynamically switch between loops and the effect will keep correct timing, as long as at least one loop key is being pressed. The preset changes the swing.
 
 ## Loop recorder
 The loop recorder is your playground to combine recordings from multiple instruments into an idea. Currently, the loop recorder is fixed with a length of 16 beats. The loop recorder uses the following keys:
@@ -92,8 +131,8 @@ The loop recorder is your playground to combine recordings from multiple instrum
 - UNDO: Each time you stop recording, a new record checkpoint is generated. Pressing UNDO will erase the last checkpoint. Long pressing UNDO will allow you to select an entire MIDI channel to erase. After SHIFT + long press UNDO, while keeping SHIFT pressed, select the MIDI channel to erase by pressing a corresponding numbered key. As always, the number 0 is MIDI channel 10 and is reserved for the drums.
 
 ### Recommendations
-It's a good idea to record something rhythmical initially so that you keep track of the tempo and know when the loop recorder loops back on itself. If you don't want to have rhythmical elements in your loop, you might first record something rhythmical such as drums. Then, when you have recorded something on top of the drums, erase the drums from the loop.
+It's a good idea to record something rhythmical initially so that you keep track of the tempo and know when the loop recorder loops back on itself. If you don't want to have rhythmical elements in your loop, you might first record something rhythmical such as drums. Then, when you have recorded something on top of the drums, erase the drums from the loop (UNDO long press).
 
-It is also possible to create a simple arrangement using the *channel mute* functionality (long press on CH function and toggle mute/unmute MIDI channels). Record various elements on different MIDI channels. Then you can arrange your idea by changing which channels are muted and not.
+It is also possible to create a simple arrangement using the *channel mute* functionality (CH long press). Record various elements on different MIDI channels. Then you can arrange your idea by changing which channels are muted and not.
 
-When recording drums into the looper, you might keep recording for a bit after it wraps back to the beginning. You don't need to time a perfect key release as the looper wraps back to the start. The loop recorder will identify that you are recording something identical on top of the current recording and prevent duplicate notes.
+When recording something periodic such as drums, you do not need to time releasing the key just as the looper loops back on itself. When exactly the same notes are repeated on top of each other, the looper will notice and not record the notes on top of each other.
