@@ -60,6 +60,9 @@ import Footer from "~/layouts/Footer.astro"
                         <input type="text" id="smp-data" placeholder="Data" />
                         <button id="button-smp" type="submit" class="btn btn-primary"><i class="bi-gear"></i> Send</button>
                         <hr />
+                        <h3>Sampler upload</h3>
+                        <button id="button-sampler" type="submit" class="btn btn-primary"><i class="bi-gear"></i> Send</button>
+                        <hr />
                         <h3>Image Upload</h3>
                         <div class="form-group">
                             <input type="file" class="form-control" id="file-image" />
@@ -91,6 +94,7 @@ main {
 <script>
 import {MCUManager, MGMT_OP_REVERSE, MGMT_GROUP_ID, OS_MGMT_ID, IMG_MGMT_ID, SMP_ERR_RC} from '~/js/mcumgr.js';
 import {imageInfo,  Log} from '~/js/utilities.js';
+import {samplesParse, CONFIG_KEYBED_SIZE} from '~/js/samples_parser.js';
 
 let log = new Log('main', Log.LEVEL_DEBUG);
 
@@ -124,6 +128,9 @@ const smpCommand = document.getElementById('smp-command') as HTMLInputElement;
 const smpSelect = document.getElementById('smp-select') as HTMLSelectElement;
 const smpData = document.getElementById('smp-data') as HTMLInputElement;
 const smpButton = document.getElementById('button-smp') as HTMLButtonElement;
+
+// sampler
+const samplerButton = document.getElementById('button-sampler') as HTMLButtonElement;
 
 // @ts-ignore: Ignore TypeScript error for bluetooth property because its not yet part of linter
 if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
@@ -259,7 +266,7 @@ fileUpload.addEventListener('click', event => {
 
 connectButton.addEventListener('click', async () => {
     const BT_MIDI_SERVICE_UUID = '03B80E5A-EDE8-4B33-A751-6CE34EC4C700'.toLowerCase()
-	let filters = [{namePrefix: 'WAVY MONKEY', services: [BT_MIDI_SERVICE_UUID]}]
+	let filters = [{namePrefix: 'WAVY', services: [BT_MIDI_SERVICE_UUID]}]
     await mcumgr.connect(filters);
 });
 
@@ -297,21 +304,85 @@ confirmButton.addEventListener('click', async () => {
 });
 
 smpButton.addEventListener('click', async () => {
-    const group = parseInt(smpGroup.value);
-    const command = parseInt(smpCommand.value);
-    const op = parseInt(smpSelect.value);
+    let group = parseInt(smpGroup.value);
+    let command = parseInt(smpCommand.value);
+    let op = parseInt(smpSelect.value);
     /* load data */
-    const data_raw = smpData.value.split(' ').map(Number);
-    // const message = {
-    //     data: new Uint8Array(data_raw),
-    //     len: 8,
-    //     off: 0,
-    // }
-    const message = [8, 0, ...data_raw];
+    let data_raw = smpData.value.split(' ').map((val) => parseInt(val, 16));
+    let length = data_raw.length;
+    let offset = 0;
+
+    // convert 32bit length and offset to byte arrays
+    let length_barray = [length & 0xFF, (length >> 8) & 0xFF, (length >> 16) & 0xFF, (length >> 24) & 0xFF];
+    let offset_barray = [offset & 0xFF, (offset >> 8) & 0xFF, (offset >> 16) & 0xFF, (offset >> 24) & 0xFF];
+
+    let message = [...length_barray, ...offset_barray, ...data_raw];
     log.debug(`Sending SMP custom command: group group ${group}, command ${command}, op ${op}`);
     log.debug(message);
 
     await mcumgr.cmdCustom(group, command, op, message, false);
 });
+
+samplerButton.addEventListener('click', async () => {
+    // ---------------------------------------------
+    // Dummy Input Data
+    // ---------------------------------------------
+
+    // Define note events
+    const noteEvent1_on = { note: 60, velocity: 100, state: 1 }; // Middle C
+    const noteEvent1_off = { note: 60, velocity: 100, state: 0 }; // Middle C
+    const noteEvent2_on = { note: 62, velocity: 110, state: 1 }; // D
+    const noteEvent2_off = { note: 62, velocity: 110, state: 0 }; // D
+    const noteEvent3_on = { note: 64, velocity: 120, state: 1 }; // E
+    const noteEvent3_off = { note: 64, velocity: 120, state: 0 }; // E
+
+    // Define a loop (drumLoop)
+    const loop0 = {
+        0: [noteEvent1_on, noteEvent2_on],
+        12: [noteEvent3_on],
+        24: [noteEvent1_off, noteEvent2_off, noteEvent3_off],
+    };
+
+    const loop1 = {
+        0: [noteEvent3_on],
+        16: [noteEvent2_on],
+        32: [noteEvent1_on],
+        48: [noteEvent2_off, noteEvent1_off, noteEvent3_off],
+    };
+
+    const loop2 = {
+        0: [noteEvent2_on],
+        8: [noteEvent3_on],
+        16: [noteEvent2_off, noteEvent3_off],
+    };
+
+    // Define the first page with loops
+    const page0 = [];
+    for (let i = 0; i < CONFIG_KEYBED_SIZE; i++) {
+        page0.push(null); // No loop assigned to this preset
+    }
+    page0[0] = loop0;
+    page0[1] = loop1;
+    page0[2] = loop2;
+
+
+    // Define the remaining pages as empty (no loops)
+    const pages = [];
+    pages.push(page0); // Add the first page with loops
+    for (let i = 1; i < 10; i++) {
+    // Total of 10 pages
+    const emptyPage = [];
+    for (let j = 0; j < CONFIG_KEYBED_SIZE; j++) {
+        emptyPage.push(null); // No loops in this page
+    }
+    pages.push(emptyPage);
+    }
+
+    const byteArray = samplesParse(pages);
+
+    // Now byteArray contains the binary data ready to be sent
+    console.log("Byte array length:", byteArray.length);
+    console.log(byteArray);
+})
 
 </script>
