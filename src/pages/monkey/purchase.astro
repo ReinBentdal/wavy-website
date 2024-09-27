@@ -25,6 +25,10 @@ import arrowRightImg from '~/assets/icons/arrow.right.svg';
           <br />
           <input type="radio" id="international-parcel" name="shipping" value="parcel">
           <label for="international-parcel">International Parcel (€19)</label>
+          <br />
+          <input type="radio" id="local-pickup" name="shipping" value="pickup">
+          <label for="local-pickup">Pickup in <i>Trondheim, Norway</i> (free)</label>
+          <p class="hidden" id="pickup-info">Local pickup in Trondheim, Norway. We contact you to arrange a time for pickup.</p>
         </div>
       </div>
     </div>
@@ -94,6 +98,11 @@ input {
   display: inline-block;
 }
 
+#pickup-info {
+  font-size: 12px;
+  font-style: italic;
+}
+
 .in-stock {
   background-color: #d4edda;
 }
@@ -109,37 +118,42 @@ input {
 .unknown-stock {
   background-color: #eee;
 }
-
+.hidden {
+  display: none;
+}
 </style>
 
 <script>
 let shippingUrl = {
   letter: 'https://buy.stripe.com/7sI9Co9Mwb8a6WIbIJ',
-  parcel: 'https://buy.stripe.com/cN2cOAaQA2BEgxidQS'
+  parcel: 'https://buy.stripe.com/cN2cOAaQA2BEgxidQS',
+  pickup: 'https://buy.stripe.com/5kA15S0bW2BEch28wz',
 }
 
 let checkoutLink = document.getElementById('checkout-link') as HTMLAnchorElement;
 function updateUrl(val) {
-  // update href of a
-  console.log("updating url")
+  if (val == 'pickup') {
+    document.getElementById('pickup-info').classList.remove('hidden');
+  } else {
+    document.getElementById('pickup-info').classList.add('hidden');
+  }
   checkoutLink.href = shippingUrl[val];
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+
+window.addEventListener('pageshow', function() {
   const radios = document.querySelectorAll('input[type="radio"][name="shipping"]') as NodeListOf<HTMLInputElement>;
-  
+
+  // Event listener for radio button changes
   radios.forEach(radio => {
+    if (radio.checked)
+      updateUrl(radio.value);
+
     radio.addEventListener('change', function(e) {
-      const target = e.target as HTMLInputElement;  // Cast target as HTMLInputElement
+      const target = e.target as HTMLInputElement;
       let shippingMethod = target.value;
       updateUrl(shippingMethod);
     });
-    
-    // check if initially checked as well
-    if (radio.checked) {
-      let shippingMethod = radio.value;
-      updateUrl(shippingMethod);
-    }
   });
 });
 
