@@ -3,7 +3,6 @@ import '~/styles/global.css';
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/layouts/Header.astro';
 import Footer from '~/layouts/Footer.astro';
-import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 ---
 
 <Layout title="Wavy Industries: device update">
@@ -11,8 +10,8 @@ import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 		<Header />
 		<section id="screens">
 			<div id="initial-screen" class="screen">
-				<h1>Device updater</h1>
-				<span class="catch-phrase">Bluetooth device updater directly in the browser</span><br/><br/>
+				<h1>Sample updater</h1>
+				<span class="catch-phrase">Upload new drum samples to MONKEY</span><br/><br/>
 				<div id="bt-unavailable-screen" class="screen">
 					<p>It looks like your browser is not supported 🙁</p>
 					<p>Notably <b>Safari</b> and <b>Firefox</b> is not supported. Here are some suggested alternatives:</p>
@@ -36,10 +35,7 @@ import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 			<div id="connected-screen" class="screen">
 				<button id="button-disconnect" type="submit"><i class="bi-x-square"></i> Disconnect</button>
 				<b><span id="device-name">unknown name</span></b>
-				<p>
-					Device firmware version: <span id="device-fw-version"></span><br/>
-					Latest firmware version: <span id="latest-fw-version"></span>
-				</p>
+
 				<br/>
 
 				<div id="update-waiting-screen" class="screen">
@@ -49,8 +45,8 @@ import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 					<span class="ok">Your device is up to date!</span>
 				</div>
 				<div id="update-update-screen" class="screen">
-					<span class="remark">Update is available!</span><br/>
 					<button id="update-button" class="button-highlight" >Start update</button>
+                    <button id="samples-log-button" class="button-highlight" >Show samples log</button>
 				</div>
 				<div id="update-prepare-screen" class="screen">
 					<span>Fetching update and preparing device...</span>
@@ -61,13 +57,7 @@ import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 				<div id="update-complete-screen" class="screen">
 					<span class="ok">Transfer complete! Device will reboot and finish installation...</span>
 				</div>				
-				<hr />
-				<h2>Changelog</h2>
-				<p id="changelog"></p>
 			</div>
-			<br />
-			<hr />
-			<DeviceUpdateSubscribe />
 		</section>
 		<Footer />
 	</main>
@@ -122,33 +112,34 @@ p {
 </style>
 
 <script>
-import {parseChangelog, Changelog} from '~/js/parsers/changelog_parser';
+
 import {MCUManager} from '~/js/mcumgr/mcumgr.js';
-import { ImageManager, ImageFirmwareVersion } from '~/js/mcumgr/ImageManager';
+import { SampleManager } from '~/js/mcumgr/SampleManager';
+import {BasicManager} from '~/js/mcumgr/BasicManager';
+import { Samples, CONFIG_KEYBED_SIZE } from '~/js/parsers/samples_parser';
 import {Screens} from '~/js/screens.js';
+import { Log, canonicalize } from '~/js/utilities';
+import { samplesParser_encode, samplesParser_decode } from '~/js/parsers/samples_parser';
 
-const product_name = "MONKEY";
+let log = new Log('main', Log.LEVEL_DEBUG);
+
 const mcumgr = new MCUManager();
-const imageManager = new ImageManager(mcumgr);
-
-let firmwareVersions: Changelog = null;
-let deviceFirmwareVersion: ImageFirmwareVersion = null;
+const sampleManager = new SampleManager(mcumgr);
+const basicManager = new BasicManager(mcumgr);
 
 /* initialise the view */
 const mainScreens = new Screens('initial-screen', ['initial-screen', 'connected-screen', 'reconnect-screen']);
+const initialScreens = new Screens(null, ['bt-available-screen', 'bt-unavailable-screen']);
+const updateScreens = new Screens('update-update-screen', ['update-good-screen', 'update-update-screen', 'update-prepare-screen', 'update-uploading-screen']);
 
 mainScreens.on('connected-screen', () => {
 	deviceName.innerText = mcumgr.name;
-	getFirmwareUpdates();
-	getDeviceFirmware();
 }, "show");
 
 mainScreens.on('connected-screen', () => {
-	changelog.innerHTML = "";
+	
 }, "hide");
 
-const initialScreens = new Screens(null, ['bt-available-screen', 'bt-unavailable-screen']);
-const updateScreens = new Screens('update-waiting-screen', ['update-waiting-screen', 'update-good-screen', 'update-update-screen', 'update-prepare-screen', 'update-uploading-screen', 'update-complete-screen']);
 
 // @ts-ignore: Ignore TypeScript error for bluetooth property because its not yet part of linter
 if (navigator && navigator.bluetooth && navigator.bluetooth.getAvailability()) {
@@ -162,13 +153,12 @@ const connectButton = document.getElementById('button-connect') as HTMLButtonEle
 const disconnectButton = document.getElementById('button-disconnect') as HTMLButtonElement;
 
 const deviceName = document.getElementById('device-name');
-const deviceFWVersion = document.getElementById('device-fw-version');
-const latestFWVersion = document.getElementById('latest-fw-version');
 
-const updateButton = document.getElementById('update-button') as HTMLButtonElement;
+const uploadButton = document.getElementById('update-button') as HTMLButtonElement;
 const uploadStatus = document.getElementById('upload-status') as HTMLButtonElement;
 
-const changelog = document.getElementById('changelog');
+const samplesLogButton = document.getElementById('samples-log-button') as HTMLButtonElement;
+
 /* elements end */ 
 
 mcumgr.onConnecting(() => {
@@ -178,6 +168,9 @@ mcumgr.onConnecting(() => {
 });
 mcumgr.onConnect(() => {
 	mainScreens.set('connected-screen')
+
+	// send poll command such that the device can expect data transfer and increase communication speed
+	basicManager.poll();
 });
 
 const defaultButtonText = connectButton.innerText;
@@ -191,18 +184,19 @@ mcumgr.onConnectionLoss(() => {
 	mainScreens.set('reconnect-screen')
 });
 
-imageManager.onImageUploadProgress((percentage) => {
+sampleManager.onUploadProgress((percentage) => {
 	if (percentage != 0 && updateScreens.get() != 'update-uploading-screen') {
 		updateScreens.set('update-uploading-screen');
 	}
 	uploadStatus.innerText = `${percentage}%`;
 });
 
-imageManager.onImageUploadComplete((success) => {
-	if (success) {
-		updateScreens.set('update-complete-screen');
+sampleManager.onUploadComplete((success) => {
+    updateScreens.set('update-update-screen');
+	if (!success) {
+		log.error('Failed to upload samples');
 	} else {
-		updateScreens.set('update-update-screen');
+        log.info('Samples uploaded successfully');
 	}
 });
 
@@ -216,60 +210,72 @@ disconnectButton.addEventListener('click', async () => {
 	mcumgr.disconnect();
 });
 
-updateButton.addEventListener('click', async () => {
-	try {
-		updateScreens.set('update-prepare-screen');
-		fetch(`/firmware/${product_name}/app\_update_${firmwareVersions.release.versionString}.bin`)
-			.then(res => res.arrayBuffer())
-			.then(image => {
-				imageManager.uploadImage(image);
-			})
-	} catch (e) {
-		updateScreens.set('update-update-screen');
-	}
+uploadButton.addEventListener('click', async () => {
+    let dummySamples = generateDummySamples();
+    await sampleManager.uploadSamples(dummySamples);
 });
 
-async function getFirmwareUpdates() {
-	const response = await fetch(`/firmware/${product_name}/changelog.md`);
-	const data = await response.text();
-	firmwareVersions = parseChangelog(data);
-	updateAvailableUpdate();
+samplesLogButton.addEventListener('click', async () => {
+    let dummySamples = generateDummySamples();
+    let samples = samplesParser_encode(dummySamples);
+	log.info("Encoded samples:");
+    log.info(samples);
+	let decodedSamples = samplesParser_decode(samples);
+	log.info("Decoded samples:");
+	log.info(decodedSamples);
+	// check if its the same as the original
+	let equal = JSON.stringify(canonicalize(dummySamples)) == JSON.stringify(canonicalize(decodedSamples))
+	log.info(`Are the samples equal? ${equal}`);
+});
 
-	latestFWVersion.innerText = firmwareVersions.release.versionString;
+function generateDummySamples(): Samples {
+    // Define note events
+    const kick_on = { note: 36, velocity: 100, state: 1 }; // Kick drum
+    const kick_off = { note: 36, velocity: 100, state: 0 }; // Kick drum
+    const snare_on = { note: 38, velocity: 100, state: 1 }; // Snare drum
+    const snare_off = { note: 38, velocity: 100, state: 0 }; // Snare drum
+    const highhat_on = { note: 42, velocity: 100, state: 1 }; // High hat
+    const highhat_off = { note: 42, velocity: 100, state: 0 }; // High hat
 
-	firmwareVersions.versions.forEach((version) => {
-		if (version.isDev == true || version.isObsolete == true) {
-			return;
-		}
+    // Define a loop (drumLoop)
+    const loop0 = {
+        0: [kick_on, highhat_on],
+        6: [kick_off, highhat_off],
+        12: [highhat_on],
+        18: [highhat_off],
+        24: [kick_on, snare_on, highhat_on],
+        30: [kick_off, snare_off, highhat_off],
+        36: [highhat_on],
+        42: [highhat_off],
+    };
 
-		let changeHTML = `<details>`
-			changeHTML += `<summary>${version.version.versionString}${version.highlight != null ? ' ' + version.highlight : ''}</summary>`;
-			changeHTML += `<p><ul>`;
-		version.changes.forEach((change) => {
-			changeHTML += `<li>${change}</li>`;
-		});
-		changeHTML += `</ul></p>`;
-		changeHTML += `</details>`
-		changelog.innerHTML += changeHTML;
-	});
+    const loop1 = {
+        0: [kick_on],
+        12: [snare_on],
+        24: [kick_off, snare_off],
+    };
+
+    // Define the first page with loops
+    const page0 = [];
+    for (let i = 0; i < CONFIG_KEYBED_SIZE; i++) {
+        page0.push(null); // No loop assigned to this preset
+    }
+    page0[0] = loop0;
+    page0[1] = loop1;
+    page0[2] = loop1;
+
+    // Define the remaining pages as empty (no loops)
+    const pages = [];
+    pages.push(page0); // Add the first page with loops
+    for (let i = 1; i < 10; i++) {
+    // Total of 10 pages
+    const emptyPage = [];
+    for (let j = 0; j < CONFIG_KEYBED_SIZE; j++) {
+        emptyPage.push(null); // No loops in this page
+    }
+    pages.push(emptyPage);
+    }
+    return pages;
 }
 
-async function getDeviceFirmware() {
-	const fw = await imageManager.getFirmwareVersion();
-	deviceFWVersion.innerText = fw.versionString;
-	deviceFirmwareVersion = fw; 
-	updateAvailableUpdate();
-}
-
-function updateAvailableUpdate() {
-	if (deviceFirmwareVersion == null || firmwareVersions == null) {
-		return;
-	}
-
-	if (deviceFirmwareVersion.versionString != firmwareVersions.release.versionString) {
-		updateScreens.set('update-update-screen');
-	} else {
-		updateScreens.set('update-good-screen');
-	}
-}
 </script>

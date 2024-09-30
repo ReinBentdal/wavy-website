@@ -12,6 +12,7 @@
   },
   "dependencies": {
     "@astrojs/mdx": "^3.1.5",
+    "@types/web-bluetooth": "^0.0.20",
     "astro": "^4.15.3"
   },
   "devDependencies": {
