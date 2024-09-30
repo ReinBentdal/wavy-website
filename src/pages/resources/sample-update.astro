@@ -38,25 +38,14 @@ import Footer from '~/layouts/Footer.astro';
 
 				<br/>
 
-				<div id="update-waiting-screen" class="screen">
-					<p>Waiting on device information...</p>
-				</div>
-				<div id="update-good-screen" class="screen">
-					<span class="ok">Your device is up to date!</span>
-				</div>
 				<div id="update-update-screen" class="screen">
-					<button id="update-button" class="button-highlight" >Start update</button>
+					<button id="update-button" class="button-highlight" >Update device samples</button>
+					<button id="fetch-button" class="button-highlight" >Fetch device samples</button>
                     <button id="samples-log-button" class="button-highlight" >Show samples log</button>
-				</div>
-				<div id="update-prepare-screen" class="screen">
-					<span>Fetching update and preparing device...</span>
 				</div>
 				<div id="update-uploading-screen" class="screen">
 					Progress: <span id="upload-status"></span>
-				</div>
-				<div id="update-complete-screen" class="screen">
-					<span class="ok">Transfer complete! Device will reboot and finish installation...</span>
-				</div>				
+				</div>			
 			</div>
 		</section>
 		<Footer />
@@ -105,10 +94,6 @@ p {
 .button-highlight {
 	background-color: #acffac;
 }
-.button-connect {
-	/* background-color: #3943d7;
-	color: white; */
-}
 </style>
 
 <script>
@@ -130,15 +115,13 @@ const basicManager = new BasicManager(mcumgr);
 /* initialise the view */
 const mainScreens = new Screens('initial-screen', ['initial-screen', 'connected-screen', 'reconnect-screen']);
 const initialScreens = new Screens(null, ['bt-available-screen', 'bt-unavailable-screen']);
-const updateScreens = new Screens('update-update-screen', ['update-good-screen', 'update-update-screen', 'update-prepare-screen', 'update-uploading-screen']);
+const updateScreens = new Screens('update-update-screen', ['update-update-screen', 'update-uploading-screen']);
 
 mainScreens.on('connected-screen', () => {
 	deviceName.innerText = mcumgr.name;
 }, "show");
 
-mainScreens.on('connected-screen', () => {
-	
-}, "hide");
+mainScreens.on('connected-screen', () => {}, "hide");
 
 
 // @ts-ignore: Ignore TypeScript error for bluetooth property because its not yet part of linter
@@ -155,6 +138,7 @@ const disconnectButton = document.getElementById('button-disconnect') as HTMLBut
 const deviceName = document.getElementById('device-name');
 
 const uploadButton = document.getElementById('update-button') as HTMLButtonElement;
+const fetchButton = document.getElementById('fetch-button') as HTMLButtonElement;
 const uploadStatus = document.getElementById('upload-status') as HTMLButtonElement;
 
 const samplesLogButton = document.getElementById('samples-log-button') as HTMLButtonElement;
@@ -213,6 +197,16 @@ disconnectButton.addEventListener('click', async () => {
 uploadButton.addEventListener('click', async () => {
     let dummySamples = generateDummySamples();
     await sampleManager.uploadSamples(dummySamples);
+});
+
+fetchButton.addEventListener('click', async () => {
+	try {
+		let samples = await sampleManager.downloadSamples();
+		log.info("Fetched samples:");
+		log.info(samples);
+	} catch (e) {
+		log.error("Failed to fetch samples");
+	}
 });
 
 samplesLogButton.addEventListener('click', async () => {

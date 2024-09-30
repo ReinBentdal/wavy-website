@@ -1,6 +1,6 @@
 import { MCUManager, MGMT_OP, MGMT_ERR, ResponseError } from './mcumgr';
 import { Log } from '../utilities'; // Assuming you have an imageHash function
-import { samplesParser_encode, Samples } from '../parsers/samples_parser';
+import { samplesParser_encode, Samples, samplesParser_decode } from '../parsers/samples_parser';
 
 let log = new Log('smpl_mgr', Log.LEVEL_DEBUG);
 
@@ -10,14 +10,16 @@ enum _MGMT_ID {
 }
 
 enum _STATE_TRANSITION {
-    START_UPLOAD = 0,
-    UPLOAD_COMPLETE = 1,
-    UPLOAD_ERROR = 2,
+    START_UPLOAD,
+    START_DOWNLOAD,
+    TRANSFER_COMPLETE,
+    TRANSFER_ERROR,
 }
 
 enum _STATE {
-    IDLE = 0,
-    UPLOADING = 1,
+    IDLE,
+    UPLOADING,
+    DOWNLOADING,
 }
 
 interface UploadRequest {
@@ -32,17 +34,30 @@ interface UploadSuccessResponse {
 
 type UploadResponse = UploadSuccessResponse | ResponseError;
 
+interface DownloadRequest {
+    off: number;
+}
+
+interface DownloadResponseSuccess {
+    len?: number;
+    off: number;
+    data: Uint8Array;
+}
+
+type DownloadResponse = DownloadResponseSuccess | ResponseError;
+
 export class SampleManager {
     private readonly GROUP_ID = 100;
     private state: _STATE = _STATE.IDLE;
     private mcumgr: MCUManager;
-    private samplesBlob: ArrayBuffer | null = null;
-    private offset: number = 0;
-    private totalLength: number = 0;
 
     private onUploadProgressCallback: ((percent: number) => void) | null = null;
     private onUploadCompleteCallback: ((success: boolean) => void) | null = null;
     private onUploadStartedCallback: (() => void) | null = null;
+
+    private onDownloadProgressCallback: ((percent: number) => void) | null = null;
+    private onDownloadCompleteCallback: ((success: boolean) => void) | null = null;
+    private onDownloadStartedCallback: (() => void) | null = null;
 
     constructor(mcumgr: MCUManager) {
         this.mcumgr = mcumgr;
@@ -67,45 +82,31 @@ export class SampleManager {
     }
 
     // Start the image upload process
-    async uploadSamples(image: Samples): Promise<void> {
+    async uploadSamples(image: Samples): Promise<boolean> {
         log.debug('Starting sample upload process');
-        if (this.state === _STATE.UPLOADING) {
-            log.error('Upload already in progress');
-            return;
+        if (this.state !== _STATE.IDLE) {
+            log.error('Cant start upload when not in idle state');
+            return Promise.reject('Cant start upload when not in idle state');
         }
-
-        log.debug('Parsing image into byte array');
-        this.samplesBlob = samplesParser_encode(image);
-        this.offset = 0;
-        this.totalLength = this.samplesBlob.byteLength;
-        log.debug(`Total sample length: ${this.totalLength} bytes`);
-
-        try {
-            await this._uploadLoop();
-        } catch (error) {
-            log.error('Error during image upload:', error);
-            this._setState(_STATE_TRANSITION.UPLOAD_ERROR);
-        }
-    }
-
-    // Upload the next chunks of the image using a loop
-    private async _uploadLoop(): Promise<void> {
-        const maxPayloadSize = this.mcumgr.maxPayloadSize; // Max payload size from MCUManager
-        log.debug(`Max payload size: ${maxPayloadSize} bytes`);
 
         this._setState(_STATE_TRANSITION.START_UPLOAD);
-        log.debug('Entering upload loop');
+        this.state = _STATE.UPLOADING; // dumy to get rid of TS errors
 
-        while (this.state === _STATE.UPLOADING && this.offset < this.totalLength) {
-            log.debug(`Current offset: ${this.offset}, Total length: ${this.totalLength}`);
+        const maxPayloadSize = this.mcumgr.maxPayloadSize; // Max payload size from MCUManager
+        const samplesBlob = samplesParser_encode(image);
+        const totalLength = samplesBlob.byteLength;
+        let offset = 0;
+        
+        while (this.state === _STATE.UPLOADING && offset < totalLength) {
+            log.debug(`Current offset: ${offset}, Total length: ${totalLength}`);
 
             // Prepare the initial payload
             let payload: UploadRequest = {
-                off: this.offset,
+                off: offset,
                 data: new Uint8Array([]),
-                len: this.totalLength,
+                len: totalLength,
             };
-            let payloadEncoded = this._payloadEncode(payload);
+            let payloadEncoded = this._payloadUploadEncode(payload);
             log.debug(`Initial payload size (without data): ${payloadEncoded.byteLength} bytes`);
 
             // Calculate the maximum data size that fits within the MTU
@@ -114,24 +115,24 @@ export class SampleManager {
 
             if (maxDataSize <= 0) {
                 log.error('MTU too small to send data');
-                this._setState(_STATE_TRANSITION.UPLOAD_ERROR);
-                return;
+                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                return false;
             }
 
             // Get the data chunk to send
-            const dataEnd = Math.min(this.offset + maxDataSize, this.totalLength);
-            const dataChunk = new Uint8Array(this.samplesBlob!.slice(this.offset, dataEnd));
-            log.debug(`Data chunk length: ${dataChunk.byteLength} bytes (from offset ${this.offset} to ${dataEnd})`);
+            const dataEnd = Math.min(offset + maxDataSize, totalLength);
+            const dataChunk = new Uint8Array(samplesBlob!.slice(offset, dataEnd));
+            log.debug(`Data chunk length: ${dataChunk.byteLength} bytes (from offset ${offset} to ${dataEnd})`);
 
             // Re-encode the payload with the data included
             payload.data = dataChunk;
-            payloadEncoded = this._payloadEncode(payload);
+            payloadEncoded = this._payloadUploadEncode(payload);
             log.debug(`Payload size after adding data: ${payloadEncoded.byteLength} bytes`);
 
             if (payloadEncoded.byteLength > maxPayloadSize) {
                 log.warn(`Payload too large: ${payloadEncoded.byteLength} > ${maxPayloadSize}`);
-                this._setState(_STATE_TRANSITION.UPLOAD_ERROR);
-                return;
+                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                return false;
             }
 
             try {
@@ -142,36 +143,144 @@ export class SampleManager {
                 // Check for errors in response
                 if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
                     log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
-                    this._setState(_STATE_TRANSITION.UPLOAD_ERROR);
-                    break;
+                    this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                    return false;
                 }
 
                 const responseSuccess = response as UploadSuccessResponse;
                 log.debug(`Response success, new offset: ${responseSuccess.off}`);
 
                 // Update the offset
-                this.offset = responseSuccess.off;
+                offset = responseSuccess.off;
 
                 // Call progress callback if defined
-                const progress = Math.floor((this.offset / this.totalLength) * 100);
+                const progress = Math.floor((offset / totalLength) * 100);
                 log.debug(`Upload progress: ${progress}%`);
                 this.onUploadProgressCallback?.(progress);
 
                 // Check if upload is complete
-                if (this.offset >= this.totalLength) {
+                if (offset >= totalLength) {
                     log.debug('Upload complete');
-                    this._setState(_STATE_TRANSITION.UPLOAD_COMPLETE);
+                    this._setState(_STATE_TRANSITION.TRANSFER_COMPLETE);
                     break;
                 }
 
             } catch (error) {
                 log.error('Error during upload:', error);
-                this._setState(_STATE_TRANSITION.UPLOAD_ERROR);
-                break;
+                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                return false;
             }
         }
 
-        log.debug('Exiting upload loop');
+        log.debug('Successfully uploaded samples');
+        return true;
+    }
+
+    onDownloadProgress(fn: (percent: number) => void): this {
+        this.onDownloadProgressCallback = fn;
+        return this;
+    }
+
+    onDownloadComplete(fn: (success: boolean) => void): this {
+        this.onDownloadCompleteCallback = fn;
+        return this;
+    }
+
+    onDownloadStarted(fn: () => void): this {
+        this.onDownloadStartedCallback = fn;
+        return this;
+    }
+
+    async downloadSamples(): Promise<Samples> {
+        log.debug('Starting sample download process');
+        if (this.state !== _STATE.IDLE) {
+            log.error('Cant start download when not in idle state');
+            // return error
+            return Promise.reject('Cant start download when not in idle state');
+        }
+
+        this._setState(_STATE_TRANSITION.START_DOWNLOAD);
+
+        let data_raw = new Uint8Array([]);
+        let offset = 0;
+        let total_length: number = 0;
+
+        // get first chunk with length
+        let payload: DownloadRequest = {off: offset};
+        let payloadEncoded = this._payloadDownloadEncode(payload);
+
+        try {
+            const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as DownloadResponse;
+            if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
+                log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
+                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                return Promise.reject('Error response received');
+            }
+
+            const responseSuccess = response as DownloadResponseSuccess;
+            log.debug(`Received first chunk, offset: ${responseSuccess.off}, data length: ${responseSuccess.data.byteLength}`);
+            if (responseSuccess.len === undefined) {
+                log.error('Length not received in first chunk');
+                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                return Promise.reject('Length not received in first chunk');
+            }
+            if (responseSuccess.off !== offset) {
+                log.error('Invalid offset received in first chunk');
+                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                return Promise.reject('Invalid offset received in first chunk');
+            }
+            data_raw = responseSuccess.data;
+            offset = responseSuccess.off + responseSuccess.data.byteLength;
+            total_length = responseSuccess.len as number;
+
+            // Call progress callback if defined
+            this.onDownloadProgressCallback?.(Math.floor((offset / total_length) * 100));
+        } catch (error) {
+            log.error('Error during download:', error);
+            this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+            return Promise.reject('Error during download');
+        }
+
+        while (offset < total_length) {
+            log.debug(`Current offset: ${offset}, Total length: ${total_length}`);
+
+            // Prepare the payload
+            payload = {off: offset};
+            payloadEncoded = this._payloadDownloadEncode(payload);
+
+            try {
+                const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as DownloadResponse;
+                if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
+                    log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
+                    this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                    return Promise.reject('Error response received');
+                }
+
+                const responseSuccess = response as DownloadResponseSuccess;
+                log.debug(`Received chunk, offset: ${responseSuccess.off}, data length: ${responseSuccess.data.byteLength}`);
+                data_raw = new Uint8Array([...data_raw, ...responseSuccess.data]);
+                offset = responseSuccess.off + responseSuccess.data.byteLength;
+
+                // Call progress callback if defined
+                this.onDownloadProgressCallback?.(Math.floor((offset / total_length) * 100));
+
+                // Check if download is complete
+                if (offset >= total_length) {
+                    log.debug('Download complete');
+                    this._setState(_STATE_TRANSITION.TRANSFER_COMPLETE);
+                    break;
+                }
+
+            } catch (error) {
+                log.error('Error during download:', error);
+                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                return Promise.reject('Error during download');
+            }
+        }
+
+        log.debug('Successfully downloaded samples');
+
+        return Promise.resolve(samplesParser_decode(data_raw));
     }
 
     private _setState(stateTransition: _STATE_TRANSITION): void {
@@ -185,22 +294,35 @@ export class SampleManager {
                 this.onUploadStartedCallback?.();
                 break;
 
-            case _STATE_TRANSITION.UPLOAD_COMPLETE:
-                if (this.state !== _STATE.UPLOADING) {
-                    log.error('Upload not in progress');
-                    return;
+                case _STATE_TRANSITION.START_DOWNLOAD:
+                    if (this.state === _STATE.DOWNLOADING) {
+                        log.error('Download already in progress');
+                        return;
+                    }
+                    this.state = _STATE.DOWNLOADING;
+                    this.onDownloadStartedCallback?.();
+                    break;
+
+            case _STATE_TRANSITION.TRANSFER_COMPLETE:
+                if (this.state === _STATE.UPLOADING) {
+                    this.onUploadCompleteCallback?.(true);
+                } else if (this.state === _STATE.DOWNLOADING) {
+                    this.onDownloadCompleteCallback?.(true);
+                } else {
+                    log.error('Transfer complete but not in upload or download state');
                 }
                 this.state = _STATE.IDLE;
-                this.onUploadCompleteCallback?.(true);
                 break;
 
-            case _STATE_TRANSITION.UPLOAD_ERROR:
-                if (this.state !== _STATE.UPLOADING) {
-                    log.error('Upload not in progress');
-                    return;
+            case _STATE_TRANSITION.TRANSFER_ERROR:
+                if (this.state === _STATE.UPLOADING) {
+                    this.onUploadCompleteCallback?.(false);
+                } else if (this.state === _STATE.DOWNLOADING) {
+                    this.onDownloadCompleteCallback?.(false);
+                } else {
+                    log.error('Transfer error but not in upload or download state');
                 }
                 this.state = _STATE.IDLE;
-                this.onUploadCompleteCallback?.(false);
                 break;
 
             default:
@@ -209,22 +331,29 @@ export class SampleManager {
         }
     }
 
-    private _payloadEncode(payload: UploadRequest): Uint8Array {
+    private _payloadUploadEncode(payload: UploadRequest): Uint8Array {
         log.debug(`Encoding payload: len=${payload.len}, off=${payload.off}, data=${payload.data.byteLength} bytes`);
-
         // format: <len: uint32><off: uint32><data: uint8[]>
         const len0 = payload.len & 0xFF;
         const len1 = (payload.len >> 8) & 0xFF;
         const len2 = (payload.len >> 16) & 0xFF;
         const len3 = (payload.len >> 24) & 0xFF;
-
         const off0 = payload.off & 0xFF;
         const off1 = (payload.off >> 8) & 0xFF;
         const off2 = (payload.off >> 16) & 0xFF;
         const off3 = (payload.off >> 24) & 0xFF;
-
         const encoded = new Uint8Array([len0, len1, len2, len3, off0, off1, off2, off3, ...payload.data]);
+        return encoded;
+    }
 
+    private _payloadDownloadEncode(payload: DownloadRequest): Uint8Array {
+        log.debug(`Encoding payload: off=${payload.off}`);
+        // format: <off: uint32>
+        const off0 = payload.off & 0xFF;
+        const off1 = (payload.off >> 8) & 0xFF;
+        const off2 = (payload.off >> 16) & 0xFF;
+        const off3 = (payload.off >> 24) & 0xFF;
+        const encoded = new Uint8Array([off0, off1, off2, off3]);
         return encoded;
     }
 }
