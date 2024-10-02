@@ -6,7 +6,8 @@ let log = new Log('smpl_mgr', Log.LEVEL_DEBUG);
 
 // Enums for better type safety
 enum _MGMT_ID {
-    UPLOAD = 0,
+    ID = 0,
+    UPLOAD = 1,
 }
 
 enum _STATE_TRANSITION {
@@ -22,29 +23,29 @@ enum _STATE {
     DOWNLOADING,
 }
 
+interface IDResponse {
+    id: number;
+}
+
 interface UploadRequest {
     len: number; // optional length of an image, must appear when "off" is 0
     off: number; // offset of image chunk the request carries
     data: Uint8Array; // image data to write at provided offset
 }
 
-interface UploadSuccessResponse {
+interface UploadResponse {
     off: number; // Offset of last successfully written byte of update
 }
-
-type UploadResponse = UploadSuccessResponse | ResponseError;
 
 interface DownloadRequest {
     off: number;
 }
 
-interface DownloadResponseSuccess {
+interface DownloadResponse {
     len?: number;
     off: number;
     data: Uint8Array;
 }
-
-type DownloadResponse = DownloadResponseSuccess | ResponseError;
 
 export class SampleManager {
     private readonly GROUP_ID = 100;
@@ -79,6 +80,18 @@ export class SampleManager {
     onUploadStarted(fn: () => void): this {
         this.onUploadStartedCallback = fn;
         return this;
+    }
+
+    async getId(): Promise<number> {
+        log.debug('Getting sample ID');
+        const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.ID) as IDResponse | ResponseError;
+        if ((response as ResponseError).rc === undefined || (response as ResponseError).rc !== MGMT_ERR.EOK) {
+            log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
+            return Promise.reject('Error response received');
+        }
+        const responseSuccess = response as IDResponse;
+        log.debug(`Received sample ID: ${responseSuccess.id}`);
+        return responseSuccess.id;
     }
 
     // Start the image upload process
@@ -137,7 +150,7 @@ export class SampleManager {
 
             try {
                 log.debug('Sending payload to mcumgr');
-                const response = await this.mcumgr.sendMessage(MGMT_OP.WRITE, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as UploadResponse;
+                const response = await this.mcumgr.sendMessage(MGMT_OP.WRITE, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as UploadResponse | ResponseError;
                 log.debug('Received response from mcumgr');
 
                 // Check for errors in response
@@ -147,7 +160,7 @@ export class SampleManager {
                     return false;
                 }
 
-                const responseSuccess = response as UploadSuccessResponse;
+                const responseSuccess = response as UploadResponse;
                 log.debug(`Response success, new offset: ${responseSuccess.off}`);
 
                 // Update the offset
@@ -210,14 +223,14 @@ export class SampleManager {
         let payloadEncoded = this._payloadDownloadEncode(payload);
 
         try {
-            const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as DownloadResponse;
+            const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as DownloadResponse | ResponseError;
             if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
                 log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
                 this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
                 return Promise.reject('Error response received');
             }
 
-            const responseSuccess = response as DownloadResponseSuccess;
+            const responseSuccess = response as DownloadResponse;
             log.debug(`Received first chunk, offset: ${responseSuccess.off}, data length: ${responseSuccess.data.byteLength}`);
             if (responseSuccess.len === undefined) {
                 log.error('Length not received in first chunk');
@@ -249,14 +262,14 @@ export class SampleManager {
             payloadEncoded = this._payloadDownloadEncode(payload);
 
             try {
-                const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as DownloadResponse;
+                const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as DownloadResponse | ResponseError;
                 if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
                     log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
                     this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
                     return Promise.reject('Error response received');
                 }
 
-                const responseSuccess = response as DownloadResponseSuccess;
+                const responseSuccess = response as DownloadResponse;
                 log.debug(`Received chunk, offset: ${responseSuccess.off}, data length: ${responseSuccess.data.byteLength}`);
                 data_raw = new Uint8Array([...data_raw, ...responseSuccess.data]);
                 offset = responseSuccess.off + responseSuccess.data.byteLength;
