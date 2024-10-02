@@ -8,14 +8,21 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
-    "deploy": "npm run build && gh-pages -d dist -t true"
+    "deploy": "npm run build && gh-pages -d dist -t true",
+    "test": "vitest"
   },
   "dependencies": {
+    "@astrojs/lit": "^4.3.0",
     "@astrojs/mdx": "^3.1.5",
     "@types/web-bluetooth": "^0.0.20",
-    "astro": "^4.15.3"
+    "@webcomponents/template-shadowroot": "^0.2.1",
+    "astro": "^4.15.3",
+    "lit": "^3.2.0"
   },
   "devDependencies": {
-    "gh-pages": "^6.1.1"
+    "gh-pages": "^6.1.1",
+    "jsdom": "^25.0.1",
+    "vite-tsconfig-paths": "^5.0.1",
+    "vitest": "^2.1.1"
   }
 }

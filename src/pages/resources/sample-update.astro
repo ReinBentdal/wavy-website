@@ -101,7 +101,7 @@ p {
 import {MCUManager} from '~/js/mcumgr/mcumgr.js';
 import { SampleManager } from '~/js/mcumgr/SampleManager';
 import {BasicManager} from '~/js/mcumgr/BasicManager';
-import { Samples, CONFIG_KEYBED_SIZE } from '~/js/parsers/samples_parser';
+import { generateDummySamples } from '~/js/parsers/samples_parser';
 import {Screens} from '~/js/screens.js';
 import { Log, canonicalize } from '~/js/utilities';
 import { samplesParser_encode, samplesParser_decode } from '~/js/parsers/samples_parser';
@@ -221,55 +221,5 @@ samplesLogButton.addEventListener('click', async () => {
 	let equal = JSON.stringify(canonicalize(dummySamples)) == JSON.stringify(canonicalize(decodedSamples))
 	log.info(`Are the samples equal? ${equal}`);
 });
-
-function generateDummySamples(): Samples {
-    // Define note events
-    const kick_on = { note: 36, velocity: 100, state: 1 }; // Kick drum
-    const kick_off = { note: 36, velocity: 100, state: 0 }; // Kick drum
-    const snare_on = { note: 38, velocity: 100, state: 1 }; // Snare drum
-    const snare_off = { note: 38, velocity: 100, state: 0 }; // Snare drum
-    const highhat_on = { note: 42, velocity: 100, state: 1 }; // High hat
-    const highhat_off = { note: 42, velocity: 100, state: 0 }; // High hat
-
-    // Define a loop (drumLoop)
-    const loop0 = {
-        0: [kick_on, highhat_on],
-        6: [kick_off, highhat_off],
-        12: [highhat_on],
-        18: [highhat_off],
-        24: [kick_on, snare_on, highhat_on],
-        30: [kick_off, snare_off, highhat_off],
-        36: [highhat_on],
-        42: [highhat_off],
-    };
-
-    const loop1 = {
-        0: [kick_on],
-        12: [snare_on],
-        24: [kick_off, snare_off],
-    };
-
-    // Define the first page with loops
-    const page0 = [];
-    for (let i = 0; i < CONFIG_KEYBED_SIZE; i++) {
-        page0.push(null); // No loop assigned to this preset
-    }
-    page0[0] = loop0;
-    page0[1] = loop1;
-    page0[2] = loop1;
-
-    // Define the remaining pages as empty (no loops)
-    const pages = [];
-    pages.push(page0); // Add the first page with loops
-    for (let i = 1; i < 10; i++) {
-    // Total of 10 pages
-    const emptyPage = [];
-    for (let j = 0; j < CONFIG_KEYBED_SIZE; j++) {
-        emptyPage.push(null); // No loops in this page
-    }
-    pages.push(emptyPage);
-    }
-    return pages;
-}
 
 </script>

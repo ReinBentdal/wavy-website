@@ -2,6 +2,8 @@ import { defineConfig } from 'astro/config';
 
 import mdx from '@astrojs/mdx';
 
+import lit from '@astrojs/lit';
+
 // https://astro.build/config
 export default defineConfig({
   build: {
@@ -16,5 +18,5 @@ export default defineConfig({
       }
     }
   },
-  integrations: [mdx()]
+  integrations: [mdx(), lit()]
 });

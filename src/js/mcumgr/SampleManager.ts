@@ -1,6 +1,6 @@
 import { MCUManager, MGMT_OP, MGMT_ERR, ResponseError } from './mcumgr';
 import { Log } from '../utilities'; // Assuming you have an imageHash function
-import { samplesParser_encode, Samples, samplesParser_decode } from '../parsers/samples_parser';
+import { samplesParser_encode, SamplePack, samplesParser_decode } from '../parsers/samples_parser';
 
 let log = new Log('smpl_mgr', Log.LEVEL_DEBUG);
 
@@ -82,7 +82,7 @@ export class SampleManager {
     }
 
     // Start the image upload process
-    async uploadSamples(image: Samples): Promise<boolean> {
+    async uploadSamples(image: SamplePack): Promise<boolean> {
         log.debug('Starting sample upload process');
         if (this.state !== _STATE.IDLE) {
             log.error('Cant start upload when not in idle state');
@@ -191,7 +191,7 @@ export class SampleManager {
         return this;
     }
 
-    async downloadSamples(): Promise<Samples> {
+    async downloadSamples(): Promise<SamplePack> {
         log.debug('Starting sample download process');
         if (this.state !== _STATE.IDLE) {
             log.error('Cant start download when not in idle state');

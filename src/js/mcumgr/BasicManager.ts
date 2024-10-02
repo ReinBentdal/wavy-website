@@ -22,4 +22,3 @@ export class BasicManager {
         return;
     }
 }
-
