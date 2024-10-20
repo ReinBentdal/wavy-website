@@ -10,6 +10,7 @@ export const routes = {
     'midiConnect': '/MIDI-connect',
     'guides': '/resources/guides',
     'deviceUpdate': '/resources/device-update',
+    'faq': '/resources/faq',
     'wavyDiscord': 'https://discord.gg/4HQHERUW5K',
     'newsletter': 'http://eepurl.com/ivXTOk',
     'midiConnectAppStore': 'https://apps.apple.com/no/app/midi-toolbar/id6476070288?mt=12',

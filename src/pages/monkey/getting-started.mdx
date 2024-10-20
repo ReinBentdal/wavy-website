@@ -2,9 +2,10 @@
 layout: ~/layouts/MarkdownArticleLayout.astro
 ---
 
-import Accordion from '../../components/Accordion.astro';
-import LinkButton from '../../components/LinkButton.astro';
-import {routes} from '../../routes.js';
+import Accordion from '~/components/Accordion.astro';
+import LinkButton from '~/components/LinkButton.astro';
+import NoteInfo from '~/components/NoteInfo.astro';
+import {routes} from '~/routes';
 
 import monkeyOverviewImg from '~/assets/resources/monkey_manual/monkey_2d_overview.svg';
 import midiConnectImg from '~/assets/resources/mac-connect/midi_connect.png';
@@ -33,15 +34,17 @@ import flStudioCh10SelectImg from '~/assets/resources/fl-studio/4-ch10_select.pn
 
 Before starting, insert a CR2032 battery into Monkey. The LEDs in the light house as well as the LEDs in the eyes of the monkey will briefly blink indicating it has booted successfully.
 
+<NoteInfo>Make sure there is no protection film on the battery</NoteInfo>
+
 ## Device updates
 
-Please make sure your device is up to date before continuing. This is easily done on this website.
+Please make sure your device is up to date before continuing. The device is updated directly though the browser:
 
-<a href={routes.deviceUpdate}>Go to device update page</a>
+<LinkButton href={routes.deviceUpdate} target="_blank">Go to device update page</LinkButton>
 
-## Connecting up
+## Connecting
 
-MONKEY supports a variety of hosts and works just great together with many types of devices. The connection process varies with the device you choose to use MONKEY with. For new users, we recommend starting with a mobile device. On mobile devices, it's typical for the music making apps to handle connections. This is contrary to desktop operating systems such as Windows and macOS, where you typically handle the connection through the OS.
+MONKEY supports a variety of hosts and works just great in many types of setups. The connection process varies with the device you choose to use MONKEY with. For new users, we recommend starting with a mobile device. On mobile devices, it's typical for the music creation apps to handle connections. This is contrary to desktop operating systems such as Windows and macOS, where you typically handle the connection through the OS.
 
 ### Connecting to mobile apps
 
@@ -119,6 +122,8 @@ There is a bunch of fun apps to try out. We recommend checking out *N-Track Stud
   Now you are done! Test it by pressing random keys on Monkey and check if the notes are received in the _INPUT MONITOR_ of MIDIBerry.
 
   <img alt="MIDIBerry input" src={windowsConnect5Img.src} />
+
+  Be aware that you need to keep MIDIBerry open to keep the connection. You might also experience having connected everything correctly but still not receiving any notes. In this case, try to disconnect from Monkey in Windows settings and reconnect, and making sure it's set up as descibed above.
 </Accordion>
 
 ### Configure desktop DAW
@@ -153,6 +158,8 @@ We provide guides for some DAWs though MONKEY should work with most of them. The
   <img alt="FL Studio configure channel" src={flStudioCh1SelectImg.src} />
   <img alt="FL Studio configure channel" src={flStudioCh10SelectImg.src} />
 </Accordion>
+
+<a>Feel like </a>
 
 <br/>
 <br/>

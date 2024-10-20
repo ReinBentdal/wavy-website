@@ -1,6 +1,9 @@
-# 1.1.0 Custom drums
+# 1.2.0 Custom drums -dev
 - Feature: Using the online uploader, it is now possible to upload new drum loops and fills
 - Improvement: Better management of connection parameters
+
+# 1.1.0 Touch Modulation -dev
+- MIDI CC Modulation throught the touch surface underneath in monkey playing the piano
 
 # 1.0.0
 - Support for new hardware

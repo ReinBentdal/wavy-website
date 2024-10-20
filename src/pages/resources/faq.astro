@@ -3,17 +3,13 @@ import '~/styles/global.css';
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/layouts/Header.astro';
 import Footer from '~/layouts/Footer.astro';
-import LinkButton from '~/components/LinkButton.astro';
-import { routes } from '~/routes';
 ---
 
 <Layout title="Wavy Industries">
 	<main>
 		<Header />
 		<section>
-			<h1>Guides</h1>
-            <LinkButton href={routes.monkeyGettingStarted} type="default" >MONKEY getting started</LinkButton><br/><br/>
-            <LinkButton href={routes.monkeyManual} type="default" >MONKEY manual</LinkButton><br /><br />
+			<h1>Frequently asked questions</h1>
 		</section>
 		<Footer />
 	</main>
