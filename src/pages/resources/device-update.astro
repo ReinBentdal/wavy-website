@@ -7,18 +7,23 @@ import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
 
 import Scene from '~/lit/scene';
 import View from '~/lit/view';
+
+import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png';
 ---
 
 <Layout title="Wavy Industries: device update">
 	<main>
 		<Header />
-		<section>
+		<section style="flex-grow: 2; display: flex; flex-direction: column; align-items: center;">
 			<Scene id="scene-main">
 
 				<View name="disconnected" active>
-					<div>
-						<h1>Device updater</h1>
-						<span class="catch-phrase">Bluetooth device updater directly in the browser</span><br/><br/>
+					<div id="connect-content">
+						<img src={MonkeyProgramImg.src} alt="Monkey programmer" id="programmer-monkey" />
+						<div style="display:flex; align-items: center; flex-direction: column;">
+							<h1>device tools</h1>
+							<span class="tagline">update and configure your device directly in the browser!</span>
+						</div>
 						<Scene id="scene-bluetooth">
 							<View name="checking" active></View>
 							<View name="unavailable">
@@ -34,10 +39,8 @@ import View from '~/lit/view';
 							</div>
 							</View>
 							<View name="available">
-							<div>
-								<span>Note: Make sure your Wavy device isn't already connected to this or another device. If it is, this app won’t be able to find it.</span><br/><br/>
-								<button id="button-connect" type="submit" class="btn btn-primary"><i class="bi-bluetooth"></i>Find device via Bluetooth</button>
-							</div>
+							<!-- <span>Note: Make sure your Wavy device isn't already connected to this or another device. If it is, this app won’t be able to find it.</span><br/><br/> -->
+							<button id="button-connect" type="submit" class="btn btn-primary"><i class="bi-bluetooth"></i>Connect</button>
 							</View>
 						</Scene>
 					</div>
@@ -99,12 +102,48 @@ section {
 	width: 100%;
 	padding: 0 20px;
 }
+h1 {
+	font-size: 48px;
+	margin-block-start: 0;
+    margin-block-end: 0;
+}
+button {
+	border: 1px solid #857852;
+	background-color: #EAE7DE;
+	border-radius: 3px;
+	padding: 8px 20px;
+	font-size: 16px;
+	cursor: pointer;
+}
+button:hover {
+	background-color: #dedacd;
+}
+.button-small {
+	padding: 0px 10px;
+	
+}
+.tagline {
+	font-size: 18px;
+	color: #5E5E5E;
+}
 
-.catch-phrase {
-	font-size: 20px;
-	font-weight: 300;
-	margin-block-start: 0em;
-	margin-block-end: 0em;
+#scene-main {
+	display: block;
+	flex-grow: 2;
+}
+
+#connect-content {
+	margin: 100px auto;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 15px;
+}
+
+#programmer-monkey {
+	image-rendering: pixelated;
+	max-width: 250px; 
+	width: 100%;
 }
 
 #device-connection-status {
@@ -175,8 +214,14 @@ const uploadStatus = document.getElementById('upload-status') as HTMLButtonEleme
 const changelog = document.getElementById('changelog');
 /* elements end */ 
 
+mcumgr.onDeviceSelection = () => {
+	connectButton.disabled = true;
+}
+mcumgr.onDeviceSelectionCancel = () => {
+	connectButton.disabled = false;
+}
+
 mcumgr.onConnecting = () => {
-	console.log('Connecting...');
 	connectButton.disabled = true;
 	connectButton.innerText = 'Connecting...';
 }

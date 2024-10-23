@@ -57,6 +57,7 @@ interface ResponseResolver {
 
 type ConnectionState =
   | { type: 'disconnected' }
+  | { type: 'selectingDevice' }
   | { type: 'connecting' }
   | { type: 'connected' }
   | { type: 'disconnecting' }
@@ -81,6 +82,9 @@ type ConnectionState =
     public onConnectionLoss: (() => void) | null = null;
     public onConnectionReestablished: (() => void) | null = null;
 
+    public onDeviceSelection: (() => void) | null = null;
+    public onDeviceSelectionCancel: (() => void) | null = null;
+
     private readonly SMP_SERVICE_UUID: string = '8d53dc1d-1db7-4cd3-868b-8a527460aa84';
     private readonly SMP_CHARACTERISTIC_UUID: string = 'da2e7828-fbce-4e01-ae9e-261174997c48';
     private readonly SMP_HEADER_SIZE: number = 8;
@@ -93,10 +97,6 @@ type ConnectionState =
     private readonly SMP_HEADER_SEQ_IDX: number = 6;
     private readonly SMP_HEADER_ID_IDX: number = 7;
 
-    constructor() {
-        // Initialization is handled above
-    }
-
     private async requestDevice(filters?: BluetoothLEScanFilter[]): Promise<BluetoothDevice> {
         const params = {
             optionalServices: [this.SMP_SERVICE_UUID]
@@ -105,8 +105,12 @@ type ConnectionState =
         if (filters) {
             (params as { filters: BluetoothLEScanFilter[] }).filters = filters;
         } else {
-            (params as { acceptAllDevices: boolean }).acceptAllDevices = false;
+            (params as { acceptAllDevices: boolean }).acceptAllDevices = true;
         }
+
+        // Invoke the device selection start callback
+        this.onDeviceSelection?.();
+
         return navigator.bluetooth.requestDevice(params);
     }
 
@@ -116,19 +120,29 @@ type ConnectionState =
             return;
         }
 
-        this.state = { type: 'connecting' };
-        this.onConnecting?.();
+        this.state = { type: 'selectingDevice' };
 
         try {
             this.device = await this.requestDevice(filters);
+            // Device selected, move to connecting
+            this.state = { type: 'connecting' };
+            this.onConnecting?.();
+
             console.debug(`Connecting to device ${this.device.name}...`);
 
             this.device.addEventListener('gattserverdisconnected', this.handleDisconnection.bind(this));
 
             await this.connectDevice();
         } catch (error) {
-            console.error('Connection error:', error);
-            await this.handleDisconnected();
+            if (error.name === 'NotFoundError') {
+                // User canceled the device selection
+                console.debug('Device selection canceled.');
+                this.state = { type: 'disconnected' };
+                this.onDeviceSelectionCancel?.();
+            } else {
+                console.error('Connection error:', error);
+                await this.handleDisconnected();
+            }
         }
     }
 
@@ -149,12 +163,13 @@ type ConnectionState =
             this.characteristic.addEventListener('characteristicvaluechanged', this.notification.bind(this));
             await this.characteristic.startNotifications();
 
-            if (this.state.type === 'connecting') {
+            if (this.state.type === 'connecting' || this.state.type === 'connectionLoss') {
+                if (this.state.type === 'connecting') {
+                    this.onConnect?.();
+                } else {
+                    this.onConnectionReestablished?.();
+                }
                 this.state = { type: 'connected' };
-                this.onConnect?.();
-            } else if (this.state.type === 'connectionLoss') {
-                this.state = { type: 'connected' };
-                this.onConnectionReestablished?.();
             }
         } catch (error) {
             console.error('Error during connection:', error);
