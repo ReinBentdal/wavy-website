@@ -55,7 +55,14 @@ interface ResponseResolver {
     reject: (error: any) => void;
 }
 
-export class MCUManager {
+type ConnectionState =
+  | { type: 'disconnected' }
+  | { type: 'connecting' }
+  | { type: 'connected' }
+  | { type: 'disconnecting' }
+  | { type: 'connectionLoss' };
+
+  export class MCUManager {
     private device: BluetoothDevice | null = null;
     private service: BluetoothRemoteGATTService | null = null;
     private characteristic: BluetoothRemoteGATTCharacteristic | null = null;
@@ -63,11 +70,16 @@ export class MCUManager {
     private buffer: Uint8Array = new Uint8Array([]);
     private smpSequenceNumber: number = 0;
     private responseResolvers: { [sequenceNumber: number]: ResponseResolver } = {};
-    private userRequestedDisconnect: boolean = false;
-    private connectCallback: (() => void) | null = null;
-    private disconnectCallback: (() => void) | null = null;
-    private connectingCallback: (() => void) | null = null;
-    private connectionLossCallback: (() => void) | null = null;
+
+    // Connection state management
+    private state: ConnectionState = { type: 'disconnected' };
+
+    // Event callbacks
+    public onConnect: (() => void) | null = null;
+    public onDisconnect: (() => void) | null = null;
+    public onConnecting: (() => void) | null = null;
+    public onConnectionLoss: (() => void) | null = null;
+    public onConnectionReestablished: (() => void) | null = null;
 
     private readonly SMP_SERVICE_UUID: string = '8d53dc1d-1db7-4cd3-868b-8a527460aa84';
     private readonly SMP_CHARACTERISTIC_UUID: string = 'da2e7828-fbce-4e01-ae9e-261174997c48';
@@ -89,7 +101,7 @@ export class MCUManager {
         const params = {
             optionalServices: [this.SMP_SERVICE_UUID]
         } as RequestDeviceOptions;
-        
+
         if (filters) {
             (params as { filters: BluetoothLEScanFilter[] }).filters = filters;
         } else {
@@ -99,86 +111,105 @@ export class MCUManager {
     }
 
     public async connect(filters?: BluetoothLEScanFilter[]): Promise<void> {
+        if (this.state.type !== 'disconnected') {
+            console.warn('Already connecting or connected.');
+            return;
+        }
+
+        this.state = { type: 'connecting' };
+        this.onConnecting?.();
+
         try {
             this.device = await this.requestDevice(filters);
-            log.debug(`Connecting to device ${this.name}...`);
-            this.device.addEventListener('gattserverdisconnected', async () => {
-                log.debug('Device disconnected');
-                if (!this.userRequestedDisconnect) {
-                    log.debug('Trying to reconnect');
-                    await new Promise(resolve => setTimeout(resolve, 1000));
-                    if (this.connectionLossCallback) this.connectionLossCallback();
-                    await this.connectDevice();
-                } else {
-                    await this.disconnected();
-                }
-            });
+            console.debug(`Connecting to device ${this.device.name}...`);
+
+            this.device.addEventListener('gattserverdisconnected', this.handleDisconnection.bind(this));
+
             await this.connectDevice();
         } catch (error) {
-            log.error('Connection error:', error);
-            await this.disconnected();
+            console.error('Connection error:', error);
+            await this.handleDisconnected();
         }
     }
 
     private async connectDevice(): Promise<void> {
         if (!this.device) {
-            log.error('No device to connect to');
+            console.error('No device to connect to');
             return;
         }
+
         try {
-            if (this.connectingCallback) this.connectingCallback();
             const server = await this.device.gatt!.connect();
-            log.debug('Server connected. Awaiting SMP service...');
+            console.debug('Server connected. Awaiting SMP service...');
+
             this.service = await server.getPrimaryService(this.SMP_SERVICE_UUID);
-            log.debug('Service connected.');
+            console.debug('Service connected.');
+
             this.characteristic = await this.service.getCharacteristic(this.SMP_CHARACTERISTIC_UUID);
             this.characteristic.addEventListener('characteristicvaluechanged', this.notification.bind(this));
             await this.characteristic.startNotifications();
-            await this.connected();
+
+            if (this.state.type === 'connecting') {
+                this.state = { type: 'connected' };
+                this.onConnect?.();
+            } else if (this.state.type === 'connectionLoss') {
+                this.state = { type: 'connected' };
+                this.onConnectionReestablished?.();
+            }
         } catch (error) {
-            log.error('Error during connection:', error);
-            await this.disconnected();
+            console.error('Error during connection:', error);
+            await this.handleDisconnected();
         }
     }
 
     public disconnect(): void {
-        this.userRequestedDisconnect = true;
+        if (this.state.type !== 'connected') {
+            console.warn('Cannot disconnect because not connected.');
+            return;
+        }
+
+        this.state = { type: 'disconnecting' };
+
         if (this.device && this.device.gatt) {
             this.device.gatt.disconnect();
         }
     }
 
-    public onConnecting(callback: () => void): this {
-        this.connectingCallback = callback;
-        return this;
+    private async handleDisconnection(): Promise<void> {
+        console.debug('Device disconnected');
+
+        if (this.state.type === 'connected') {
+            // Connection was lost unexpectedly
+            this.state = { type: 'connectionLoss' };
+            this.onConnectionLoss?.();
+
+            // Attempt to reconnect
+            await this.reconnect();
+        } else if (this.state.type === 'disconnecting') {
+            // User requested disconnect
+            await this.handleDisconnected();
+        }
     }
 
-    public onConnect(callback: () => void): this {
-        this.connectCallback = callback;
-        return this;
+    private async reconnect(): Promise<void> {
+        try {
+            // Wait a moment before attempting to reconnect
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await this.connectDevice();
+        } catch (error) {
+            console.error('Reconnection error:', error);
+            // Optionally retry or notify the user
+        }
     }
 
-    public onDisconnect(callback: () => void): this {
-        this.disconnectCallback = callback;
-        return this;
-    }
+    private async handleDisconnected(): Promise<void> {
+        this.state = { type: 'disconnected' };
+        this.onDisconnect?.();
 
-    public onConnectionLoss(callback: () => void): this {
-        this.connectionLossCallback = callback;
-        return this;
-    }
-
-    private async connected(): Promise<void> {
-        if (this.connectCallback) this.connectCallback();
-    }
-
-    private async disconnected(): Promise<void> {
-        log.debug('Disconnected.');
-        if (this.disconnectCallback) this.disconnectCallback();
+        // Clean up resources
         this.device = null;
         this.service = null;
         this.characteristic = null;
-        this.userRequestedDisconnect = false;
     }
 
     public get name(): string | undefined {

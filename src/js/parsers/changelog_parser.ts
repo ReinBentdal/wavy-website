@@ -33,7 +33,9 @@ export function parseChangelog(markdown: string): Changelog {
 
         if (line.startsWith('#')) {
             // Updated regex to capture the highlight after the version number
-            const versionMatch = line.match(/# (\d+)\.(\d+)\.(\d+)(?:(?: -(obsolete|dev))?(?: -(obsolete|dev))?)?(?: (.*))?/);
+            const versionMatch = line.match(
+                /# (\d+)\.(\d+)\.(\d+)\s*(.*?)\s*((?:-\w+\s*)*)$/
+            );
 
             if (versionMatch) {
                 const changeVersion: ImageFirmwareVersion = {
@@ -43,13 +45,16 @@ export function parseChangelog(markdown: string): Changelog {
                     revision: parseInt(versionMatch[3], 10),
                 };
 
-                // Determine whether the -obsolete or -dev flags are present
-                const tag1 = versionMatch[4];  // First tag (either obsolete or dev)
-                const tag2 = versionMatch[5];  // Second tag (either obsolete or dev)
-
+                const description = versionMatch[4].trim(); // unused
+                const flagsString = versionMatch[5];
+                const flags = flagsString
+                    .trim()
+                    .split(/\s+/)
+                    .filter(Boolean); // Remove empty strings
+                
                 // Set the flags for obsolete and dev
-                const isObsolete = (tag1 === 'obsolete' || tag2 === 'obsolete') ? true : false;
-                const isDev = (tag1 === 'dev' || tag2 === 'dev') ? true : false;
+                const isObsolete = flags.includes('-obsolete');
+                const isDev = flags.includes('-dev');
 
                 // Capture the highlight string, if present
                 const highlight = versionMatch[6] ? versionMatch[6].trim() : null;

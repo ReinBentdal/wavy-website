@@ -95,38 +95,17 @@ class ImageManager {
     private totalLength: number = 0;
     private hash: Uint8Array | null = null;
 
-    private onImageUploadProgressCallback: ((percent: number) => void) | null = null;
-    private onImageUploadCompleteCallback: ((success: boolean) => void) | null = null;
-    private onImageUploadStartedCallback: (() => void) | null = null;
-
     constructor(mcumgr: MCUManager) {
         this.mcumgr = mcumgr;
     }
 
-    // Callback for upload progress
-    onImageUploadProgress(fn: (percent: number) => void): this {
-        this.onImageUploadProgressCallback = fn;
-        return this;
-    }
-
-    // Callback for upload completion
-    onImageUploadComplete(fn: (success: boolean) => void): this {
-        this.onImageUploadCompleteCallback = fn;
-        return this;
-    }
-
-    // Callback for upload start
-    onImageUploadStarted(fn: () => void): this {
-        this.onImageUploadStartedCallback = fn;
-        return this;
-    }
-
     // Start the image upload process
-    async uploadImage(image: ArrayBuffer): Promise<void> {
+    async uploadImage(image: ArrayBuffer, uploadProgressUpdate?: (percent: Number) => void): Promise<boolean> {
         if (this.state === IMG_STATE.UPLOADING) {
             log.error('Upload already in progress');
             return;
         }
+        this.state = IMG_STATE.UPLOADING;
 
         this.image = image;
         this.offset = 0;
@@ -137,13 +116,78 @@ class ImageManager {
             this.hash = new Uint8Array(await imageHash(image));
 
             // Start uploading chunks
-            await this._uploadLoop();
+            const maxPayloadSize = this.mcumgr.maxPayloadSize; // Max payload size from MCUManager
+        
+            while (this.offset < this.totalLength) {
+                // Prepare the payload
+                let payload: ImageUploadRequest = {
+                    off: this.offset,
+                    data: new Uint8Array([]),
+                };
+        
+                if (this.offset === 0) {
+                    log.debug('Starting image upload');
+                    // First chunk includes length and hash
+                    payload.len = this.totalLength;
+                    payload.sha = this.hash;
+                }
+        
+                // Encode the initial payload to determine its length
+                let encodedPayload = CBOR.encode(payload);
+                const initialPayloadLength = encodedPayload.byteLength;
+                
+                log.debug(`maxPayloadSize: ${maxPayloadSize}, initialPayloadLength: ${initialPayloadLength}`);
+        
+                // Calculate the maximum data size that fits within the MTU
+                const maxDataSize = maxPayloadSize - initialPayloadLength - 20;
+                if (maxDataSize <= 0) {
+                    log.error('MTU too small to send data');
+                    this.state = IMG_STATE.IDLE;
+                    return false;
+                }
+        
+                // Get the data chunk to send
+                const dataEnd = Math.min(this.offset + maxDataSize, this.totalLength);
+                const dataChunk = new Uint8Array(this.image!.slice(this.offset, dataEnd));
+                payload.data = dataChunk;
+        
+                // Re-encode the payload with the data included
+                encodedPayload = CBOR.encode(payload);
+                if (encodedPayload.byteLength > maxPayloadSize) {
+                    log.warn(`Payload too large: ${encodedPayload.byteLength} > ${maxPayloadSize}`);
+                    // this.state = IMG_STATE.IDLE;
+                    // return false;
+                }
+        
+
+                const response = await this.mcumgr.sendMessage(
+                    MGMT_OP.WRITE,
+                    this.IMAGE_GROUP_ID,
+                    IMG_MGMT_ID.UPLOAD,
+                    new Uint8Array(encodedPayload)
+                ) as ImageUploadResponse;
+    
+                // Check for errors, map to either success or error response interface
+                if ((response as ImageUploadErrorResponse).rc !== undefined && (response as ImageUploadErrorResponse).rc !== MGMT_ERR.EOK) {
+                    this.state = IMG_STATE.IDLE;
+                    return false;
+                }
+    
+                const responseSuccess = response as ImageUploadSuccessResponse;
+    
+                this.offset = responseSuccess.off;
+                uploadProgressUpdate?.(Math.floor((this.offset / this.totalLength) * 100));
+            }
+        
+            this.state = IMG_STATE.IDLE;
+            return true;
         } catch (error) {
             log.error('Error during image upload:', error);
-            this._setState(IMG_STATE_TRANSITION.UPLOAD_ERROR);
+            this.state = IMG_STATE.IDLE;
+            return false;
         }
     }
-
+    
     async getFirmwareVersion(): Promise<ImageFirmwareVersion> {
         const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.IMAGE_GROUP_ID, IMG_MGMT_ID.STATE) as ImageStateResponse;
 
@@ -165,120 +209,6 @@ class ImageManager {
             minor: version[1],
             revision: version[2],
         };
-    }
-
-    // Upload the next chunks of the image using a loop
-    private async _uploadLoop(): Promise<void> {
-        const maxPayloadSize = this.mcumgr.maxPayloadSize; // Max payload size from MCUManager
-        this._setState(IMG_STATE_TRANSITION.START_UPLOAD);
-
-        while (this.state === IMG_STATE.UPLOADING && this.offset < this.totalLength) {
-            // Prepare the payload
-            let payload: ImageUploadRequest = {
-                off: this.offset,
-                data: new Uint8Array([]),
-            };
-
-            if (this.offset === 0) {
-                log.debug('Starting image upload');
-                // First chunk includes length and hash
-                payload.len = this.totalLength;
-                payload.sha = this.hash;
-            }
-
-            // Encode the initial payload to determine its length
-            let encodedPayload = CBOR.encode(payload);
-            const initialPayloadLength = encodedPayload.byteLength;
-            
-            log.debug(`maxPayloadSize: ${maxPayloadSize}, initialPayloadLength: ${initialPayloadLength}`);
-
-            // Calculate the maximum data size that fits within the MTU
-            const maxDataSize = maxPayloadSize - initialPayloadLength - 20;
-            if (maxDataSize <= 0) {
-                log.error('MTU too small to send data');
-                this._setState(IMG_STATE_TRANSITION.UPLOAD_ERROR);
-                return;
-            }
-
-            // Get the data chunk to send
-            const dataEnd = Math.min(this.offset + maxDataSize, this.totalLength);
-            const dataChunk = new Uint8Array(this.image!.slice(this.offset, dataEnd));
-            payload.data = dataChunk;
-
-            // Re-encode the payload with the data included
-            encodedPayload = CBOR.encode(payload);
-            if (encodedPayload.byteLength > maxPayloadSize) {
-                log.warn(`Payload too large: ${encodedPayload.byteLength} > ${maxPayloadSize}`);
-                // this._setState(IMG_STATE_TRANSITION.UPLOAD_ERROR);
-                // return;
-            }
-
-            try {
-                const response = await this.mcumgr.sendMessage(
-                    MGMT_OP.WRITE,
-                    this.IMAGE_GROUP_ID,
-                    IMG_MGMT_ID.UPLOAD,
-                    new Uint8Array(encodedPayload)
-                ) as ImageUploadResponse;
-
-                // Check for errors, map to either success or error response interface
-                if ((response as ImageUploadErrorResponse).rc !== undefined && (response as ImageUploadErrorResponse).rc !== MGMT_ERR.EOK) {
-                    this._setState(IMG_STATE_TRANSITION.UPLOAD_ERROR);
-                    break;
-                }
-
-                const responseSuccess = response as ImageUploadSuccessResponse;
-
-                this.offset = responseSuccess.off;
-                this.onImageUploadProgressCallback?.(Math.floor((this.offset / this.totalLength) * 100));
-
-                // Check if upload is complete
-                if (this.offset >= this.totalLength) {
-                    this._setState(IMG_STATE_TRANSITION.UPLOAD_COMPLETE);
-                    break;
-                }
-                // Continue to next iteration to upload next chunk
-            } catch (error) {
-                log.error('Error during upload:', error);
-                this._setState(IMG_STATE_TRANSITION.UPLOAD_ERROR);
-                break;
-            }
-        }
-    }
-
-    private _setState(stateTransition: IMG_STATE_TRANSITION): void {
-        switch (stateTransition) {
-            case IMG_STATE_TRANSITION.START_UPLOAD:
-                if (this.state === IMG_STATE.UPLOADING) {
-                    log.error('Upload already in progress');
-                    return;
-                }
-                this.state = IMG_STATE.UPLOADING;
-                this.onImageUploadStartedCallback?.();
-                break;
-
-            case IMG_STATE_TRANSITION.UPLOAD_COMPLETE:
-                if (this.state !== IMG_STATE.UPLOADING) {
-                    log.error('Upload not in progress');
-                    return;
-                }
-                this.state = IMG_STATE.IDLE;
-                this.onImageUploadCompleteCallback?.(true);
-                break;
-
-            case IMG_STATE_TRANSITION.UPLOAD_ERROR:
-                if (this.state !== IMG_STATE.UPLOADING) {
-                    log.error('Upload not in progress');
-                    return;
-                }
-                this.state = IMG_STATE.IDLE;
-                this.onImageUploadCompleteCallback?.(false);
-                break;
-
-            default:
-                log.error('Unknown state transition');
-                break;
-        }
     }
 }
 
