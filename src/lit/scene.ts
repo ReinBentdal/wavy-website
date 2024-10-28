@@ -21,13 +21,17 @@ export class MyScene<T extends string> extends LitElement {
       if (!viewName) return;
       if (viewName == name) {
         if (view.hasAttribute('active')) return;
-        view.setAttribute('active', '');
         this.callbacks.show[name]?.();
+        view.setAttribute('active', '');
       } else if (view.hasAttribute('active')) {
         view.removeAttribute('active');
         this.callbacks.hide[viewName]?.();
       }
     });
+  }
+
+  get() {
+    return this.views.find(view => view.hasAttribute('active'))?.getAttribute('name') as T | undefined;
   }
 
   on(event: 'show' | 'hide', view: T, callback: () => void) {

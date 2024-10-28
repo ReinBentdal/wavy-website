@@ -1,10 +1,15 @@
-<div id="mc_embed_shell">
+---
+const {...rest} = Astro.props;
+---
+
+<div id="mc_embed_shell" {...rest}>
     <link
         href="//cdn-images.mailchimp.com/embedcode/classic-061523.css"
         rel="stylesheet"
         type="text/css"
     />
     <div>
+        <p class="note">get updates on new firmware reøeases and new tools</p>
         <form
             action="https://gmail.us17.list-manage.com/subscribe/post?u=aeaa412d0bb97f711adce99bf&id=915dc46d7f&f_id=00aa7fe0f0"
             method="post"
@@ -13,13 +18,11 @@
             class="validate"
             target="_blank"
         >
-            <h3>Sign up for updates on new firmware releases</h3>
-            <p style="font-size:12px"><i>You can unsubscrive at any moment</i></p>
             <input
                 type="email"
                 name="EMAIL"
-                placeholder="Your email address"
-                class="required email"
+                placeholder="enter email address.."
+                class="required email input-small"
                 id="mce-EMAIL"
                 required=""
                 value=""
@@ -44,12 +47,24 @@
             <input
                 type="submit"
                 name="subscribe"
-                class="button"
+                class="button input-small"
                 value="Subscribe"
             />
         </form>
     </div>
 </div>
+
+<style>
+form {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+input[type="email"] {
+    width: 100%;
+    max-width: 400px;
+}
+</style>
 
 <script type="text/javascript">
 

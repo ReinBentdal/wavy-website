@@ -1,9 +1,10 @@
 ---
 interface Props {
 	textColor?: 'black' | 'white';
+    hide?: boolean;
 }
 
-const { textColor = 'black' } = Astro.props;
+const { textColor = 'black', hide = false } = Astro.props;
 
 import { routes } from '../routes';
 import '../styles/global.css';
@@ -21,7 +22,7 @@ function currentPageCheck(link) {
 import logoImg from '../assets/logo.svg';
 import logoWhiteImg from '../assets/logo-white.svg';
 ---
-<header class={textColor == 'white' ? 'text-white' : 'text-black'}>
+<header class={textColor == 'white' ? 'text-white' : 'text-black'} hide={hide}>
     <div class="logo">
         <a href={routes.home}><img src={textColor == 'white' ? logoWhiteImg.src : logoImg.src} /></a>
     </div>
@@ -32,7 +33,7 @@ import logoWhiteImg from '../assets/logo-white.svg';
             <ul>
                 <li class={currentPageCheck(routes.monkey)}><a href={routes.monkey}>MON<b>KEY</b></a></li>
                 <li class={currentPageCheck(routes.kd3)}><a href={routes.kd3}>KD-3</a></li>
-                <li class={currentPageCheck(routes.midiConnect)}><a href={routes.midiConnect}>MIDI connect</a></li>
+                <!-- <li class={currentPageCheck(routes.midiConnect)}><a href={routes.midiConnect}>MIDI connect</a></li> -->
             </ul>
         </div>
         
@@ -40,8 +41,8 @@ import logoWhiteImg from '../assets/logo-white.svg';
             <h3>Resources</h3>
             <ul>
                 <li class={currentPageCheck(routes.guides)}><a href={routes.guides}>guides</a></li>
-                <li class={currentPageCheck(routes.deviceUpdate)}><a href={routes.deviceUpdate}>device update</a></li>
-                <li class={currentPageCheck(routes.faq)}><a href={routes.faq}>FAQ</a></li>
+                <li class={currentPageCheck(routes.deviceUtility)}><a href={routes.deviceUtility}>device utility</a></li>
+                <!-- <li class={currentPageCheck(routes.faq)}><a href={routes.faq}>FAQ</a></li> -->
             </ul>
         </div>
 
@@ -63,13 +64,23 @@ import logoWhiteImg from '../assets/logo-white.svg';
         padding-bottom: 20px;
         padding-left: 20px;
         padding-right: 20px;
-        width: 100vw;
+        width: 100%;
 
         display: flex;
         justify-content: space-between;
         flex-wrap: wrap;
         align-items: top;
         gap: 15px;
+
+        transition: all 0.3s;
+        height: auto;
+    }
+
+    header[hide] {
+        height: 0;
+        padding-top: 0;
+        padding-bottom: 0;
+        overflow: hidden;
     }
 
     .text-black {
@@ -99,7 +110,7 @@ import logoWhiteImg from '../assets/logo-white.svg';
         padding: 0;
         margin: 0;
 
-        font-size: 14px;
+        font-size: 16px;
         font-weight: 400
     }
 

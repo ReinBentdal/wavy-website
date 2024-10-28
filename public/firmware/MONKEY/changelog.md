@@ -1,19 +1,23 @@
-# 1.2.0 Custom drums -dev
-- Feature: Using the online uploader, it is now possible to upload new drum loops and fills
-- Improvement: Better management of connection parameters
+# 1.0.3[26. oct 2024] -dev
+- Capacitive touch improved user fidelity
+- SHIFT Long press increased to 2 seconds
+- SHIFT 'ultra long press' to get connection status. Then press WAKE to disconnect from host.
 
-# 1.1.0 Touch Modulation -dev
-- MIDI CC Modulation throught the touch surface underneath in monkey playing the piano
+# 1.0.2[10. oct 2024] -dev
+- Capacitive touch improved sensitivity & stability
+- Capacitive touch improved power consuimption
 
-# 1.0.0
-- Support for new hardware
-- New STTR presets
+# 1.0.1[2. oct 2024] -dev
+- Initial capacitive touch modulation support
+
+# 1.0.0[28. aug 2024] Official MONKEY release
+- Support for production hardware
+- Updated STTR presets
 - Lots of minor improvements
 
-# 0.9.0
-- Production release candidate
+# 0.9.0 Production release candidate -obsolete
 - Support for new hardware
-- New STTR presets
+- Updated STTR presets
 - Lots of minor improvements
 
 # 0.6.7 -obsolete

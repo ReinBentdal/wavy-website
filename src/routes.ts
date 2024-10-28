@@ -9,7 +9,7 @@ export const routes = {
     'kd3': '/KD-3',
     'midiConnect': '/MIDI-connect',
     'guides': '/resources/guides',
-    'deviceUpdate': '/resources/device-update',
+    'deviceUtility': '/resources/device-utility',
     'faq': '/resources/faq',
     'wavyDiscord': 'https://discord.gg/4HQHERUW5K',
     'newsletter': 'http://eepurl.com/ivXTOk',

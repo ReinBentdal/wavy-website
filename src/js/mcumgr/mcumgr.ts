@@ -81,7 +81,7 @@ type ConnectionState =
     public onConnecting: (() => void) | null = null;
     public onConnectionLoss: (() => void) | null = null;
     public onConnectionReestablished: (() => void) | null = null;
-
+    
     public onDeviceSelection: (() => void) | null = null;
     public onDeviceSelectionCancel: (() => void) | null = null;
 
@@ -164,10 +164,10 @@ type ConnectionState =
             await this.characteristic.startNotifications();
 
             if (this.state.type === 'connecting' || this.state.type === 'connectionLoss') {
-                if (this.state.type === 'connecting') {
-                    this.onConnect?.();
-                } else {
+                if (this.state.type === 'connectionLoss') {
                     this.onConnectionReestablished?.();
+                } else {
+                    this.onConnect?.();
                 }
                 this.state = { type: 'connected' };
             }
