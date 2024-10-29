@@ -1,3 +1,8 @@
+# 1.1.0[29. oct 2024] Touch Modulation
+- MIDI CC Modulation throught the touch surface underneath the monkey playing the piano
+- SHIFT long press to see connection status. Double blink means connected. Single blink means not connected. When in this mode, press WAKE to disconnect from host.
+- Other minor improvements
+
 # 1.0.3[26. oct 2024] -dev
 - Capacitive touch improved user fidelity
 - SHIFT Long press increased to 2 seconds

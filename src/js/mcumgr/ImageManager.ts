@@ -90,10 +90,6 @@ class ImageManager {
     private readonly IMAGE_GROUP_ID = 1;
     private state: IMG_STATE = IMG_STATE.IDLE;
     private mcumgr: MCUManager;
-    private image: ArrayBuffer | null = null;
-    private offset: number = 0;
-    private totalLength: number = 0;
-    private hash: Uint8Array | null = null;
 
     constructor(mcumgr: MCUManager) {
         this.mcumgr = mcumgr;
@@ -107,29 +103,28 @@ class ImageManager {
         }
         this.state = IMG_STATE.UPLOADING;
 
-        this.image = image;
-        this.offset = 0;
-        this.totalLength = image.byteLength;
+        let offset = 0;
+        let totalLength = image.byteLength;
 
         try {
             // Compute image hash
-            this.hash = new Uint8Array(await imageHash(image));
+            let hash = new Uint8Array(await imageHash(image));
 
             // Start uploading chunks
             const maxPayloadSize = this.mcumgr.maxPayloadSize; // Max payload size from MCUManager
         
-            while (this.offset < this.totalLength) {
+            while (offset < totalLength) {
                 // Prepare the payload
                 let payload: ImageUploadRequest = {
-                    off: this.offset,
+                    off: offset,
                     data: new Uint8Array([]),
                 };
         
-                if (this.offset === 0) {
+                if (offset === 0) {
                     log.debug('Starting image upload');
                     // First chunk includes length and hash
-                    payload.len = this.totalLength;
-                    payload.sha = this.hash;
+                    payload.len = totalLength;
+                    payload.sha = hash;
                 }
         
                 // Encode the initial payload to determine its length
@@ -147,14 +142,15 @@ class ImageManager {
                 }
         
                 // Get the data chunk to send
-                const dataEnd = Math.min(this.offset + maxDataSize, this.totalLength);
-                const dataChunk = new Uint8Array(this.image!.slice(this.offset, dataEnd));
+                const dataEnd = Math.min(offset + maxDataSize, totalLength);
+                const dataChunk = new Uint8Array(image.slice(offset, dataEnd));
                 payload.data = dataChunk;
         
                 // Re-encode the payload with the data included
                 encodedPayload = CBOR.encode(payload);
                 if (encodedPayload.byteLength > maxPayloadSize) {
                     log.warn(`Payload too large: ${encodedPayload.byteLength} > ${maxPayloadSize}`);
+                    // soft error, just continue and try
                     // this.state = IMG_STATE.IDLE;
                     // return false;
                 }
@@ -175,8 +171,8 @@ class ImageManager {
     
                 const responseSuccess = response as ImageUploadSuccessResponse;
     
-                this.offset = responseSuccess.off;
-                uploadProgressUpdate?.(Math.floor((this.offset / this.totalLength) * 100));
+                offset = responseSuccess.off;
+                uploadProgressUpdate?.(Math.floor((offset / totalLength) * 100));
             }
         
             this.state = IMG_STATE.IDLE;

@@ -43,7 +43,7 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 
 				<View name="connected">
 					<div>
-						<button id="button-disconnect" class="input-small" type="submit">Disconnect</button>
+						<button class="button-disconnect input-small" type="submit">Disconnect</button>
 						<b><span id="device-name">unknown name</span></b><div id="device-connection-status" />
 						<span class="update-version-device"></span>
 						<input type="checkbox" id="show-advanced" style="margin-left: 10px;" />
@@ -85,6 +85,7 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 								<div class="flex-center-col" style="gap: 15px;">
 									<h1>your device is up to date!</h1>
 									<span class="tagline">Your device is running the newest firmware. To get notifications when new firmware versions are available, add your email at the bottom of this page.</span>
+									<button class="button-disconnect">Disconnect</button>
 								</div>
 							</View>
 							
@@ -119,7 +120,7 @@ import {$} from '~/js/utils/$';
 const connectProblemNote = $('#connect-problem-note') as HTMLSpanElement;
 const connectBrowserSupportNote = $('#browser-support-note') as HTMLSpanElement;
 const connectButton = $('#button-connect') as HTMLButtonElement;
-const disconnectButton = $('#button-disconnect') as HTMLButtonElement;
+const disconnectButtons = $('.button-disconnect') as NodeListOf<HTMLButtonElement>;
 const deviceName = $('#device-name') as HTMLSpanElement;
 const deviceConnectionStatus = $('#device-connection-status') as HTMLDivElement;
 const updateVersionDevice = $('.update-version-device') as NodeListOf<HTMLSpanElement>;
@@ -212,8 +213,10 @@ connectButton.addEventListener('click', async () => {
 	await mcumgr.connect(filters);
 });
 
-disconnectButton.addEventListener('click', async () => {
-	mcumgr.disconnect();
+disconnectButtons.forEach((button) => {
+	button.addEventListener('click', async () => {
+		mcumgr.disconnect();
+	});
 });
 
 checkboxAdvanced.addEventListener('change', () => {
@@ -250,7 +253,7 @@ function updateAvailableUpdate() {
 
     const to = $('.update-version-to') as NodeListOf<HTMLSpanElement>;
 	to.forEach((element) => {
-		element.innerText = advancedOptions ? firmwareVersions.dev.versionString + ' [BETA]' : firmwareVersions.release.versionString;
+		element.innerText = (advancedOptions && imageIsNewer(firmwareVersions.dev, firmwareVersions.release)) ? firmwareVersions.dev.versionString + ' [BETA]' : firmwareVersions.release.versionString;
 	});
 
     let changes = "";
@@ -265,8 +268,6 @@ function updateAvailableUpdate() {
 
         const isNewerThanDevice = imageIsNewer(deviceFirmwareVersion, version.version);
         const isSameVersion = deviceFirmwareVersion.versionString === version.version.versionString;
-
-		
 
 		// we have new release if we find any which are greater than current version
         if (isNewerThanDevice) {
