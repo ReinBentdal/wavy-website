@@ -120,3 +120,21 @@ export const imageInfo = async (image) => {
 
     return info;
 }
+
+export function canonicalize(obj) {
+    if (Array.isArray(obj)) {
+        // If it's an array, canonicalize each element
+        return obj.map(canonicalize);
+    } else if (obj && typeof obj === 'object') {
+        // If it's an object, sort the keys
+        const sortedKeys = Object.keys(obj).sort();
+        const result = {};
+        for (const key of sortedKeys) {
+            result[key] = canonicalize(obj[key]);
+        }
+        return result;
+    } else {
+        // If it's a primitive value, return it as is
+        return obj;
+    }
+}

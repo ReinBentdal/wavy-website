@@ -12,6 +12,7 @@ import midiConnectImg from '~/assets/resources/mac-connect/midi_connect.png';
 import macConnect from '~/assets/resources/mac-connect/1-search.png';
 import macConnect2Img from '~/assets/resources/mac-connect/2-open_midi_studio.png';
 import macConnect3Img from '~/assets/resources/mac-connect/3-open_bluetooth.png';
+import macConnect3AltImg from '~/assets/resources/mac-connect/3-alt_open_bluetooth.png';
 import macConnect4Img from '~/assets/resources/mac-connect/4-connect.png';
 import windowsConnect0Img from '~/assets/resources/windows/0-advanced_discovery.jpeg';
 import windowsConnect1Img from '~/assets/resources/windows/1-connect_pre.png';
@@ -40,7 +41,7 @@ Before starting, insert a CR2032 battery into Monkey. The LEDs in the light hous
 
 Please make sure your device is up to date before continuing. The device is updated directly though the browser:
 
-<LinkButton href={routes.deviceUpdate} target="_blank">Go to device update page</LinkButton>
+<LinkButton href={routes.deviceUtility} target="_blank">Go to device update page</LinkButton>
 
 ## Connecting
 
@@ -63,6 +64,8 @@ There is a bunch of fun apps to try out. We recommend checking out *N-Track Stud
 ### Connecting to desktop operating systems
 
 <Accordion title="macOS">
+  {/* <NoteInfo>Bluetooth MIDI devices will not appear in system Bluetooth settings. Follow the steps below for </NoteInfo> */}
+
   We have developed _MIDI Connect_ which simplifies connections on macOS. And it's not limited to Wavy devices. This is how we recommend you connect to MONKEY on macOS.
 
   <LinkButton target="_blank" href={routes.midiConnectAppStore}>MIDI Connect on App Store</LinkButton>
@@ -86,7 +89,7 @@ There is a bunch of fun apps to try out. We recommend checking out *N-Track Stud
 
   If you don't see the Bluetooth icon:
 
-  <img alt="Alternative Bluetooth option" src={macConnect3Img.src} />
+  <img alt="Alternative Bluetooth option" src={macConnect3AltImg.src} />
 
   **4.** Find your device in the list and connect
 
@@ -158,6 +161,8 @@ We provide guides for some DAWs though MONKEY should work with most of them. The
   <img alt="FL Studio configure channel" src={flStudioCh1SelectImg.src} />
   <img alt="FL Studio configure channel" src={flStudioCh10SelectImg.src} />
 </Accordion>
+
+<a>Feel like </a>
 
 <br/>
 <br/>

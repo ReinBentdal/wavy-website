@@ -396,4 +396,4 @@ function decode(data, tagger, simpleValue) {
 
 const CBOR = { encode, decode };
 
-export { CBOR };
+export default CBOR;

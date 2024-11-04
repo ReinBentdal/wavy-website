@@ -1,6 +1,6 @@
 ---
 import '~/styles/global.css';
-import {routes} from '~/routes.js'
+import {routes} from '~/routes';
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/layouts/Header.astro';
 import Footer from '~/layouts/Footer.astro';
@@ -9,6 +9,7 @@ import TagContainer from '~/components/TagContainer.astro';
 import Tag from '~/components/Tag.astro';
 
 import monkeyRevealVideo from '~/assets/monkey/monkey_front_reveal_LED_compressed.mp4';
+import monkeyRevealPlaceholder from '~/assets/monkey/monkey_reveal_placeholder.png';
 import monkeyPackagingImg from '~/assets/monkey/packaging/Monkey with packaging.jpg';
 // import monkeyPackagingImg from '~/assets/monkey/packaging/Monkey with packaging_5.jpg';
 
@@ -31,9 +32,9 @@ import sonicstateProfile from '~/assets/monkey/profiles/sonicstate.jpg';
 				<LinkButton href={routes.monkeyPurchase} type="highlight" >Buy now €59</LinkButton>
 			</div>
 
-			<video id="monkey-reveal-video" width="100%" autoplay muted playsinline onended="this.pause()">
+			<video id="monkey-reveal-video" width="100%" autoplay muted playsinline onended="this.pause()" poster={monkeyRevealPlaceholder.src}>
 				<source src={monkeyRevealVideo} type="video/mp4">
-				Your browser does not support the video tag.
+				Your browser does not support the video tag. <img src={monkeyRevealPlaceholder.src} alt="Monkey reveal placeholder">
 			</video>
 			<p>MON<b>KEY</b> is a two octave Bluetooth MIDI keyboard which literaly fits in your pocket. Bluetooth in MIDI keybaords is nothing new. But ultra long battery life of several months is. This is what enables Bluetooth to actually be practical to use, together with low latency communication.</p>
 			<p>Through the SHIFT key on MON<b>KEY</b> you get access to all the features written under and above the keys. Monkey has 6 MIDI effects, each with 10 presets. Furthermore it includes a loop recorder for you to record your ideas with up to 10 instruments! </p>
@@ -97,7 +98,7 @@ img {
 }
 
 .text-white {
-	color: rgba(255, 255, 255, 0.8);
+	color: #f0f0f0;
 }
 
 section {
@@ -145,7 +146,4 @@ p {
 	border-radius: 50%;
 }
 
-#packaging-image {
-	/* padding: 100px 25%; */
-}
 </style>

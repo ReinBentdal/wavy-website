@@ -8,27 +8,35 @@ let year = new Date().getFullYear();
 // images
 import discordImg from '../assets/icons/Discord blue mark.svg';
 import instagramImg from '../assets/icons/instagram.svg';
-import mailImg from '../assets/icons/mail.stack.fill.svg';
+import mailImg from '../assets/icons/newspaper.svg';
 ---
 
 <footer>
     <div>
         <span>Wavy Industries © {year}</span>
         <span>📍Norway</span>
-        <a id="something-special-footer-a"><span id="something-special-footer"></span></a>
         <a href={routes.wavyDiscord} target="_blank"><span><img alt="Discord channel link" src={discordImg.src} /> Discord</span></a>
         <a href={routes.wavyIndstagram} target="_blank"><span><img alt="Instagram link" src={instagramImg.src} /> Instagram</span></a>
         <a href={routes.newsletter} target="_blank"><img alt="newsletter" src={mailImg.src} /> Newsletter</a>
+        <a id="something-special-footer-a"><span id="something-special-footer"></span></a>
     </div>
 </footer>
 
 <style>
 footer {
-    flex-grow: 2;
+    /* flex-grow: 2; */
     /* padding: 20px 0; */
     display: flex;
     align-items: end;
 
+    transition: all 0.3s;
+    height: auto;
+}
+
+footer[hide] {
+    height: 0;
+    padding: 0;
+    overflow: hidden;
 }
 
 footer > div {
