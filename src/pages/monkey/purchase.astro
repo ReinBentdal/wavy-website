@@ -18,17 +18,18 @@ import arrowRightImg from '~/assets/icons/arrow.right.svg';
       </div>
       <hr />
       <div class="content">
-        <p>Select shipping method:</p>
+        <p>Choose shipping region:</p>
         <div>
-          <input type="radio" id="european-letter" name="shipping" value="letter" checked>
-          <label for="european-letter">European Letter (€10)</label>
+          <input type="radio" id="european-option" name="shipping" value="european" checked>
+          <label for="european-option">European (€10)</label>
+          <p class="hidden shipping-info" id="european-info">Not all European contries are included. Select international shipping for those countries.</p>
           <br />
-          <input type="radio" id="international-parcel" name="shipping" value="parcel">
-          <label for="international-parcel">International Parcel (€19)</label>
+          <input type="radio" id="international-option" name="shipping" value="international">
+          <label for="international-option">International (€19)</label>
           <br />
-          <input type="radio" id="local-pickup" name="shipping" value="pickup">
-          <label for="local-pickup">Pickup in <i>Trondheim, Norway</i> (free)</label>
-          <p class="hidden" id="pickup-info">Local pickup in Trondheim, Norway. We contact you to arrange a time for pickup.</p>
+          <input type="radio" id="pickup-option" name="shipping" value="pickup">
+          <label for="pickup-option">Pickup in <i>Trondheim, Norway</i> (free)</label>
+          <p class="hidden shipping-info" id="pickup-info">Local pickup in Trondheim, Norway. We contact you to arrange a time for pickup.</p>
         </div>
       </div>
     </div>
@@ -98,7 +99,7 @@ input {
   display: inline-block;
 }
 
-#pickup-info {
+.shipping-info {
   font-size: 12px;
   font-style: italic;
 }
@@ -124,20 +125,34 @@ input {
 </style>
 
 <script>
-let shippingUrl = {
-  letter: 'https://buy.stripe.com/7sI9Co9Mwb8a6WIbIJ',
-  parcel: 'https://buy.stripe.com/cN2cOAaQA2BEgxidQS',
-  pickup: 'https://buy.stripe.com/5kA15S0bW2BEch28wz',
-}
+const shippingUrlBase = 'http://server.wavyindustries.com/create-purchase-link?product_id=1&shipping_option=';
+
+type ShippingOptions = 'european' | 'international' | 'pickup';
+
+const shippingOptions = {
+  european: 'european',
+  international: 'international',
+  pickup: 'pickup'
+};
 
 let checkoutLink = document.getElementById('checkout-link') as HTMLAnchorElement;
-function updateUrl(val) {
-  if (val == 'pickup') {
-    document.getElementById('pickup-info').classList.remove('hidden');
-  } else {
-    document.getElementById('pickup-info').classList.add('hidden');
+function updateUrl(val: ShippingOptions) {
+  switch (val) {
+    case 'european':
+      document.getElementById('european-info').classList.remove('hidden');
+      document.getElementById('pickup-info').classList.add('hidden');
+      break;
+    case 'international':
+      document.getElementById('european-info').classList.add('hidden');
+      document.getElementById('pickup-info').classList.add('hidden');
+      break;
+    case 'pickup':
+      document.getElementById('pickup-info').classList.remove('hidden');
+      document.getElementById('european-info').classList.add('hidden');
+      break;
   }
-  checkoutLink.href = shippingUrl[val];
+
+  checkoutLink.href = shippingUrlBase + val;
 }
 
 
@@ -147,11 +162,11 @@ window.addEventListener('pageshow', function() {
   // Event listener for radio button changes
   radios.forEach(radio => {
     if (radio.checked)
-      updateUrl(radio.value);
+      updateUrl(radio.value as ShippingOptions);
 
     radio.addEventListener('change', function(e) {
       const target = e.target as HTMLInputElement;
-      let shippingMethod = target.value;
+      let shippingMethod = target.value as ShippingOptions;
       updateUrl(shippingMethod);
     });
   });

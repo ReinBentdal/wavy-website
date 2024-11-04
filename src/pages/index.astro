@@ -1,9 +1,9 @@
 ---
-import '~/styles/global.css';
+// import '~/styles/global.css';
 import Layout from '~/layouts/Layout.astro';
-import Header from '~/layouts/Header.astro';
-import Footer from '~/layouts/Footer.astro';
-import LinkButton from '~/components/LinkButton.astro';
+// import Header from '~/layouts/Header.astro';
+// import Footer from '~/layouts/Footer.astro';
+// import LinkButton from '~/components/LinkButton.astro';
 import { routes } from '~/routes';
 
 // images
@@ -11,7 +11,7 @@ import monkeyImg from '~/assets/monkey/monkey_front.png';
 ---
 
 <Layout title="Wavy Industries">
-	<main>
+	<!-- <main>
 		<Header />
 		<section>
 			<h1>Introducing MON<span style="font-weight: 400;" >KEY</span></h1>
@@ -30,7 +30,7 @@ import monkeyImg from '~/assets/monkey/monkey_front.png';
 			</div>
 		</section>
 		<Footer />
-	</main>
+	</main> -->
 </Layout>
 
 <script define:vars={{routes}}>
@@ -38,7 +38,7 @@ import monkeyImg from '~/assets/monkey/monkey_front.png';
 	window.location.href = routes.monkey;
 </script>
 
-<style>
+<!-- <style>
 main {
 	/* background-color: #FFFFF5; */
 	min-height: 100vh;
@@ -87,4 +87,4 @@ h1 {
 	gap: 15px;
 	padding: 15px 0;
 }
-</style>
+</style> -->
