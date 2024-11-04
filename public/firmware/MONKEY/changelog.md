@@ -1,3 +1,6 @@
+# 1.1.1[04. nov 2024]
+- Fix beta hardware support
+
 # 1.1.0[29. oct 2024] Touch Modulation
 - MIDI CC Modulation throught the touch surface underneath the monkey playing the piano
 - SHIFT long press to see connection status. Double blink means connected. Single blink means not connected. When in this mode, press WAKE to disconnect from host.
