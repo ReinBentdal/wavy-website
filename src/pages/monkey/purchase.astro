@@ -126,15 +126,13 @@ input {
 </style>
 
 <script>
-const shippingUrlBase = 'http://server.wavyindustries.com/create-purchase-link?product_id=1&shipping_option=';
-
 type ShippingOptions = 'european' | 'international' | 'pickup';
 
-const shippingOptions = {
-  european: 'european',
-  international: 'international',
-  pickup: 'pickup'
-};
+let shippingUrl = {
+  european: 'https://buy.stripe.com/7sI9Co9Mwb8a6WIbIJ',
+  international: 'https://buy.stripe.com/cN2cOAaQA2BEgxidQS',
+  pickup: 'https://buy.stripe.com/5kA15S0bW2BEch28wz',
+}
 
 let checkoutLink = document.getElementById('checkout-link') as HTMLAnchorElement;
 function updateUrl(val: ShippingOptions) {
@@ -153,7 +151,7 @@ function updateUrl(val: ShippingOptions) {
       break;
   }
 
-  checkoutLink.href = shippingUrlBase + val;
+  checkoutLink.href = shippingUrl[val];
 }
 
 
