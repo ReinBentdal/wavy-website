@@ -1,3 +1,8 @@
+# 1.1.2[09. nov 2024]
+- Improved battery percentage algorithm
+- Tweaked modulation touch surface sensitivity
+- Fixed modulation touch surface preventing device from going to sleep
+
 # 1.1.1[04. nov 2024]
 - Fix beta hardware support
 
