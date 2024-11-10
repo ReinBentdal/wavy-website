@@ -1,3 +1,6 @@
+# 1.1.3[10. nov 2024]
+- Fix looper edge case where two undo checkpoints might merge when using channel undo
+
 # 1.1.2[09. nov 2024]
 - Improved battery percentage algorithm
 - Tweaked modulation touch surface sensitivity
@@ -7,6 +10,7 @@
 - Fix beta hardware support
 
 # 1.1.0[29. oct 2024] Touch Modulation
+This release branch introduced the CC Touch modulation surface
 - MIDI CC Modulation throught the touch surface underneath the monkey playing the piano
 - SHIFT long press to see connection status. Double blink means connected. Single blink means not connected. When in this mode, press WAKE to disconnect from host.
 - Other minor improvements
