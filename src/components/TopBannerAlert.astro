@@ -1,0 +1,58 @@
+<section>
+    <span><slot /></span>
+    <span><slot /></span>
+</section>
+
+
+<style>
+section {
+  width: 100%;
+  padding: 10px 20px;
+  background-color: yellow;
+  color: black;
+
+  font-weight: 400;
+  font-size: 14px;
+  font-style: italic;
+
+  white-space: nowrap; /* Prevent text wrapping */
+  overflow: hidden; /* Hide overflowing content */
+  position: relative;
+}
+
+section::before,
+section::after {
+  content: ''; /* Clear content */
+  position: absolute;
+  top: 0;
+  bottom: 0;
+  width: 2rem; /* Optional for fading effect */
+  z-index: 1;
+}
+
+section::before {
+  left: 0;
+  background: linear-gradient(to right, yellow, rgba(255, 255, 0, 0));
+}
+
+section::after {
+  right: 0;
+  background: linear-gradient(to left, yellow, rgba(255, 255, 0, 0));
+}
+
+@keyframes scroll {
+  0% {
+    transform: translateX(0vw); /* Start fully outside the right of the container */
+  }
+  100% {
+    transform: translateX(-100vw); /* End fully outside the left of the container */
+  }
+}
+
+section span {
+    position: relative;
+    display: inline-block;
+    width: 100vw;
+    animation: scroll 10s linear infinite;
+}
+</style>

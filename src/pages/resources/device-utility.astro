@@ -1,6 +1,6 @@
 ---
 import '~/styles/global.css';
-import '~/styles/device-tools.css';
+import '~/styles/device-utility.css';
 import Layout from '~/layouts/Layout.astro';
 import Header from '~/layouts/Header.astro';
 import Footer from '~/layouts/Footer.astro';
@@ -12,7 +12,7 @@ import View from '~/lit/view';
 import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png';
 ---
 
-<Layout title="Wavy Industries: device update">
+<Layout title="Wavy Industries: device utility">
 	<main>
 		<Header />
 		<section style="flex-grow: 2; display: flex; flex-direction: column; align-items: center;">
@@ -42,61 +42,81 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 				</View>
 
 				<View name="connected">
-					<div>
-						<button class="button-disconnect input-small" type="submit">Disconnect</button>
-						<b><span id="device-name">unknown name</span></b><div id="device-connection-status" />
-						<span class="update-version-device"></span>
-						<input type="checkbox" id="show-advanced" style="margin-left: 10px;" />
-						<label for="show-advanced">Beta</label>
-					</div>
 
-					<div class="main-content">
-					<Scene id="scene-updater">
-						<View name="loading" active>Waiting for device info</View>
-						<View name="update-available">
-							<div class="flex-center-col" style="gap: 15px;">
-								<h1>New update available</h1>
-								<span class="tagline">Your device is ready to be updated</span>
-								<span><span class="update-version-device"></span> ➔ <span class="update-version-to"></span></span>
-								<button class="update-buttons" style="background-color: #B7FF9E;">Start update</button>
-							</div>
-						</View>
-						<View name="downgrade-available">
-							<div class="flex-center-col" style="gap: 15px;">
-								<h1>Downgrade available</h1>
-								<span class="tagline">Your device running a beta firmware. Downgrade to stable release</span>
-								<span><span class="update-version-device"></span> ➔ <span class="update-version-to"></span></span>
-								<button class="update-buttons" style="background-color: #fffb9e;">Start downgrade</button>
-							</div>
-						</View>
-						<View name="updating">
-							<div class="flex-center-col" style="gap: 15px;">
-								<h1>Updating</h1>
-								<p>
-									<span id="update-stage-fetch" class="update-stage">fetching new firmware</span><br/>
-									<span id="update-stage-uploading" class="update-stage">uploading firmware <span id="upload-status"></span></span><br/>
-									<span id="update-stage-applying" class="update-stage">applying update (waiting on device)</span><br/>
-									<span id="update-stage-verifying" class="update-stage">verifying update</span><br/>
-									<span id="update-stage-done" class="update-stage">done!</span>
-								</p>
+					<!-- header -->
+					<header>
+						<span>
+							<button class="button-disconnect input-small" type="submit">Disconnect</button>
+							<span>
+							<b><span id="device-name">unknown name</span></b><div id="device-connection-status" />
+							<span class="update-version-device"></span>
+							<input type="checkbox" id="show-advanced" style="margin-left: 10px;" />
+							</span>
+							<label for="show-advanced">Beta</label>
+						</span>
+						<nav>
+							<a href="#device-update" active>Device update</a>
+							<!-- <a href="#sample-manager">Sample manager</a> -->
+						</nav>
+					</header>
+					
+					<Scene id="scene-utility-tools">
+						<View name="device-update" active>
+								<div class="main-content">
+								<Scene id="scene-updater">
+									<View name="loading" active>Waiting for device info</View>
+									<View name="update-available">
+										<div class="flex-center-col" style="gap: 15px;">
+											<h1>New update available</h1>
+											<span class="tagline">Your device is ready to be updated</span>
+											<span><span class="update-version-device"></span> ➔ <span class="update-version-to"></span></span>
+											<button class="update-buttons" style="background-color: #B7FF9E;">Start update</button>
+										</div>
+									</View>
+									<View name="downgrade-available">
+										<div class="flex-center-col" style="gap: 15px;">
+											<h1>Downgrade available</h1>
+											<span class="tagline">Your device running a beta firmware. Downgrade to stable release</span>
+											<span><span class="update-version-device"></span> ➔ <span class="update-version-to"></span></span>
+											<button class="update-buttons" style="background-color: #fffb9e;">Start downgrade</button>
+										</div>
+									</View>
+									<View name="updating">
+										<div class="flex-center-col" style="gap: 15px;">
+											<h1>Updating</h1>
+											<p>
+												<span id="update-stage-fetch" class="update-stage">fetching new firmware</span><br/>
+												<span id="update-stage-uploading" class="update-stage">uploading firmware <span id="upload-status"></span></span><br/>
+												<span id="update-stage-applying" class="update-stage">applying update (waiting on device)</span><br/>
+												<span id="update-stage-verifying" class="update-stage">verifying update</span><br/>
+												<span id="update-stage-done" class="update-stage">done!</span>
+											</p>
+										</div>
+									</View>
+									<View name="updated">
+										<div class="flex-center-col" style="gap: 15px;">
+											<h1>your device is up to date!</h1>
+											<span class="tagline">Your device is running the newest firmware. To get notifications when new firmware versions are available, add your email at the bottom of this page.</span>
+											<button class="button-disconnect">Disconnect</button>
+										</div>
+									</View>
+								</Scene>
+								<br/>
+								<br/>
+								<div>
+									<h3>Changelog</h3>
+									<div id="changelog"></div>
+								</div>
 							</div>
 							</View>
-							<View name="updated">
-								<div class="flex-center-col" style="gap: 15px;">
-									<h1>your device is up to date!</h1>
-									<span class="tagline">Your device is running the newest firmware. To get notifications when new firmware versions are available, add your email at the bottom of this page.</span>
-									<button class="button-disconnect">Disconnect</button>
+							<View name="sample-manager">
+								<div class="main-content">
+									<div class="flex-center-col" style="gap: 15px;">
+										
+									</div>
 								</div>
 							</View>
-							
 						</Scene>
-						<br/>
-						<br/>
-						<div>
-							<h3>Changelog</h3>
-							<div id="changelog"></div>
-						</div>
-					</div>
 				</View>
 
 			</Scene>
@@ -144,6 +164,9 @@ const mainScene = document.getElementById('scene-main') as Scene<MainSceneViews>
 
 type BluetoothSceneViews = 'checking' | 'unavailable' | 'available';
 const bluetoothScene = document.getElementById('scene-bluetooth') as Scene<BluetoothSceneViews>;
+
+type UtilityToolsScene = 'device-update' | 'sample-manager';
+const utilityToolsScene = document.getElementById('scene-utility-tools') as Scene<UtilityToolsScene>;
 
 type UpdateScreens = 'loading' | 'update-available' | 'downgrade-available' | 'updating' | 'updated';
 const updateScene = document.getElementById('scene-updater') as Scene<UpdateScreens>;
@@ -207,6 +230,34 @@ mcumgr.onConnectionReestablished = async () => {
 	}
 }
 
+function updateActiveLinkAndScene() {
+    const currentHash = window.location.hash;
+
+    // Remove "active" class from all <a> tags
+    document.querySelectorAll('nav a').forEach(link => {
+		link.removeAttribute('active');
+    });
+
+    // Add "active" class to the current <a> tag
+    const activeLink = document.querySelector(`nav a[href="${currentHash}"]`);
+    if (activeLink) {
+        activeLink.setAttribute('active', '');
+    }
+
+    // Your existing logic for setting scenes
+    if (currentHash === '#device-update') {
+        utilityToolsScene.set('device-update');
+    } else if (currentHash === '#sample-manager') {
+        utilityToolsScene.set('sample-manager');
+    }
+}
+
+// Run on page load
+updateActiveLinkAndScene();
+
+// Run on hashchange
+window.addEventListener('hashchange', updateActiveLinkAndScene);
+
 connectButton.addEventListener('click', async () => {
 	const BT_MIDI_SERVICE_UUID = '03B80E5A-EDE8-4B33-A751-6CE34EC4C700'.toLowerCase()
 	let filters = [{namePrefix: 'WAVY MONKEY', services: [BT_MIDI_SERVICE_UUID]}]
@@ -232,6 +283,7 @@ async function getFirmwareUpdates() {
 	const response = await fetch(`/firmware/${product_name}/changelog.md`);
 	const data = await response.text();
 	firmwareVersions = parseChangelog(data);
+	console.log(firmwareVersions);
 	updateAvailableUpdate();
 }
 
@@ -256,11 +308,11 @@ function updateAvailableUpdate() {
 		element.innerText = (advancedOptions && imageIsNewer(firmwareVersions.dev, firmwareVersions.release)) ? firmwareVersions.dev.versionString + ' [BETA]' : firmwareVersions.release.versionString;
 	});
 
-    let changes = "";
     let hasNewRelease = false;
     let hasDowngrade = true;
 	let lastWasNew = false;
 
+    let changes = "";
     firmwareVersions.versions.forEach((version) => {
         if ((version.isDev && !advancedOptions) || version.isObsolete) {
             return;
@@ -285,13 +337,12 @@ function updateAvailableUpdate() {
 		lastWasNew = isNewerThanDevice;
 
         changes += `
-            <div class="changelog-item" ${isNewerThanDevice ? 'new' : ''}>
+            <div class="changelog-item" style="${version.isDev ? 'background-color: #eee;' : ''}"" ${isNewerThanDevice ? 'new' : ''}>
                 <p><b>${version.version.versionString}${version.highlight ? ' ' + version.highlight : ''}${version.isDev ? ' [BETA]' : ''}</b><span><i>${version.date ?? ''}</i></span></p>
                 ${version.changes.map(change => `- ${change}<br/>`).join('')}
             </div>
         `;
     });
-
     changelog.innerHTML = changes;
 
     if (hasNewRelease) {
@@ -302,8 +353,6 @@ function updateAvailableUpdate() {
         updateScene.set('updated');
     }
 }
-
-
 
 async function deviceUpdateScript() {
 	try {
