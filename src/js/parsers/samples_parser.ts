@@ -1,11 +1,78 @@
 // Define constants
-export const CONFIG_KEYBED_SIZE = 25; // Adjust this value if your keybed size is different
 export const TICKS_PER_BEAT = 24; // 24 ticks per beat
 export const NUM_PAGES = 10;
-export const PRESETS_PER_PAGE = CONFIG_KEYBED_SIZE;
-export const SAMPLE_PACK_INFO_SIZE = 4 * 4; // 4 uint32_t values
-export const OFFSET_SIZE = NUM_PAGES * PRESETS_PER_PAGE * 2; // 2 bytes per offset
-export const HEADER_SIZE = SAMPLE_PACK_INFO_SIZE + OFFSET_SIZE;
+export const LOOPS_PER_PAGE = 15;
+
+class ByteArray {
+    data: number[];
+
+    constructor() {
+        this.data = [];
+    }
+
+    push8(value: number): void {
+        if (value < 0 || value > 0xFF) {
+            throw new RangeError(`Value ${value} is out of range for an 8-bit unsigned integer`);
+        }
+        this.data.push(value & 0xFF);
+    }
+
+    push16(value: number): void {
+        if (value < 0 || value > 0xFFFF) {
+            throw new RangeError(`Value ${value} is out of range for a 16-bit unsigned integer`);
+        }
+        this.data.push(value & 0xFF);
+        this.data.push((value >> 8) & 0xFF);
+    }
+
+    push32(value: number): void {
+        if (value < 0 || value > 0xFFFFFFFF) {
+            throw new RangeError(`Value ${value} is out of range for a 32-bit unsigned integer`);
+        }
+        this.data.push(value & 0xFF);
+        this.data.push((value >> 8) & 0xFF);
+        this.data.push((value >> 16) & 0xFF);
+        this.data.push((value >> 24) & 0xFF);
+    }
+
+    pop8(): number {
+        if (this.data.length < 1) {
+            throw new RangeError("Attempted to pop from an empty array");
+        }
+        return this.data.shift()!;
+    }
+
+    pop16(): number {
+        if (this.data.length < 2) {
+            throw new RangeError("Not enough data to pop 16 bits");
+        }
+        const lsb = this.data.shift()!;
+        const msb = this.data.shift()!;
+        return lsb | (msb << 8);
+    }
+
+    pop32(): number {
+        if (this.data.length < 4) {
+            throw new RangeError("Not enough data to pop 32 bits");
+        }
+        const b0 = this.data.shift()!;
+        const b1 = this.data.shift()!;
+        const b2 = this.data.shift()!;
+        const b3 = this.data.shift()!;
+        let value = b0 | (b1 << 8) | (b2 << 16) | (b3 << 24);
+        return value >>> 0; // force unsigned interpretation
+    }
+
+    add(other: ByteArray): void {
+        this.data.push(...other.data);
+    }
+
+    static from(array: Uint8Array): ByteArray {
+        const byteArray = new ByteArray();
+        byteArray.data = Array.from(array); // Convert Uint8Array to a regular array
+        return byteArray;
+    }
+}
 
 // Define event type
 export interface NoteEvent {
@@ -24,12 +91,15 @@ export interface LoopData {
 }
 
 // Define the type for pages, each page is an array of loops
-export type Page = LoopData[];
+export interface Page {
+    id: number // uint16_t
+    loops: LoopData[]
+}
 
 // Define the sample pack type
 export interface SamplePack {
     // Pack info
-    id: number; // uint32_t
+    reserved0?: number; // uint32_t
     reserved1?: number; // uint32_t
     reserved2?: number; // uint32_t
     reserved3?: number; // uint32_t
@@ -38,200 +108,99 @@ export interface SamplePack {
     pages: Page[];
 }
 
-// Helper functions to write data in little-endian format
-function writeInt8(array: number[], value: number): void {
-    array.push(value & 0xFF);
-}
-
-function writeUint8(array: number[], value: number): void {
-    array.push(value & 0xFF);
-}
-
-function writeUint16LE(array: number[], value: number): void {
-    array.push(value & 0xFF);
-    array.push((value >> 8) & 0xFF);
-}
-
-function writeUint32LE(array: number[], value: number): void {
-    array.push(value & 0xFF);
-    array.push((value >> 8) & 0xFF);
-    array.push((value >> 16) & 0xFF);
-    array.push((value >> 24) & 0xFF);
-}
-
-// Helper functions to read data in little-endian format
-function readInt8(value: number): number {
-    return value << 24 >> 24; // Sign-extend to 32 bits
-}
-
-function readUint16LE(array: Uint8Array, index: number): number {
-    return array[index] | (array[index + 1] << 8);
-}
-
-function readUint32LE(array: Uint8Array, index: number): number {
-    return (
-        (array[index] |
-            (array[index + 1] << 8) |
-            (array[index + 2] << 16) |
-            (array[index + 3] << 24)) >>> 0
-    );
-}
-
-// Function to write the header
-function writeHeader(byteArray: number[], samplePack: SamplePack): void {
-    writeUint32LE(byteArray, samplePack.id);
-    writeUint32LE(byteArray, samplePack.reserved1 || 0xFFFFFFFF);
-    writeUint32LE(byteArray, samplePack.reserved2 || 0xFFFFFFFF);
-    writeUint32LE(byteArray, samplePack.reserved3 || 0xFFFFFFFF);
-}
-
-// Function to read the header
-function readHeader(packedData: Uint8Array): { samplePack: SamplePack; position: number } {
-    let position = 0;
-    const id = readUint32LE(packedData, position);
-    position += 4;
-    const reserved1 = readUint32LE(packedData, position);
-    position += 4;
-    const reserved2 = readUint32LE(packedData, position);
-    position += 4;
-    const reserved3 = readUint32LE(packedData, position);
-    position += 4;
-    const samplePack: SamplePack = {
-        id: id,
-        reserved1: reserved1,
-        reserved2: reserved2,
-        reserved3: reserved3,
-        pages: [],
-    };
-    return { samplePack, position };
-}
-
-// Function to write a loop
-function writeLoop(byteArray: number[], loop: LoopData): void {
-    writeUint8(byteArray, loop.length); // loop_length (uint8_t)
-    writeUint8(byteArray, loop.events.length); // num_events (uint8_t)
-
-    for (const event of loop.events) {
-        writeInt8(byteArray, event[1].note); // note (int8_t)
-        const data = (event[1].state << 7) | (event[1].velocity & 0x7F);
-        writeUint8(byteArray, data); // data (uint8_t)
-        writeUint16LE(byteArray, event[0]); // time_ticks (uint16_t)
-    }
-}
-
-// Function to read a loop
-function readLoop(
-    packedData: Uint8Array,
-    position: number
-): { loopData: LoopData; newPosition: number } {
-    const loopLength = packedData[position++];
-    const numEvents = packedData[position++];
-
-    const events: NoteEventTime[] = [];
-
-    for (let eventIndex = 0; eventIndex < numEvents; eventIndex++) {
-        const note = readInt8(packedData[position++]);
-        const data = packedData[position++];
-        const state = (data >> 7) & 0x01;
-        const velocity = data & 0x7F;
-        const timeTicks = readUint16LE(packedData, position);
-        position += 2;
-
-        events.push([
-            timeTicks,
-            {
-                note: note,
-                state: state,
-                velocity: velocity,
-            },
-        ]);
-    }
-
-    const loopData: LoopData = {
-        length: loopLength,
-        events: events,
-    };
-
-    return { loopData, newPosition: position };
-}
-
-// Main function to encode the sample pack
 export function samplesParser_encode(samplePack: SamplePack): Uint8Array {
-    const byteArray: number[] = []; // Final byte array
-    const presetOffsets = new Array(NUM_PAGES * PRESETS_PER_PAGE).fill(0xFFFF); // Initialize preset offsets
+    let d = new ByteArray()
 
-    // Write header
-    writeHeader(byteArray, samplePack);
+    // write header
+    d.push32(samplePack.reserved0)
+    d.push32(samplePack.reserved1)
+    d.push32(samplePack.reserved2)
+    d.push32(samplePack.reserved3)
 
-    // Reserve space for the preset offsets
-    for (let i = 0; i < OFFSET_SIZE; i++) {
-        writeUint8(byteArray, 0xFF);
+    for (let i = 0; i < NUM_PAGES; i++) {
+        d.push16(samplePack.pages[i].id)
     }
 
-    let currentOffset = HEADER_SIZE; // Start after the header
-
-    // Encode loops and update offsets
-    for (let pageIndex = 0; pageIndex < NUM_PAGES; pageIndex++) {
-        const page = samplePack.pages[pageIndex];
-        for (let presetIndex = 0; presetIndex < PRESETS_PER_PAGE; presetIndex++) {
-            const loop = page[presetIndex];
-            const offsetIndex = pageIndex * PRESETS_PER_PAGE + presetIndex;
-            if (loop !== null && loop !== undefined) {
-                const offsetRelativeToHeader = currentOffset - HEADER_SIZE;
-                presetOffsets[offsetIndex] = offsetRelativeToHeader;
-                writeLoop(byteArray, loop);
-                currentOffset = byteArray.length;
+    // gather offsets and loop data, then combine into main array
+    let loopOffsets = new ByteArray()
+    let loopData = new ByteArray()
+    for (let page_idx = 0; page_idx < NUM_PAGES; page_idx++) {
+        let page = samplePack.pages[page_idx]
+        for (let loop_idx = 0; loop_idx < LOOPS_PER_PAGE; loop_idx++) {
+            let loop = page.loops[loop_idx]
+            if (loop == null) {
+                loopOffsets.push16(0xFFFF)
+                continue
+            }
+            loopOffsets.push16(loopData.data.length) // offset relative to start of data
+            
+            loopData.push8(loop.length) // loop length
+            loopData.push8(loop.events.length) // number of events
+            for (const event of loop.events) {
+                const [ticks, noteEvent] = event;
+                loopData.push8(noteEvent.note & 0x7F)
+                const data = (noteEvent.state << 7) | (noteEvent.velocity & 0x7F);
+                loopData.push8(data);
+                loopData.push16(ticks);
             }
         }
     }
 
-    // Write presetOffsets back into byteArray at positions after the header
-    let offsetPosition = SAMPLE_PACK_INFO_SIZE;
-    for (let i = 0; i < presetOffsets.length; i++) {
-        const offsetValue = presetOffsets[i];
-        byteArray[offsetPosition++] = offsetValue & 0xFF;
-        byteArray[offsetPosition++] = (offsetValue >> 8) & 0xFF;
-    }
+    d.add(loopOffsets)
+    d.add(loopData)
 
-    return Uint8Array.from(byteArray);
+    return Uint8Array.from(d.data)
 }
 
-// Main function to decode the sample pack
 export function samplesParser_decode(packedData: Uint8Array): SamplePack {
-    // Read header
-    const { samplePack, position: afterHeaderPosition } = readHeader(packedData);
-    let position = afterHeaderPosition;
-
-    const presetOffsets = new Array(NUM_PAGES * PRESETS_PER_PAGE);
-
-    // Read presetOffsets
-    for (let i = 0; i < NUM_PAGES * PRESETS_PER_PAGE; i++) {
-        const lowByte = packedData[position++];
-        const highByte = packedData[position++];
-        const offset = lowByte | (highByte << 8);
-        presetOffsets[i] = offset;
+    let d = ByteArray.from(packedData)
+    let p: SamplePack = {
+        reserved0: d.pop32(),
+        reserved1: d.pop32(),
+        reserved2: d.pop32(),
+        reserved3: d.pop32(),
+        pages: [],
     }
 
-    for (let pageIndex = 0; pageIndex < NUM_PAGES; pageIndex++) {
-        const page: Page = [];
-        for (let presetIndex = 0; presetIndex < PRESETS_PER_PAGE; presetIndex++) {
-            const offsetIndex = pageIndex * PRESETS_PER_PAGE + presetIndex;
-            const offset = presetOffsets[offsetIndex];
-            if (offset === 0xFFFF) {
-                // Loop is null
-                page.push(null);
-            } else {
-                let loopPosition = HEADER_SIZE + offset;
-                const { loopData } = readLoop(packedData, loopPosition);
-                page.push(loopData);
+    // extract page IDs
+    for (let i = 0; i < NUM_PAGES; i++) {
+        p.pages.push({id: d.pop16(), loops: []})
+    }
+
+    // remove offsets, only interested in loop is set or not
+    let loopExists: boolean[] = []
+    for (let i = 0; i < NUM_PAGES*LOOPS_PER_PAGE; i++) {
+        loopExists.push(d.pop16() === 0xFFFF ? false : true)
+    }
+
+    for (let page_idx = 0; page_idx < NUM_PAGES; page_idx++) {
+        let page = p.pages[page_idx]
+        for (let loop_idx = 0; loop_idx < LOOPS_PER_PAGE; loop_idx++) {
+            
+            if (loopExists[page_idx*NUM_PAGES + loop_idx] == false) {
+                page.loops.push(null)
+                continue
             }
+            
+            let loop: LoopData = {
+                length: d.pop8(),
+                events: []
+            }
+            let numEvents = d.pop8()
+            for (let i = 0; i < numEvents; i++) {
+                let note = d.pop8() & 0x7F
+                let data = d.pop8()
+                let state = (data >> 7) & 0x01;
+                let velocity = data & 0x7F;
+                let ticks = d.pop16()
+                loop.events.push([ticks, {note: note, state: state, velocity: velocity}])
+            }
+            page.loops.push(loop)
         }
-        samplePack.pages.push(page);
     }
 
-    return samplePack;
+    return p
 }
-
 
 export function generateDummySamples(): SamplePack {
     // Define note events
@@ -284,22 +253,28 @@ export function generateDummySamples(): SamplePack {
     const pages: Page[] = [];
 
     // Define the first page with loops
-    const page0: Page = new Array(CONFIG_KEYBED_SIZE).fill(null);
-    page0[0] = loop0;
-    page0[1] = loop1;
-    page0[2] = loop1;
+    const page0: Page = {
+        id: 0xFEFE,
+        loops: new Array(LOOPS_PER_PAGE).fill(null),
+    }
+    page0.loops[0] = loop0;
+    page0.loops[1] = loop1;
+    page0.loops[2] = loop1;
 
     pages.push(page0);
 
     // Define the remaining pages as empty (no loops)
     for (let i = 1; i < NUM_PAGES; i++) {
-        const emptyPage: Page = new Array(CONFIG_KEYBED_SIZE).fill(null);
+        const emptyPage: Page = {
+            id: 0xFFFF,
+            loops: new Array(LOOPS_PER_PAGE).fill(null),
+        }
         pages.push(emptyPage);
     }
 
     // Create the SamplePack
     const samplePack: SamplePack = {
-        id: 0x12345678, // Example ID
+        reserved0: 0xFFFFFFFF,
         reserved1: 0xFFFFFFFF,
         reserved2: 0xFFFFFFFF,
         reserved3: 0xFFFFFFFF,

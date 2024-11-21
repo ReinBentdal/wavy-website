@@ -56,7 +56,7 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 						</span>
 						<nav>
 							<a href="#device-update" active>Device update</a>
-							<!-- <a href="#sample-manager">Sample manager</a> -->
+							<a href="#sample-manager">Sample manager</a>
 						</nav>
 					</header>
 					
@@ -112,7 +112,8 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 							<View name="sample-manager">
 								<div class="main-content">
 									<div class="flex-center-col" style="gap: 15px;">
-										
+										<button id="upload-samples">Upload Samples</button>
+										<span id="upload-samples-status"></span>
 									</div>
 								</div>
 							</View>
@@ -130,8 +131,10 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 
 <script>
 import {parseChangelog, Changelog} from '~/js/parsers/changelog_parser';
+import { samplesParser_decode, samplesParser_encode, generateDummySamples } from '~/js/parsers/samples_parser';
 import {MCUManager} from '~/js/mcumgr/mcumgr.js';
 import { ImageManager, ImageFirmwareVersion, imageIsNewer} from '~/js/mcumgr/ImageManager';
+import { SampleManager } from '~/js/mcumgr/SampleManager';
 import Scene from '~/lit/scene';
 import {getOperatingSystem, OperatingSystem} from '~/js/utils/operating_system';
 import {$} from '~/js/utils/$';
@@ -149,9 +152,13 @@ const uploadStatus = $('#upload-status') as HTMLButtonElement;
 const changelog =$('#changelog') as HTMLDivElement;
 const checkboxAdvanced = $('#show-advanced') as HTMLInputElement;
 
+const uploadSamplesButton = $('#upload-samples') as HTMLButtonElement;
+const uploadSamplesStatus = $('#upload-samples-status') as HTMLSpanElement;
+
 const product_name = "MONKEY";
 const mcumgr = new MCUManager();
 const imageManager = new ImageManager(mcumgr);
+const sampleManager = new SampleManager(mcumgr);
 
 let advancedOptions = false;	
 let connectionReestablishedResolver: (value: unknown) => void | null = null;
@@ -279,6 +286,8 @@ updateButtons.forEach((button) => {
 	button.addEventListener('click', deviceUpdateScript);
 });
 
+uploadSamplesButton.addEventListener('click', deviceSampleUploadScript);
+
 async function getFirmwareUpdates() {
 	const response = await fetch(`/firmware/${product_name}/changelog.md`);
 	const data = await response.text();
@@ -384,7 +393,7 @@ async function deviceUpdateScript() {
 		updateStageFetch.setAttribute('active', '');
 		const firmwareVersion = advancedOptions ? firmwareVersions.dev.versionString : firmwareVersions.release.versionString;
 		const image = await fetch(`/firmware/${product_name}/app\_update_${firmwareVersion}.bin`)
-		.then(res => res.arrayBuffer())
+			.then(res => res.arrayBuffer())
 		updateStageFetch.removeAttribute('active');
 		updateStageFetch.setAttribute('done', '');
 
@@ -417,6 +426,14 @@ async function deviceUpdateScript() {
 	} catch (e) {
 		console.error(e);
 		updateScene.set('update-available');
+	}
+}
+
+async function deviceSampleUploadScript() {
+	try {
+		sampleManager.uploadSamples(generateDummySamples(), (percent) => uploadSamplesStatus.innerHTML = `${percent}%`)
+	} catch (e) {
+
 	}
 }
 </script>
