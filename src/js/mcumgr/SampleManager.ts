@@ -6,8 +6,9 @@ let log = new Log('smpl_mgr', Log.LEVEL_DEBUG);
 
 // Enums for better type safety
 enum _MGMT_ID {
-    ID = 0,
+    IDs = 0,
     UPLOAD = 1,
+    ISSET = 2,
 }
 
 enum _STATE {
@@ -18,6 +19,10 @@ enum _STATE {
 
 interface IDResponse {
     ids: number[];
+}
+
+interface ISSETResponse {
+    set: boolean;
 }
 
 interface UploadRequest {
@@ -49,12 +54,23 @@ export class SampleManager {
         this.mcumgr = mcumgr;
     }
 
+    async isSet(): Promise<boolean> {
+        log.debug('Getting sample ID');
+        const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.ISSET) as ISSETResponse | ResponseError;
+        if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
+            log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
+            return Promise.reject((response as ResponseError).rc);
+        }
+        const responseSuccess = response as ISSETResponse;
+        return responseSuccess.set;
+    }
+
     async getIDs(): Promise<number[]> {
         log.debug('Getting sample ID');
-        const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.ID) as IDResponse | ResponseError;
-        if ((response as ResponseError).rc === undefined || (response as ResponseError).rc !== MGMT_ERR.EOK) {
+        const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.IDs) as IDResponse | ResponseError;
+        if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
             log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
-            return Promise.reject('Error response received');
+            return Promise.reject((response as ResponseError).rc);
         }
         const responseSuccess = response as IDResponse;
         log.debug(`Received sample IDs: ${responseSuccess.ids}`);

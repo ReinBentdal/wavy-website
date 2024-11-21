@@ -123,20 +123,20 @@ input[type="text"], input[type="email"], input[type="password"] {
     align-items: center;
 }
 
-header {
+#device-tools-header {
     display: flex;
     justify-content:flex-start;
     align-items: center;
     gap: 50px;
 }
 
-header > * {
+#device-tools-header > * {
     display: inline-flex;
     align-items: center;
     gap: 10px;
 }
 
-header > span > span {
+#device-tools-header > span > span {
     display: inline-flex;
     align-items: center;
 }

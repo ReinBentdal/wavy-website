@@ -86,7 +86,7 @@ export type NoteEventTime = [number, NoteEvent];
 
 // Define loop data structure
 export interface LoopData {
-    length: number;
+    length_beats: number;
     events: NoteEventTime[];
 }
 
@@ -134,7 +134,7 @@ export function samplesParser_encode(samplePack: SamplePack): Uint8Array {
             }
             loopOffsets.push16(loopData.data.length) // offset relative to start of data
             
-            loopData.push8(loop.length) // loop length
+            loopData.push8(loop.length_beats) // loop length
             loopData.push8(loop.events.length) // number of events
             for (const event of loop.events) {
                 const [ticks, noteEvent] = event;
@@ -183,7 +183,7 @@ export function samplesParser_decode(packedData: Uint8Array): SamplePack {
             }
             
             let loop: LoopData = {
-                length: d.pop8(),
+                length_beats: d.pop8(),
                 events: []
             }
             let numEvents = d.pop8()
@@ -205,11 +205,11 @@ export function samplesParser_decode(packedData: Uint8Array): SamplePack {
 export function generateDummySamples(): SamplePack {
     // Define note events
     const kick_on: NoteEvent = { note: 36, velocity: 100, state: 1 }; // Kick drum on
-    const kick_off: NoteEvent = { note: 36, velocity: 0, state: 0 }; // Kick drum off
+    const kick_off: NoteEvent = { note: 36, velocity: 100, state: 0 }; // Kick drum off
     const snare_on: NoteEvent = { note: 38, velocity: 100, state: 1 }; // Snare drum on
-    const snare_off: NoteEvent = { note: 38, velocity: 0, state: 0 }; // Snare drum off
+    const snare_off: NoteEvent = { note: 38, velocity: 100, state: 0 }; // Snare drum off
     const highhat_on: NoteEvent = { note: 42, velocity: 100, state: 1 }; // Hi-hat on
-    const highhat_off: NoteEvent = { note: 42, velocity: 0, state: 0 }; // Hi-hat off
+    const highhat_off: NoteEvent = { note: 42, velocity: 100, state: 0 }; // Hi-hat off
 
     // Helper function to create events
     function createEvents(eventMap: { [time: number]: NoteEvent[] }): NoteEventTime[] {
@@ -227,7 +227,7 @@ export function generateDummySamples(): SamplePack {
 
     // Define loops
     const loop0: LoopData = {
-        length: 48, // Total length of the loop in ticks
+        length_beats: 2, // Total length of the loop in ticks
         events: createEvents({
             0: [kick_on, highhat_on],
             6: [kick_off, highhat_off],
@@ -241,7 +241,7 @@ export function generateDummySamples(): SamplePack {
     };
 
     const loop1: LoopData = {
-        length: 32,
+        length_beats: 1,
         events: createEvents({
             0: [kick_on],
             12: [snare_on],
