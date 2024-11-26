@@ -1,15 +1,21 @@
-<section>
+
+<section id="top-banner">
+  <div id="remove-btn">×</div>
+  <div>
     <span><slot /></span>
     <span><slot /></span>
+  </div>
 </section>
 
-
 <style>
+:root {
+  --banner-color: rgb(137,112,88);
+}
 section {
   width: 100%;
-  padding: 10px 20px;
-  background-color: yellow;
-  color: black;
+  padding: 0px 15px;
+  background-color: var(--banner-color);
+  color: white;
 
   font-weight: 400;
   font-size: 14px;
@@ -18,26 +24,9 @@ section {
   white-space: nowrap; /* Prevent text wrapping */
   overflow: hidden; /* Hide overflowing content */
   position: relative;
-}
 
-section::before,
-section::after {
-  content: ''; /* Clear content */
-  position: absolute;
-  top: 0;
-  bottom: 0;
-  width: 2rem; /* Optional for fading effect */
-  z-index: 1;
-}
-
-section::before {
-  left: 0;
-  background: linear-gradient(to right, yellow, rgba(255, 255, 0, 0));
-}
-
-section::after {
-  right: 0;
-  background: linear-gradient(to left, yellow, rgba(255, 255, 0, 0));
+  display: flex;
+  align-items: center;
 }
 
 @keyframes scroll {
@@ -53,6 +42,24 @@ section span {
     position: relative;
     display: inline-block;
     width: 100vw;
-    animation: scroll 10s linear infinite;
+    animation: scroll 15s linear infinite;
+    padding: 5px 0;
+  }
+
+#remove-btn {
+  z-index: 1000;
+  display: inline-block;
+  position: absolute;
+  color: white;
+  padding: 5px 15px;
+  height: max-content;
+  right: 0;
+  cursor: pointer;
 }
 </style>
+<script>
+  import { $ } from "~/js/utils/$";
+  $('#remove-btn').addEventListener('click', () => {
+    $('#top-banner').style.display = 'none';
+  })
+</script>
