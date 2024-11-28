@@ -1,6 +1,6 @@
 
 <section id="top-banner">
-  <div id="remove-btn">×</div>
+  <!-- <div id="remove-btn">×</div> -->
   <div>
     <span><slot /></span>
     <span><slot /></span>
@@ -46,7 +46,7 @@ section span {
     padding: 5px 0;
   }
 
-#remove-btn {
+/* #remove-btn {
   z-index: 1000;
   display: inline-block;
   position: absolute;
@@ -58,8 +58,8 @@ section span {
 }
 </style>
 <script>
-  import { $ } from "~/js/utils/$";
+  import { $ } from "~/js/utils/S";
   $('#remove-btn').addEventListener('click', () => {
     $('#top-banner').style.display = 'none';
   })
-</script>
+</script> */

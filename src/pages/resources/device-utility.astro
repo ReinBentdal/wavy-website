@@ -59,6 +59,11 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 						</nav>
 					</header>
 					
+					<div style="display: none;">
+						<button id="upload-samples-state">Check state</button>
+						<button id="upload-samples">Upload Samples</button>
+						<span id="upload-samples-status"></span>
+					</div>
 					<Scene id="scene-utility-tools">
 						<View name="device-update" active>
 								<div class="main-content">
@@ -111,8 +116,7 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 							<View name="sample-manager">
 								<div class="main-content">
 									<div class="flex-center-col" style="gap: 15px;">
-										<button id="upload-samples">Upload Samples</button>
-										<span id="upload-samples-status"></span>
+										
 									</div>
 								</div>
 							</View>
@@ -130,13 +134,16 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 
 <script>
 import {parseChangelog, Changelog} from '~/js/parsers/changelog_parser';
-import { generateDummySamples } from '~/js/parsers/samples_parser';
+import { generateDummySamples, getPackSize } from '~/js/parsers/samples_parser';
 import {MCUManager} from '~/js/mcumgr/mcumgr.js';
 import { ImageManager, ImageFirmwareVersion, imageIsNewer} from '~/js/mcumgr/ImageManager';
 import { SampleManager } from '~/js/mcumgr/SampleManager';
 import Scene from '~/lit/scene';
 import {getOperatingSystem, OperatingSystem} from '~/js/utils/operating_system';
-import {$} from '~/js/utils/$';
+import {$} from '~/js/utils/S';
+
+let k = getPackSize(generateDummySamples())
+console.log(`pack size: ${k}`)
 
 /* all elements used */ 
 const connectProblemNote = $('#connect-problem-note') as HTMLSpanElement;
@@ -160,6 +167,7 @@ const imageManager = new ImageManager(mcumgr);
 const sampleManager = new SampleManager(mcumgr);
 
 let sampleIDs: number[] | null = null;
+let sampleStorageUsedPercent: number | null;
 let advancedOptions = false;	
 let connectionReestablishedResolver: (value: unknown) => void | null = null;
 let firmwareVersions: Changelog = null;
@@ -197,7 +205,6 @@ Scene.ready.then(() => {
 	}
 });
 
-/* elements end */ 
 
 mcumgr.onDeviceSelection = () => {
 	connectButton.disabled = true;
@@ -241,20 +248,27 @@ mcumgr.onConnectionReestablished = async () => {
 		if (updateScene.get() != 'updating') {
 			await getDeviceFirmware();
 		}
-		// await sampleManagerCheckState();
+		await sampleManagerCheckState();
 	})()
 }
 
 async function sampleManagerCheckState() {
 	console.log("checking sample manager state")
 	try {
+		console.log("checking if samples is set on device")
 		const isset = await sampleManager.isSet();
+		console.log(`is set: ${isset}`)
 		if (!isset) {
 			console.log("no samples are set, setting default")
 			await deviceSampleUploadScript();
 		}
 		const ids = await sampleManager.getIDs();
 		sampleIDs = ids
+		sampleStorageUsedPercent = await sampleManager.getSpaceUsed();
+
+		console.log(`space used: ${sampleStorageUsedPercent}`)
+		// console.log(``)
+
 		document.querySelector('#device-tools-header nav').innerHTML = `
 			<a href="#device-update" active>Device update</a>
 			<a href="#sample-manager">Sample manager</a>
@@ -263,10 +277,14 @@ async function sampleManagerCheckState() {
 		updateActiveLinkAndScene()
 	} catch (e) {
 		sampleIDs = null;
+		sampleStorageUsedPercent = null;
 		document.querySelector('#device-tools-header nav').innerHTML = ''
 		window.removeEventListener('hashchange', updateActiveLinkAndScene);
 	}
 }
+$('#upload-samples-state').addEventListener('click', () => {
+	sampleManagerCheckState();
+})
 
 function updateActiveLinkAndScene() {
     const currentHash = window.location.hash;
@@ -293,12 +311,6 @@ function updateActiveLinkAndScene() {
         utilityToolsScene.set('sample-manager');
     }
 }
-
-// Run on page load
-// updateActiveLinkAndScene();
-
-// Run on hashchange
-// window.addEventListener('hashchange', updateActiveLinkAndScene);
 
 connectButton.addEventListener('click', async () => {
 	const BT_MIDI_SERVICE_UUID = '03B80E5A-EDE8-4B33-A751-6CE34EC4C700'.toLowerCase()
@@ -332,9 +344,13 @@ async function getFirmwareUpdates() {
 }
 
 async function getDeviceFirmware() {
-	const fw = await imageManager.getFirmwareVersion();
-	deviceFirmwareVersion = fw;
-	updateAvailableUpdate();
+	try {
+		const fw = await imageManager.getFirmwareVersion();
+		deviceFirmwareVersion = fw;
+		updateAvailableUpdate();
+	} catch (e) {
+		console.log("Failed to get firmware version: " + e);
+	}
 }
 
 function updateAvailableUpdate() {
@@ -434,7 +450,10 @@ async function deviceUpdateScript() {
 
 		updateStageUploading.setAttribute('active', '');
 		uploadStatus.innerText = "(preparing)";
-		await imageManager.uploadImage(image, (percent) => {uploadStatus.innerText = `(${percent}%)`});
+		let did_update = await imageManager.uploadImage(image, (percent) => {uploadStatus.innerText = `(${percent}%)`});
+		if (!did_update) {
+			throw "failed to update";
+		}
 		updateStageUploading.removeAttribute('active');
 		updateStageUploading.setAttribute('done', '');
 		
@@ -460,13 +479,13 @@ async function deviceUpdateScript() {
 
 	} catch (e) {
 		console.error(e);
-		updateScene.set('update-available');
+		updateAvailableUpdate();
 	}
 }
 
 async function deviceSampleUploadScript() {
 	try {
-		sampleManager.uploadSamples(generateDummySamples(), (percent) => uploadSamplesStatus.innerHTML = `${percent}%`)
+		await sampleManager.uploadSamples(generateDummySamples(), (percent) => uploadSamplesStatus.innerHTML = `${percent}%`)
 	} catch (e) {
 		console.error(e)
 		uploadSamplesStatus.innerHTML = 'Failed to upload'

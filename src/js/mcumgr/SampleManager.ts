@@ -9,6 +9,7 @@ enum _MGMT_ID {
     IDs = 0,
     UPLOAD = 1,
     ISSET = 2,
+    SPACE_USED = 3,
 }
 
 enum _STATE {
@@ -25,8 +26,13 @@ interface ISSETResponse {
     set: boolean;
 }
 
+interface SpaceUsedResponse {
+    tot: number; // total
+    usd: number; // storage used
+}
+
 interface UploadRequest {
-    len: number; // optional length of an image, must appear when "off" is 0
+    len: number; // length of all samples
     off: number; // offset of image chunk the request carries
     data: Uint8Array; // image data to write at provided offset
 }
@@ -55,7 +61,7 @@ export class SampleManager {
     }
 
     async isSet(): Promise<boolean> {
-        log.debug('Getting sample ID');
+        log.debug('Checking if any samples are set');
         const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.ISSET) as ISSETResponse | ResponseError;
         if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
             log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
@@ -75,6 +81,18 @@ export class SampleManager {
         const responseSuccess = response as IDResponse;
         log.debug(`Received sample IDs: ${responseSuccess.ids}`);
         return responseSuccess.ids;
+    }
+
+    async getSpaceUsed(): Promise<number> {
+        log.debug('Getting space used');
+        const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.SPACE_USED) as SpaceUsedResponse | ResponseError;
+        if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
+            log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
+            return Promise.reject((response as ResponseError).rc);
+        }
+        const ok = response as SpaceUsedResponse;
+        log.debug(`Received storage, total: ${ok.tot}, used: ${ok.usd}`);
+        return ok.usd / ok.tot * 100;
     }
 
     // Start the image upload process
@@ -116,7 +134,7 @@ export class SampleManager {
 
             // Get the data chunk to send
             const dataEnd = Math.min(offset + maxDataSize, totalLength);
-            const dataChunk = new Uint8Array(samplesBlob!.slice(offset, dataEnd));
+            const dataChunk = new Uint8Array(samplesBlob.slice(offset, dataEnd));
             log.debug(`Data chunk length: ${dataChunk.byteLength} bytes (from offset ${offset} to ${dataEnd})`);
 
             // Re-encode the payload with the data included

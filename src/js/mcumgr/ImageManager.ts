@@ -148,6 +148,7 @@ class ImageManager {
         
                 // Re-encode the payload with the data included
                 encodedPayload = CBOR.encode(payload);
+                log.debug(`total encoded size: ${encodedPayload.byteLength}`);
                 if (encodedPayload.byteLength > maxPayloadSize) {
                     log.warn(`Payload too large: ${encodedPayload.byteLength} > ${maxPayloadSize}`);
                     // soft error, just continue and try
