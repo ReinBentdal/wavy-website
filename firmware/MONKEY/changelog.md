@@ -1,6 +1,3 @@
-# 1.1.9 -dev
-- Sample manager
-
 # 1.1.3[10. nov 2024]
 - Fix looper edge case where two undo checkpoints might merge when using channel undo
 
