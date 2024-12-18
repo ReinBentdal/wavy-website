@@ -1,4 +1,4 @@
 {
-    "status": "in-stock",
-    "text" : "In stock"
+    "status": "low-stock",
+    "text" : "Low stock, next batch expected around new years."
 }
