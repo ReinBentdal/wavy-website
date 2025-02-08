@@ -22,6 +22,7 @@ function currentPageCheck(link) {
 import logoImg from '../assets/logo.svg';
 import logoWhiteImg from '../assets/logo-white.svg';
 ---
+
 <header class={textColor == 'white' ? 'text-white' : 'text-black'} hide={hide}>
     <div class="logo">
         <a href={routes.home}><img src={textColor == 'white' ? logoWhiteImg.src : logoImg.src} /></a>
@@ -31,31 +32,51 @@ import logoWhiteImg from '../assets/logo-white.svg';
         <div>
             <h3>Products</h3>
             <ul>
-                <li class={currentPageCheck(routes.monkey)}><a href={routes.monkey}>MON<b>KEY</b></a></li>
-                <li class={currentPageCheck(routes.kd3)}><a href={routes.kd3}>KD-3</a></li>
-                <!-- <li class={currentPageCheck(routes.midiConnect)}><a href={routes.midiConnect}>MIDI connect</a></li> -->
+                <li class={currentPageCheck(routes.monkey)}>
+                    <a href={routes.monkey}>MON<b>KEY</b></a>
+                    <span>MON<b>KEY</b></span>
+                </li>
+    
+                <li class={currentPageCheck(routes.kd3)}>
+                    <a href={routes.kd3}>KD-3</a>
+                    <span>KD-3</span>
+                </li>
+                <li class={currentPageCheck(routes.midiConnect)}>
+                    <a href={routes.midiConnect}>MIDI connect</a>
+                    <span>MIDI connect</span>
+                </li>
             </ul>
         </div>
         
         <div>
             <h3>Resources</h3>
             <ul>
-                <li class={currentPageCheck(routes.support)}><a href={routes.support}>support</a></li>
-                <li class={currentPageCheck(routes.deviceUtility)}><a href={routes.deviceUtility}>device utility</a></li>
-                <!-- <li class={currentPageCheck(routes.faq)}><a href={routes.faq}>FAQ</a></li> -->
+                <li class={currentPageCheck(routes.support)}>
+                    <a href={routes.support}>support</a>
+                    <span>support</span>
+                </li>
+                <li class={currentPageCheck(routes.deviceUtility)}>
+                    <a href={routes.deviceUtility}>device utility</a>
+                    <span>device utility</span>
+                </li>
+                <!-- <li class={currentPageCheck(routes.faq)}>
+                    <a href={routes.faq}>FAQ</a>
+                    <span>FAQ</span>
+                </li> -->
             </ul>
         </div>
-
+    
         <div>
             <h3>Connect</h3>
             <ul>
-                <li><a href={routes.wavyDiscord} target="_blank">discord ⬀</a></li>
-                <li><a href={routes.wavyIndstagram} target="_blank">instagram ⬀</a></li>
-                <li><a href={routes.newsletter} target="_blank">newsletter ⬀</a></li>
-                <li><a id="something-special-header" target="_blank">contact ⬀</a></li>
+                <li><a style="position:relative;" href={routes.wavyDiscord} target="_blank">discord ⬀</a></li>
+                <li><a style="position:relative;" href={routes.wavyIndstagram} target="_blank">instagram ⬀</a></li>
+                <li><a style="position:relative;" href={routes.newsletter} target="_blank">newsletter ⬀</a></li>
+                <li><a style="position:relative;" id="something-special-header" target="_blank">contact ⬀</a></li>
             </ul>
         </div>
     </nav>
+    
 </header>
 
 <style>
@@ -97,7 +118,7 @@ import logoWhiteImg from '../assets/logo-white.svg';
     nav {
         display: flex;
         justify-content: space-between;
-        gap: 20px;
+        gap: 25px;
     }
 
     nav h3 {
@@ -109,6 +130,7 @@ import logoWhiteImg from '../assets/logo-white.svg';
         list-style-type: none;
         padding: 0;
         margin: 0;
+        line-height: 1.25;
 
         font-size: 16px;
         font-weight: 400
@@ -118,7 +140,16 @@ import logoWhiteImg from '../assets/logo-white.svg';
         white-space: nowrap;
     }
 
-    ul li.active-link {
+    li > span {
+        visibility: hidden;
+        position: relative;
+    }
+
+    li > a {
+        position: absolute;
+    }
+
+    ul li.active-link a {
         font-weight: bold;
         text-decoration: underline;
     }

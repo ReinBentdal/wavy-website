@@ -1,4 +1,4 @@
-# 1.1.9 -dev
+# 1.1.9 -dev -obsolete
 - Sample manager
 
 # 1.1.3[10. nov 2024]
