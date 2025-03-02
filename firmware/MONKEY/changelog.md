@@ -1,5 +1,9 @@
-# 1.1.9 -dev -obsolete
-- Sample manager
+# 1.1.9[2. march 2025] The drum update -dev
+- User selectable drum loops (through web interface)
+- DRM: presets are now banks of drum loops instead of swing amount
+- DRM: The black keys are now momentary loop modifiers
+- Improved updating Bluetooth connection parameters
+- Other minor improvements & fixes
 
 # 1.1.3[10. nov 2024]
 - Fix looper edge case where two undo checkpoints might merge when using channel undo
