@@ -43,7 +43,7 @@ def process_midi_file(path):
     total_beats = math.ceil(max_scaled_tick / TICKS_PER_BEAT)
     length_beats = total_beats
 
-    assert length_beats <= 255, f"beat length is longer than what the system can store {length_beats}"
+    assert length_beats <= 255, f"beat length is longer than what the system can store {length_beats}: {path}"
 
     # Create LoopData object
     loop_data = {
