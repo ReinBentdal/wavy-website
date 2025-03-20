@@ -5,133 +5,20 @@ import Layout from '~/layouts/Layout.astro';
 import Header from '~/layouts/Header.astro';
 import Footer from '~/layouts/Footer.astro';
 import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
-
-import Scene from '~/lit/scene';
-import View from '~/lit/view';
+import DeviceUtility from '~/components/device-tools/DeviceUtility.svelte';
 
 import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png';
 ---
 
 <Layout title="Wavy Industries: device utility">
-	<main>
+	<main style="background-color: #f5f5f5">
 		<Header />
-		<section style="flex-grow: 2; display: flex; flex-direction: column; align-items: center;">
-			<Scene id="scene-main">
-
-				<View name="disconnected" active>
-					<div class="main-content">
-						<img src={MonkeyProgramImg.src} alt="Monkey programmer" id="programmer-monkey" />
-						<div style="display:flex; align-items: center; flex-direction: column;">
-							<h1>device utility</h1>
-							<span class="tagline">update and configure your device directly in the browser!</span>
-						</div>
-						<Scene id="scene-bluetooth">
-							<View name="checking" active></View>
-							<View name="unavailable">
-							<p class="note" style="text-align: center;">
-								It looks like your browser is not supported :/<br />
-								<span id="browser-support-note"></span>
-							</p>
-							</View>
-							<View name="available">
-							<button id="button-connect" type="submit" class="btn btn-primary"><i class="bi-bluetooth"></i>Connect</button>
-						</View>
-						</Scene>
-						<p id="connect-problem-note" class="hidden note" style="max-width: 400px; text-align: center;">If you have problems finding your device, make sure it is not already connected to something else.</p>
-					</div>
-				</View>
-
-				<View name="connected">
-
-					<!-- header -->
-					<header id="device-tools-header">
-						<span>
-							<button class="button-disconnect input-small" type="submit">Disconnect</button>
-							<span>
-							<b><span id="device-name">unknown name</span></b><div id="device-connection-status" />
-							<span class="update-version-device"></span>
-							<input type="checkbox" id="show-advanced" style="margin-left: 10px;" />
-							</span>
-							<label for="show-advanced">Beta</label>
-						</span>
-						<nav>
-							
-						</nav>
-					</header>
-					
-					<div style="display: none;">
-						<button id="upload-samples-state">Check state</button>
-						<button id="upload-samples">Upload Samples</button>
-						<span id="upload-samples-status"></span>
-					</div>
-					<Scene id="scene-utility-tools">
-						<View name="device-update" active>
-								<div class="main-content">
-								<Scene id="scene-updater">
-									<View name="loading" active>Waiting for device info</View>
-									<View name="update-available">
-										<div class="flex-center-col" style="gap: 15px;">
-											<h1>New update available</h1>
-											<span class="tagline">Your device is ready to be updated</span>
-											<span><span class="update-version-device"></span> ➔ <span class="update-version-to"></span></span>
-											<button class="update-buttons" style="background-color: #B7FF9E;">Start update</button>
-										</div>
-									</View>
-									<View name="downgrade-available">
-										<div class="flex-center-col" style="gap: 15px;">
-											<h1>Downgrade available</h1>
-											<span class="tagline">Your device running a beta firmware. Downgrade to stable release</span>
-											<span><span class="update-version-device"></span> ➔ <span class="update-version-to"></span></span>
-											<button class="update-buttons" style="background-color: #fffb9e;">Start downgrade</button>
-										</div>
-									</View>
-									<View name="updating">
-										<div class="flex-center-col" style="gap: 15px;">
-											<h1>Updating</h1>
-											<p>
-												<span id="update-stage-fetch" class="update-stage">fetching new firmware</span><br/>
-												<span id="update-stage-uploading" class="update-stage">uploading firmware <span id="upload-status"></span></span><br/>
-												<span id="update-stage-applying" class="update-stage">applying update (waiting on device)</span><br/>
-												<span id="update-stage-verifying" class="update-stage">verifying update</span><br/>
-												<span id="update-stage-done" class="update-stage">done!</span>
-											</p>
-										</div>
-									</View>
-									<View name="updated">
-										<div class="flex-center-col" style="gap: 15px;">
-											<h1>your device is up to date!</h1>
-											<span class="tagline">Your device is running the newest firmware. To get notifications when new firmware versions are available, add your email at the bottom of this page.</span>
-											<button class="button-disconnect">Disconnect</button>
-										</div>
-									</View>
-								</Scene>
-								<br/>
-								<br/>
-								<div>
-									<h3>Changelog</h3>
-									<div id="changelog"></div>
-								</div>
-							</div>
-							</View>
-							<View name="sample-manager">
-								<div class="main-content">
-									<div class="flex-center-col" style="gap: 15px;">
-										
-									</div>
-								</div>
-							</View>
-						</Scene>
-				</View>
-
-			</Scene>
-			<br />
-			<hr />
-			<DeviceUpdateSubscribe style="margin: 30px 0px;" />
-		</section>
+		<DeviceUtility client:load />
+		<DeviceUpdateSubscribe style="margin: 30px 0px;" />
 		<Footer />
 	</main>
 </Layout>
-
+<!-- 
 <script>
 import {parseChangelog, Changelog} from '~/js/parsers/changelog_parser';
 import { generateDummySamples, getPackSize } from '~/js/parsers/samples_parser';
@@ -491,4 +378,4 @@ async function deviceSampleUploadScript() {
 		uploadSamplesStatus.innerHTML = 'Failed to upload'
 	}
 }
-</script>
+</script> -->

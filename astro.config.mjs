@@ -4,6 +4,8 @@ import mdx from '@astrojs/mdx';
 
 import lit from '@astrojs/lit';
 
+import svelte from '@astrojs/svelte';
+
 // https://astro.build/config
 export default defineConfig({
   build: {
@@ -18,5 +20,5 @@ export default defineConfig({
       }
     }
   },
-  integrations: [mdx(), lit()]
+  integrations: [mdx(), lit(), svelte()]
 });

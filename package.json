@@ -12,17 +12,20 @@
     "test": "vitest"
   },
   "dependencies": {
+    "@astrojs/svelte": "^7.0.6",
     "@types/web-bluetooth": "^0.0.20",
     "@webcomponents/template-shadowroot": "^0.2.1",
-    "astro": "^4.15.3",
-    "lit": "^3.2.0"
+    "astro": "^5.5.3",
+    "lit": "^3.2.0",
+    "svelte": "^5.23.2",
+    "typescript": "^5.8.2"
   },
   "devDependencies": {
     "@astrojs/lit": "^4.3.0",
-    "@astrojs/mdx": "^3.1.5",
+    "@astrojs/mdx": "^4.2.1",
     "gh-pages": "^6.1.1",
     "jsdom": "^25.0.1",
     "vite-tsconfig-paths": "^5.0.1",
-    "vitest": "^2.1.1"
+    "vitest": "^3.0.9"
   }
 }
