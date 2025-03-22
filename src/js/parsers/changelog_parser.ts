@@ -1,4 +1,4 @@
-import { ImageFirmwareVersion, imageIsNewer } from "../mcumgr/ImageManager";
+import { ImageFirmwareVersion, imageRhsIsNewer } from "../mcumgr/ImageManager";
 
 export interface Changelog {
     release: ImageFirmwareVersion | null;
@@ -61,11 +61,11 @@ export function parseChangelog(markdown: string): Changelog {
 
                 // Set as latest release or dev if not obsolete
                 if (!isObsolete) {
-                    if (!changelog.dev || imageIsNewer(changelog.dev, changeVersion)) {
+                    if (!changelog.dev || imageRhsIsNewer(changelog.dev, changeVersion)) {
                         changelog.dev = changeVersion;
                     }
                     if (!isDev) {
-                        if (!changelog.release || imageIsNewer(changelog.release, changeVersion)) {
+                        if (!changelog.release || imageRhsIsNewer(changelog.release, changeVersion)) {
                             changelog.release = changeVersion;
                         }
                     }

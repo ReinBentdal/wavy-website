@@ -1,8 +1,8 @@
 <script lang="ts">
-    import { connectionState } from '~/stores/Bluetooth.svelte';
+    import { bluetoothState } from '~/stores/Bluetooth.svelte';
   </script>
   
-  <div class="status-circle" class:connected={$connectionState === 'connected'} class:connection-loss={$connectionState === 'connectionLoss'}>
+  <div class="status-circle" class:connected={bluetoothState.connectionState === 'connected'} class:connection-loss={bluetoothState.connectionState === 'connectionLoss'}>
   </div>
   
   <style>

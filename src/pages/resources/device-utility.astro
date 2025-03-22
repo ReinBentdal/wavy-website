@@ -5,7 +5,7 @@ import Layout from '~/layouts/Layout.astro';
 import Header from '~/layouts/Header.astro';
 import Footer from '~/layouts/Footer.astro';
 import DeviceUpdateSubscribe from '~/components/DeviceUpdateSubscribe.astro';
-import DeviceUtility from '~/components/device-tools/DeviceUtility.svelte';
+import DeviceUtility from '~/js/device-tools/DeviceUtility.svelte';
 
 import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png';
 ---
@@ -13,11 +13,23 @@ import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png
 <Layout title="Wavy Industries: device utility">
 	<main style="background-color: #f5f5f5">
 		<Header />
-		<DeviceUtility client:load />
-		<DeviceUpdateSubscribe style="margin: 30px 0px;" />
+
+		<div>
+			<DeviceUtility client:load />
+			<DeviceUpdateSubscribe style="margin: 30px 0px;" />
+		</div>
 		<Footer />
 	</main>
 </Layout>
+
+<style>
+	main >div {
+		flex-grow: 2;
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+	}
+</style>
 <!-- 
 <script>
 import {parseChangelog, Changelog} from '~/js/parsers/changelog_parser';

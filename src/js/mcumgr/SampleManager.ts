@@ -143,7 +143,7 @@ export class SampleManager {
             log.debug(`Payload size after adding data: ${payloadEncoded.byteLength} bytes`);
 
             if (payloadEncoded.byteLength > maxPayloadSize) {
-                log.warn(`Payload too large: ${payloadEncoded.byteLength} > ${maxPayloadSize}`);
+                log.warning(`Payload too large: ${payloadEncoded.byteLength} > ${maxPayloadSize}`);
                 this.state = _STATE.IDLE
                 return false;
             }

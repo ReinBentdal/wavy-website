@@ -1,11 +1,11 @@
 <script>
     import ConnectView from './ConnectView.svelte';
     import ConnectedView from './ConnectedView.svelte';
-    import { connectionState } from '~/stores/Bluetooth.svelte';
+    import { bluetoothState } from '~/stores/Bluetooth.svelte';
 </script>
 
 <section style="flex-grow: 2; display: flex; flex-direction: column; align-items: center;">
-    {#if $connectionState !== 'disconnected' && $connectionState !== 'connecting'}
+    {#if bluetoothState.connectionState !== 'disconnected' && bluetoothState.connectionState !== 'connecting'}
         <ConnectedView />
     {:else}
         <ConnectView />

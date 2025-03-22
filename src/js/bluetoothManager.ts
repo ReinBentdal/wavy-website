@@ -19,17 +19,38 @@ export class BluetoothManager {
 
     // Connection state management
     private state: ConnectionState = { type: 'disconnected' };
-
     // Event callbacks
-    public onConnect: (() => void) | null = null;
-    public onDisconnect: (() => void) | null = null;
-    public onConnecting: (() => void) | null = null;
-    public onConnectionLoss: (() => void) | null = null;
-    public onConnectionReestablished: (() => void) | null = null;
-    
-    public onDeviceSelection: (() => void) | null = null;
-    public onDeviceSelectionCancel: (() => void) | null = null;
-    public onDataReceived: ((data: Uint8Array) => void) | null = null;
+    private _onConnect = new Set<() => void>();
+    private _onDisconnect = new Set<() => void>();
+    private _onConnecting = new Set<() => void>();
+    private _onConnectionLoss = new Set<() => void>();
+    private _onConnectionReestablished = new Set<() => void>();
+    private _onDataReceived = new Set<(data: Uint8Array) => void>();
+
+    // Event trigger methods
+    public onConnect(callback: () => void) {
+        this._onConnect.add(callback);
+    }
+
+    public onDisconnect(callback: () => void) {
+        this._onDisconnect.add(callback);
+    }
+
+    public onConnecting(callback: () => void) {
+        this._onConnecting.add(callback);
+    }
+
+    public onConnectionLoss(callback: () => void) {
+        this._onConnectionLoss.add(callback);
+    }
+
+    public onConnectionReestablished(callback: () => void) {
+        this._onConnectionReestablished.add(callback);
+    }
+
+    public onDataReceived(callback: (data: Uint8Array) => void) {
+        this._onDataReceived.add(callback);
+    }
 
     constructor(
         private readonly serviceUUID: string,
@@ -49,7 +70,7 @@ export class BluetoothManager {
         }
 
         // Invoke the device selection start callback
-        this.onDeviceSelection?.();
+        // this.onDeviceSelection?.();
 
         return navigator.bluetooth.requestDevice(params);
     }
@@ -66,7 +87,7 @@ export class BluetoothManager {
             this.device = await this._requestDevice(filters);
             // Device selected, move to connecting
             this.state = { type: 'connecting' };
-            this.onConnecting?.();
+            this._onConnecting.forEach(callback => callback());
 
             console.debug(`Connecting to device ${this.device.name}...`);
 
@@ -78,7 +99,7 @@ export class BluetoothManager {
                 // User canceled the device selection
                 console.debug('Device selection canceled.');
                 this.state = { type: 'disconnected' };
-                this.onDeviceSelectionCancel?.();
+                // this.onDeviceSelectionCancel?.();
             } else {
                 console.error('Connection error:', error);
                 await this._handleDisconnected();
@@ -105,9 +126,9 @@ export class BluetoothManager {
 
             if (this.state.type === 'connecting' || this.state.type === 'connectionLoss') {
                 if (this.state.type === 'connectionLoss') {
-                    this.onConnectionReestablished?.();
+                    this._onConnectionReestablished.forEach(callback => callback());
                 } else {
-                    this.onConnect?.();
+                    this._onConnect.forEach(callback => callback());
                 }
                 this.state = { type: 'connected' };
             }
@@ -136,7 +157,7 @@ export class BluetoothManager {
         if (this.state.type === 'connected') {
             // Connection was lost unexpectedly
             this.state = { type: 'connectionLoss' };
-            this.onConnectionLoss?.();
+            this._onConnectionLoss.forEach(callback => callback());
 
             // Attempt to reconnect
             await this._reconnect();
@@ -159,7 +180,7 @@ export class BluetoothManager {
 
     private async _handleDisconnected(): Promise<void> {
         this.state = { type: 'disconnected' };
-        this.onDisconnect?.();
+        this._onDisconnect.forEach(callback => callback());
 
         // Clean up resources
         this.device = null;
@@ -200,7 +221,7 @@ export class BluetoothManager {
                 const message = this.buffer.slice(0, totalLength);
                 log.debug('Processing message');
                 log.debug(message);
-                this.onDataReceived?.(message);
+                this._onDataReceived.forEach(callback => callback(message));
                 this.buffer = this.buffer.slice(totalLength);
             } else {
                 break;

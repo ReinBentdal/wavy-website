@@ -1,8 +1,11 @@
 <script>
     import MonkeyProgramImg from '~/assets/resources/device-tools/monkey_program.png';
+    import bluetoothImg from '~/assets/icons/bluetooth.svg'
+
     import ConnectedView from './ConnectedView.svelte';
     import { onMount } from 'svelte';
-    import { bluetoothManager, connectionState } from '~/stores/Bluetooth.svelte';
+    import { bluetoothManager, bluetoothState } from '~/stores/Bluetooth.svelte';
+    import { routes } from '~/routes';
     
     const BT_MIDI_SERVICE_UUID = '03B80E5A-EDE8-4B33-A751-6CE34EC4C700'.toLowerCase();
     const filters = [{ namePrefix: 'WAVY MONKEY', services: [BT_MIDI_SERVICE_UUID] }];
@@ -36,7 +39,7 @@
   </script>
   
   <div class="main-content">
-    {#if $connectionState !== 'connected'}
+    {#if bluetoothState.connectionState !== 'connected'}
       <img src={MonkeyProgramImg.src} alt="Monkey programmer" id="programmer-monkey" />
       <div style="display:flex; align-items: center; flex-direction: column;">
         <h1>device utility</h1>
@@ -52,21 +55,28 @@
       {:else}
         <button
           class="btn btn-primary"
-          disabled={$connectionState === 'connecting'}
+          disabled={bluetoothState.connectionState === 'connecting'}
           onclick={handleConnectClick}>
-          <i class="bi-bluetooth"></i>
-          {#if $connectionState === 'connecting'}
+          <img src={bluetoothImg.src} alt="bluetooth logo" height="15px" />
+          {#if bluetoothState.connectionState === 'connecting'}
             Connecting...
           {:else}
-            Connect
+            <i class="bi-bluetooth"></i> Click to connect
           {/if}
         </button>
   
         <p class="note" style="max-width: 400px; text-align: center;">
-          If you have problems finding your device, make sure it is not already connected to something else.
+          If you are having problems finding your device, make sure it is not already connected to anything else. <a href={routes.monkeyConnect}>read more</a>
         </p>
       {/if}
     {:else}
       <ConnectedView />
     {/if}
   </div>
+
+  <style>
+    button {
+      background-color: #0082FC;
+      color: white;
+    }
+  </style>

@@ -70,7 +70,7 @@ export class MCUManager {
     private readonly SMP_HEADER_ID_IDX: number = 7;
 
     constructor(private bluetoothManager: BluetoothManager) {
-        this.bluetoothManager.onDataReceived = this._processMessage.bind(this);
+        this.bluetoothManager.onDataReceived(this._processMessage.bind(this));
     }
 
     public get maxPayloadSize(): number {
@@ -104,7 +104,7 @@ export class MCUManager {
             try {
                 await this.bluetoothManager.sendMessage(message);
             } catch (error) {
-                log.dbg(`Failed to send bluetooth characteristic message: ${error}`);
+                log.debug(`Failed to send bluetooth characteristic message: ${error}`);
                 delete this.responseResolvers[sequenceNumber];
                 reject(error);
             }
@@ -131,7 +131,7 @@ export class MCUManager {
             resolver.resolve(data);
             delete this.responseResolvers[seq];
         } else {
-            log.warn(`No resolver found for sequence number ${seq}`);
+            log.warning(`No resolver found for sequence number ${seq}`);
         }
     }
 }
