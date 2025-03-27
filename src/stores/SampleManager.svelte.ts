@@ -9,11 +9,13 @@ export const sampleManager = new SampleManager(mcumgr);
 export const sampleState = $state({
     storageUsed: null,
     isset: null,
-    IDs: null
+    IDs: null,
+    IDMap: null
 })
 
 bluetoothManager.onConnect(() => {
     checkDeviceSamples()
+    getAvailableSamples();
 });
 
 bluetoothManager.onConnectionReestablished(() => {
@@ -43,4 +45,11 @@ async function checkDeviceSamples() {
 	} catch (e) {
         console.log(e)
 	}
+}
+
+async function getAvailableSamples() {
+    const device_name = "MONKEY"; // TODO: use DIS instead to get the ID of the device
+    const response = await fetch(`/samples/${device_name}/DRM/samples.json`);
+    const data = await response.json();
+    sampleState.IDMap = data;
 }

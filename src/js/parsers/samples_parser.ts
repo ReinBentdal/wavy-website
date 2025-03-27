@@ -93,6 +93,7 @@ export interface LoopData {
 // Define the type for pages, each page is an array of loops
 export interface Page {
     id: number // uint16_t
+    name?: string
     loops: LoopData[]
 }
 

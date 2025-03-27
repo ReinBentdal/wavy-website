@@ -15,11 +15,11 @@
                     <span class="changelog-header">
                     {version.version.versionString}
                     {#if version.highlight}
-                    {version.highlight}{/if}
-                    <b>
-                        {#if version.isDev}
-                            [BETA]{/if}
-                    </b>
+                    
+                    <b>{version.highlight}</b>{/if}
+                    
+                    {#if version.isDev}
+                        <span style="color: #f39c21;">BETA</span>{/if}
                     </span>
                     <span><i>{version.date ?? ""}</i></span>
                 </p>
