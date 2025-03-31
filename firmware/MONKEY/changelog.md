@@ -1,3 +1,6 @@
+# 1.1.91[31. March 2025] -dev
+- Minor fixes
+
 # 1.1.9[2. march 2025] The drum update -dev
 - User selectable drum loops (through web interface)
 - DRM: presets are now banks of drum loops instead of swing amount
