@@ -4,7 +4,7 @@ import { assert, Log } from '../utilities';
 import CBOR from './cbor';
 import { BluetoothManager } from '../bluetoothManager';
 
-let log = new Log('mcumgr', Log.LEVEL_DEBUG);
+let log = new Log('mcumgr', Log.LEVEL_INFO);
 
 export const SMP_ERR_RC: { [code: number]: string } = {
     0: 'No error, OK.',

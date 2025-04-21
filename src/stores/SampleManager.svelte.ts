@@ -10,7 +10,8 @@ export const sampleState = $state({
     storageUsed: null,
     isset: null,
     IDs: null,
-    IDMap: null
+    IDMap: null,
+	uploadPercentage: null,
 })
 
 bluetoothManager.onConnect(() => {
@@ -22,8 +23,10 @@ bluetoothManager.onConnectionReestablished(() => {
     checkDeviceSamples()
 });
 
-async function deviceSamplesUpload() {
-    await sampleManager.uploadSamples(generateDummySamples(), (percent) => console.log(`${percent}`))
+export async function deviceSamplesUpload() {
+	sampleState.uploadPercentage = 0;
+    await sampleManager.uploadSamples(generateDummySamples(), (percent) => sampleState.uploadPercentage = percent);
+	sampleState.uploadPercentage = null;
 }
 
 async function checkDeviceSamples() {
@@ -52,4 +55,6 @@ async function getAvailableSamples() {
     const response = await fetch(`/samples/${device_name}/DRM/samples.json`);
     const data = await response.json();
     sampleState.IDMap = data;
+	console.log(`available samples:`)
+	console.log(data)
 }

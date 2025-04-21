@@ -1,6 +1,6 @@
 import { Log } from './utilities';
 
-let log = new Log('bluetooth', Log.LEVEL_DEBUG);
+let log = new Log('bluetooth', Log.LEVEL_INFO);
 
 type ConnectionState =
   | { type: 'disconnected' }
