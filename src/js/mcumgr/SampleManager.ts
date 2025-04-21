@@ -6,15 +6,10 @@ let log = new Log('smpl_mgr', Log.LEVEL_DEBUG);
 
 // Enums for better type safety
 enum _MGMT_ID {
-    ID = 0,
+    IDs = 0,
     UPLOAD = 1,
-}
-
-enum _STATE_TRANSITION {
-    START_UPLOAD,
-    START_DOWNLOAD,
-    TRANSFER_COMPLETE,
-    TRANSFER_ERROR,
+    ISSET = 2,
+    SPACE_USED = 3,
 }
 
 enum _STATE {
@@ -24,11 +19,20 @@ enum _STATE {
 }
 
 interface IDResponse {
-    id: number;
+    ids: number[];
+}
+
+interface ISSETResponse {
+    set: boolean;
+}
+
+interface SpaceUsedResponse {
+    tot: number; // total
+    usd: number; // storage used
 }
 
 interface UploadRequest {
-    len: number; // optional length of an image, must appear when "off" is 0
+    len: number; // length of all samples
     off: number; // offset of image chunk the request carries
     data: Uint8Array; // image data to write at provided offset
 }
@@ -52,57 +56,53 @@ export class SampleManager {
     private state: _STATE = _STATE.IDLE;
     private mcumgr: MCUManager;
 
-    private onUploadProgressCallback: ((percent: number) => void) | null = null;
-    private onUploadCompleteCallback: ((success: boolean) => void) | null = null;
-    private onUploadStartedCallback: (() => void) | null = null;
-
-    private onDownloadProgressCallback: ((percent: number) => void) | null = null;
-    private onDownloadCompleteCallback: ((success: boolean) => void) | null = null;
-    private onDownloadStartedCallback: (() => void) | null = null;
-
     constructor(mcumgr: MCUManager) {
         this.mcumgr = mcumgr;
     }
 
-    // Callback for upload progress
-    onUploadProgress(fn: (percent: number) => void): this {
-        this.onUploadProgressCallback = fn;
-        return this;
-    }
-
-    // Callback for upload completion
-    onUploadComplete(fn: (success: boolean) => void): this {
-        this.onUploadCompleteCallback = fn;
-        return this;
-    }
-
-    // Callback for upload start
-    onUploadStarted(fn: () => void): this {
-        this.onUploadStartedCallback = fn;
-        return this;
-    }
-
-    async getId(): Promise<number> {
-        log.debug('Getting sample ID');
-        const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.ID) as IDResponse | ResponseError;
-        if ((response as ResponseError).rc === undefined || (response as ResponseError).rc !== MGMT_ERR.EOK) {
+    async isSet(): Promise<boolean> {
+        log.debug('Checking if any samples are set');
+        const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.ISSET) as ISSETResponse | ResponseError;
+        if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
             log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
-            return Promise.reject('Error response received');
+            return Promise.reject((response as ResponseError).rc);
+        }
+        const responseSuccess = response as ISSETResponse;
+        return responseSuccess.set;
+    }
+
+    async getIDs(): Promise<number[]> {
+        log.debug('Getting sample ID');
+        const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.IDs) as IDResponse | ResponseError;
+        if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
+            log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
+            return Promise.reject((response as ResponseError).rc);
         }
         const responseSuccess = response as IDResponse;
-        log.debug(`Received sample ID: ${responseSuccess.id}`);
-        return responseSuccess.id;
+        log.debug(`Received sample IDs: ${responseSuccess.ids}`);
+        return responseSuccess.ids;
+    }
+
+    async getSpaceUsed(): Promise<number> {
+        log.debug('Getting space used');
+        const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.SPACE_USED) as SpaceUsedResponse | ResponseError;
+        if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
+            log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
+            return Promise.reject((response as ResponseError).rc);
+        }
+        const ok = response as SpaceUsedResponse;
+        log.debug(`Received storage, total: ${ok.tot}, used: ${ok.usd}`);
+        return ok.usd / ok.tot * 100;
     }
 
     // Start the image upload process
-    async uploadSamples(image: SamplePack): Promise<boolean> {
+    async uploadSamples(image: SamplePack, uploadProgressUpdate?: (percent: Number) => void): Promise<boolean> {
         log.debug('Starting sample upload process');
         if (this.state !== _STATE.IDLE) {
             log.error('Cant start upload when not in idle state');
             return Promise.reject('Cant start upload when not in idle state');
         }
 
-        this._setState(_STATE_TRANSITION.START_UPLOAD);
         this.state = _STATE.UPLOADING; // dumy to get rid of TS errors
 
         const maxPayloadSize = this.mcumgr.maxPayloadSize; // Max payload size from MCUManager
@@ -128,13 +128,13 @@ export class SampleManager {
 
             if (maxDataSize <= 0) {
                 log.error('MTU too small to send data');
-                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                this.state = _STATE.IDLE
                 return false;
             }
 
             // Get the data chunk to send
             const dataEnd = Math.min(offset + maxDataSize, totalLength);
-            const dataChunk = new Uint8Array(samplesBlob!.slice(offset, dataEnd));
+            const dataChunk = new Uint8Array(samplesBlob.slice(offset, dataEnd));
             log.debug(`Data chunk length: ${dataChunk.byteLength} bytes (from offset ${offset} to ${dataEnd})`);
 
             // Re-encode the payload with the data included
@@ -144,7 +144,7 @@ export class SampleManager {
 
             if (payloadEncoded.byteLength > maxPayloadSize) {
                 log.warn(`Payload too large: ${payloadEncoded.byteLength} > ${maxPayloadSize}`);
-                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                this.state = _STATE.IDLE
                 return false;
             }
 
@@ -156,7 +156,7 @@ export class SampleManager {
                 // Check for errors in response
                 if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
                     log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
-                    this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                    this.state = _STATE.IDLE
                     return false;
                 }
 
@@ -169,18 +169,18 @@ export class SampleManager {
                 // Call progress callback if defined
                 const progress = Math.floor((offset / totalLength) * 100);
                 log.debug(`Upload progress: ${progress}%`);
-                this.onUploadProgressCallback?.(progress);
+                uploadProgressUpdate?.(progress);
 
                 // Check if upload is complete
                 if (offset >= totalLength) {
                     log.debug('Upload complete');
-                    this._setState(_STATE_TRANSITION.TRANSFER_COMPLETE);
+                    this.state = _STATE.IDLE;
                     break;
                 }
 
             } catch (error) {
                 log.error('Error during upload:', error);
-                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
+                this.state = _STATE.IDLE;
                 return false;
             }
         }
@@ -189,22 +189,7 @@ export class SampleManager {
         return true;
     }
 
-    onDownloadProgress(fn: (percent: number) => void): this {
-        this.onDownloadProgressCallback = fn;
-        return this;
-    }
-
-    onDownloadComplete(fn: (success: boolean) => void): this {
-        this.onDownloadCompleteCallback = fn;
-        return this;
-    }
-
-    onDownloadStarted(fn: () => void): this {
-        this.onDownloadStartedCallback = fn;
-        return this;
-    }
-
-    async downloadSamples(): Promise<SamplePack> {
+    async downloadSamples(uploadProgressUpdate?: (percent: Number) => void): Promise<SamplePack | null> {
         log.debug('Starting sample download process');
         if (this.state !== _STATE.IDLE) {
             log.error('Cant start download when not in idle state');
@@ -212,7 +197,7 @@ export class SampleManager {
             return Promise.reject('Cant start download when not in idle state');
         }
 
-        this._setState(_STATE_TRANSITION.START_DOWNLOAD);
+        this.state = _STATE.DOWNLOADING
 
         let data_raw = new Uint8Array([]);
         let offset = 0;
@@ -226,32 +211,32 @@ export class SampleManager {
             const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as DownloadResponse | ResponseError;
             if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
                 log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
-                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
-                return Promise.reject('Error response received');
+                this.state = _STATE.IDLE;
+                return null;
             }
 
             const responseSuccess = response as DownloadResponse;
             log.debug(`Received first chunk, offset: ${responseSuccess.off}, data length: ${responseSuccess.data.byteLength}`);
             if (responseSuccess.len === undefined) {
                 log.error('Length not received in first chunk');
-                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
-                return Promise.reject('Length not received in first chunk');
+                this.state = _STATE.IDLE;
+                return null;
             }
             if (responseSuccess.off !== offset) {
                 log.error('Invalid offset received in first chunk');
-                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
-                return Promise.reject('Invalid offset received in first chunk');
+                this.state = _STATE.IDLE;
+                return null;
             }
             data_raw = responseSuccess.data;
             offset = responseSuccess.off + responseSuccess.data.byteLength;
             total_length = responseSuccess.len as number;
 
             // Call progress callback if defined
-            this.onDownloadProgressCallback?.(Math.floor((offset / total_length) * 100));
+            uploadProgressUpdate?.(Math.floor((offset / total_length) * 100));
         } catch (error) {
             log.error('Error during download:', error);
-            this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
-            return Promise.reject('Error during download');
+            this.state = _STATE.IDLE;
+            return null;
         }
 
         while (offset < total_length) {
@@ -265,8 +250,8 @@ export class SampleManager {
                 const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.UPLOAD, payloadEncoded) as DownloadResponse | ResponseError;
                 if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
                     log.error(`Error response received, rc: ${(response as ResponseError).rc}`);
-                    this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
-                    return Promise.reject('Error response received');
+                    this.state = _STATE.IDLE;
+                    return null;
                 }
 
                 const responseSuccess = response as DownloadResponse;
@@ -275,73 +260,25 @@ export class SampleManager {
                 offset = responseSuccess.off + responseSuccess.data.byteLength;
 
                 // Call progress callback if defined
-                this.onDownloadProgressCallback?.(Math.floor((offset / total_length) * 100));
+                uploadProgressUpdate?.(Math.floor((offset / total_length) * 100));
 
                 // Check if download is complete
                 if (offset >= total_length) {
                     log.debug('Download complete');
-                    this._setState(_STATE_TRANSITION.TRANSFER_COMPLETE);
+                    this.state = _STATE.IDLE;
                     break;
                 }
 
             } catch (error) {
                 log.error('Error during download:', error);
-                this._setState(_STATE_TRANSITION.TRANSFER_ERROR);
-                return Promise.reject('Error during download');
+                this.state = _STATE.IDLE;
+                return null;
             }
         }
 
         log.debug('Successfully downloaded samples');
 
         return Promise.resolve(samplesParser_decode(data_raw));
-    }
-
-    private _setState(stateTransition: _STATE_TRANSITION): void {
-        switch (stateTransition) {
-            case _STATE_TRANSITION.START_UPLOAD:
-                if (this.state === _STATE.UPLOADING) {
-                    log.error('Upload already in progress');
-                    return;
-                }
-                this.state = _STATE.UPLOADING;
-                this.onUploadStartedCallback?.();
-                break;
-
-                case _STATE_TRANSITION.START_DOWNLOAD:
-                    if (this.state === _STATE.DOWNLOADING) {
-                        log.error('Download already in progress');
-                        return;
-                    }
-                    this.state = _STATE.DOWNLOADING;
-                    this.onDownloadStartedCallback?.();
-                    break;
-
-            case _STATE_TRANSITION.TRANSFER_COMPLETE:
-                if (this.state === _STATE.UPLOADING) {
-                    this.onUploadCompleteCallback?.(true);
-                } else if (this.state === _STATE.DOWNLOADING) {
-                    this.onDownloadCompleteCallback?.(true);
-                } else {
-                    log.error('Transfer complete but not in upload or download state');
-                }
-                this.state = _STATE.IDLE;
-                break;
-
-            case _STATE_TRANSITION.TRANSFER_ERROR:
-                if (this.state === _STATE.UPLOADING) {
-                    this.onUploadCompleteCallback?.(false);
-                } else if (this.state === _STATE.DOWNLOADING) {
-                    this.onDownloadCompleteCallback?.(false);
-                } else {
-                    log.error('Transfer error but not in upload or download state');
-                }
-                this.state = _STATE.IDLE;
-                break;
-
-            default:
-                log.error('Unknown state transition');
-                break;
-        }
     }
 
     private _payloadUploadEncode(payload: UploadRequest): Uint8Array {

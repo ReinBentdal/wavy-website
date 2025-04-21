@@ -67,7 +67,7 @@ type ConnectionState =
     private device: BluetoothDevice | null = null;
     private service: BluetoothRemoteGATTService | null = null;
     private characteristic: BluetoothRemoteGATTCharacteristic | null = null;
-    private mtu: number = 140; // Adjust if necessary
+    private mtu: number = 250; // Adjust if necessary
     private buffer: Uint8Array = new Uint8Array([]);
     private smpSequenceNumber: number = 0;
     private responseResolvers: { [sequenceNumber: number]: ResponseResolver } = {};
@@ -97,7 +97,7 @@ type ConnectionState =
     private readonly SMP_HEADER_SEQ_IDX: number = 6;
     private readonly SMP_HEADER_ID_IDX: number = 7;
 
-    private async requestDevice(filters?: BluetoothLEScanFilter[]): Promise<BluetoothDevice> {
+    private async _requestDevice(filters?: BluetoothLEScanFilter[]): Promise<BluetoothDevice> {
         const params = {
             optionalServices: [this.SMP_SERVICE_UUID]
         } as RequestDeviceOptions;
@@ -123,16 +123,16 @@ type ConnectionState =
         this.state = { type: 'selectingDevice' };
 
         try {
-            this.device = await this.requestDevice(filters);
+            this.device = await this._requestDevice(filters);
             // Device selected, move to connecting
             this.state = { type: 'connecting' };
             this.onConnecting?.();
 
             console.debug(`Connecting to device ${this.device.name}...`);
 
-            this.device.addEventListener('gattserverdisconnected', this.handleDisconnection.bind(this));
+            this.device.addEventListener('gattserverdisconnected', this._handleDisconnection.bind(this));
 
-            await this.connectDevice();
+            await this._connectDevice();
         } catch (error) {
             if (error.name === 'NotFoundError') {
                 // User canceled the device selection
@@ -141,12 +141,12 @@ type ConnectionState =
                 this.onDeviceSelectionCancel?.();
             } else {
                 console.error('Connection error:', error);
-                await this.handleDisconnected();
+                await this._handleDisconnected();
             }
         }
     }
 
-    private async connectDevice(): Promise<void> {
+    private async _connectDevice(): Promise<void> {
         if (!this.device) {
             console.error('No device to connect to');
             return;
@@ -160,7 +160,7 @@ type ConnectionState =
             console.debug('Service connected.');
 
             this.characteristic = await this.service.getCharacteristic(this.SMP_CHARACTERISTIC_UUID);
-            this.characteristic.addEventListener('characteristicvaluechanged', this.notification.bind(this));
+            this.characteristic.addEventListener('characteristicvaluechanged', this._notification.bind(this));
             await this.characteristic.startNotifications();
 
             if (this.state.type === 'connecting' || this.state.type === 'connectionLoss') {
@@ -173,7 +173,7 @@ type ConnectionState =
             }
         } catch (error) {
             console.error('Error during connection:', error);
-            await this.handleDisconnected();
+            await this._handleDisconnected();
         }
     }
 
@@ -190,7 +190,7 @@ type ConnectionState =
         }
     }
 
-    private async handleDisconnection(): Promise<void> {
+    private async _handleDisconnection(): Promise<void> {
         console.debug('Device disconnected');
 
         if (this.state.type === 'connected') {
@@ -199,25 +199,25 @@ type ConnectionState =
             this.onConnectionLoss?.();
 
             // Attempt to reconnect
-            await this.reconnect();
+            await this._reconnect();
         } else if (this.state.type === 'disconnecting') {
             // User requested disconnect
-            await this.handleDisconnected();
+            await this._handleDisconnected();
         }
     }
 
-    private async reconnect(): Promise<void> {
+    private async _reconnect(): Promise<void> {
         try {
             // Wait a moment before attempting to reconnect
             await new Promise(resolve => setTimeout(resolve, 1000));
-            await this.connectDevice();
+            await this._connectDevice();
         } catch (error) {
             console.error('Reconnection error:', error);
             // Optionally retry or notify the user
         }
     }
 
-    private async handleDisconnected(): Promise<void> {
+    private async _handleDisconnected(): Promise<void> {
         this.state = { type: 'disconnected' };
         this.onDisconnect?.();
 
@@ -236,7 +236,7 @@ type ConnectionState =
         return this.mtu - MTU_OVERHEAD - this.SMP_HEADER_SIZE;
     }
 
-    private buildSMPMessage(op: number, flags: number, group: number, sequenceNumber: number, commandId: number, payload: Uint8Array = new Uint8Array([])): Uint8Array {
+    private _buildSMPMessage(op: number, flags: number, group: number, sequenceNumber: number, commandId: number, payload: Uint8Array = new Uint8Array([])): Uint8Array {
         const length = payload.length;
         const header = new Uint8Array(this.SMP_HEADER_SIZE);
         header[this.SMP_HEADER_OP_IDX] = op;
@@ -254,7 +254,7 @@ type ConnectionState =
         const sequenceNumber = this.smpSequenceNumber;
         this.smpSequenceNumber = (this.smpSequenceNumber + 1) % 256;
         const flags = 0;
-        const message = this.buildSMPMessage(op, flags, group, sequenceNumber, id, payload);
+        const message = this._buildSMPMessage(op, flags, group, sequenceNumber, id, payload);
 
         return new Promise<any>(async (resolve, reject) => {
             // Store the resolver function to be called when the response arrives
@@ -277,7 +277,7 @@ type ConnectionState =
     }
 
     // Data received from the device
-    private async notification(event: Event): Promise<void> {
+    private async _notification(event: Event): Promise<void> {
         const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
         log.debug('Notification received');
         log.debug(characteristic.value);
@@ -292,7 +292,7 @@ type ConnectionState =
                 const message = this.buffer.slice(0, totalLength);
                 log.debug('Processing message');
                 log.debug(message);
-                await this.processMessage(message);
+                await this._processMessage(message);
                 this.buffer = this.buffer.slice(totalLength);
             } else {
                 break;
@@ -300,7 +300,7 @@ type ConnectionState =
         }
     }
 
-    private async processMessage(message: Uint8Array): Promise<void> {
+    private async _processMessage(message: Uint8Array): Promise<void> {
         const [op, flags, length_hi, length_lo, group_hi, group_lo, seq, id] = message.slice(0, this.SMP_HEADER_SIZE);
         const payload = message.slice(this.SMP_HEADER_SIZE);
         log.debug("payload");

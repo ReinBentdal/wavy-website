@@ -11,6 +11,8 @@ describe('Samples Parser', () => {
     // Encode the sample pack
     const encodedData = samplesParser_encode(originalSamplePack);
 
+    console.log(encodedData)
+
     // Decode the encoded data
     const decodedSamplePack = samplesParser_decode(encodedData);
     const decodedSamplePackCanonical = canonicalize(decodedSamplePack);

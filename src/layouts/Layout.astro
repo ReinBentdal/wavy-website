@@ -1,18 +1,25 @@
 ---
 interface Props {
 	title: string;
+	description?: string;
 }
 
-const { title } = Astro.props;
+const { title, description = "Wavy Industries Bluetooth MIDI keyboards for music creation." } = Astro.props;
 ---
 
 <!doctype html>
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<meta name="description" content="Astro description" />
+		<meta name="description" content={description} />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<slot name="meta">
+			<meta property="og:title" content="Wavy Industries (WAVY) music devices to facilitate your creative process.">
+			<meta property="og:description" content="Compact, versatile Bluetooth MIDI keyboard designed for musicians, producers, and anyone eager to start exploring music creation. Perfect for causual music creation wherever you are!">
+			<meta property="og:image" content="https://wavyindustries.com/monkey_reveal.png">
+		</slot>
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+		<link rel="preload" href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 		<meta name="generator" content={Astro.generator} />
 		<title>{title}</title>
 	</head>

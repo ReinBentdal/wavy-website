@@ -14,7 +14,7 @@ import monkeyImg from '~/assets/monkey/packaging/Monkey with packaging.jpg';
     <div class="content">
       <h2>Purchase complete!</h2>
       <p>Thank you for purchasing Wavy MON<b>KEY</b><br />You will receive an email with the receipt.</p>
-      <p id="order-id-parent" style="display: none;" >Order ID: <b><span id="order-id"></span></b></p>
+      <p id="order-id"></p>
       <img width="100%" src={monkeyImg.src} alt="Monkey with packaging" />
     </div>
     <a href={routes.home} class="back-link"><img height="10px" src={arrowRightImg.src} alt="arrow right" /> Back to website</a>
@@ -63,12 +63,28 @@ section {
 </style>
 
 <script>
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-console.log(urlParams);
-const paymentId = urlParams.get('order_id');
-if (paymentId) {
-  document.getElementById('order-id').innerText = paymentId;
-  document.getElementById('order-id-parent').style.display = 'block';
-}
-</script>
+  const apiUrl = import.meta.env.MODE === 'development'
+    ? 'http://localhost:8000'
+    : 'https://server.wavyindustries.com';
+  const queryString = window.location.search;
+  const urlParams = new URLSearchParams(queryString);
+  const sessionId = urlParams.get('session_id');
+  
+  if (sessionId) {
+    fetch(`${apiUrl}/api/order/orderIdFromSessionId/${sessionId}`)
+      .then(response => response.json())
+      .then(data => {
+        if (data.order_id) {
+
+          if (data.order_id != null) {
+            const orderIFElem = document.getElementById('order-id')
+            orderIFElem.innerHTML = `Your order ID is <b><u>${data.order_id}</u></b>.`;
+          }
+
+        } else {
+          console.error('Order not found');
+        }
+      })
+      .catch(error => console.error('Error fetching order ID:', error));
+  }
+  </script>

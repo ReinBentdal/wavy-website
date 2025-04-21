@@ -16,12 +16,12 @@ import midiConnectImg from '~/assets/midi_connect/screenshot 2.png';
 		<section>
 			<h1>MIDI Connect for macOS</h1>
             <div class="sub-title-block" >
-				<p class="catch-phrase">🛑✋ STOP menu-diving each time you want to connect to a Bluetooth MIDI device on macOS</p>
+				<span class="catch-phrase">🛑✋ STOP menu-diving each time you want to connect to a Bluetooth MIDI device on macOS</span>
 				<LinkButton href={routes.midiConnectAppStore} type="highlight" >Download on App Store</LinkButton>
 			</div>
             <img src={midiConnectImg.src} alt="MIDI connect view" />
-		</section>
-		<Footer />
+            <p>We developed this simple macOS app to make it easy for you to connect to and manage our Bluetooth MIDI devices. But we also make it available for use with other devices as well, for free.</p>
+        </section>
 	</main>
     <Footer />
 </Layout>
@@ -50,9 +50,9 @@ h1 {
     margin-block-end: 0em;
 }
 
-/* p {
+p {
     max-width: 800px;
-} */
+}
 
 .catch-phrase {
     font-size: 20px;

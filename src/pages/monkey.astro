@@ -19,11 +19,14 @@ import sonicstateProfile from '~/assets/monkey/profiles/sonicstate.jpg';
 import TopBannerAlert from '~/components/TopBannerAlert.astro';
 ---
 
-<Layout title="Wavy Industries: MONKEY">
+<Layout title="Wavy Industries: MONKEY" description='Discover MONKEY by Wavy Industries, the ultimate Bluetooth MIDI companion for musicians and producers. Compact, versatile, and designed for seamless music creation.'>
+	<meta slot="meta" property="og:title" content="WAVY MONKEY, An ultra-portable wireless music making device">
+	<meta slot="meta" property="og:description" content="Compact, versatile Bluetooth MIDI keyboard designed for musicians, producers, and anyone eager to start exploring music creation. Perfect for causual music creation wherever you are!">
+	<meta slot="meta" property="og:image" content="https://wavyindustries.com/monkey_reveal.png">
 	<main>
-		<TopBannerAlert>
-			🎅🏻 Order now to make sure it arrives before Christman 🎅🏻
-		</TopBannerAlert>
+		<!-- <TopBannerAlert>
+			MONKEY price will increase to €79 on 24. January
+		</TopBannerAlert> -->
 		<Header textColor='white' />
 		<section class="text-white">
 			<h1>MON<span style="font-weight: 400;" >KEY</span></h1>
@@ -36,9 +39,9 @@ import TopBannerAlert from '~/components/TopBannerAlert.astro';
 				<LinkButton href={routes.monkeyPurchase} type="highlight" >Buy now €59</LinkButton>
 			</div>
 
-			<video id="monkey-reveal-video" width="100%" autoplay muted playsinline onended="this.pause()" poster={monkeyRevealPlaceholder.src}>
+			<video id="monkey-reveal-video" width="100%" autoplay muted playsinline onended="this.pause()">
 				<source src={monkeyRevealVideo} type="video/mp4">
-				Your browser does not support the video tag. <img src={monkeyRevealPlaceholder.src} alt="Monkey reveal placeholder">
+				<img src={monkeyRevealPlaceholder.src} alt="Monkey reveal placeholder">
 			</video>
 			<p>MON<b>KEY</b> is a two octave Bluetooth MIDI keyboard which literaly fits in your pocket. Bluetooth in MIDI keybaords is nothing new. But ultra long battery life of several months is. This is what enables Bluetooth to actually be practical to use, together with low latency communication.</p>
 			<p>Through the SHIFT key on MON<b>KEY</b> you get access to all the features written under and above the keys. Monkey has 6 MIDI effects, each with 10 presets. Furthermore it includes a loop recorder for you to record your ideas with up to 10 instruments! </p>
@@ -49,6 +52,7 @@ import TopBannerAlert from '~/components/TopBannerAlert.astro';
 					<li>Two octave keybed with low operating force</li>
 					<li>6 MIDI effects each with 10 presets</li>
 					<li>Loop recorder with up to 10 instruments simultaneously</li>
+					<li>Pressure sensitive touch surface for modulation</li>
 					<li>Low latency Bluetooth MIDI</li>
 					<li>Ultra compact form factor of 150mm x 50mm</li>
 					<li>Compatible with many configurations, including macOS, iOS/iPadOS, Android, Windows, CME WIDI and more</li>
@@ -149,5 +153,4 @@ p {
 	width: 30px;
 	border-radius: 50%;
 }
-
 </style>
