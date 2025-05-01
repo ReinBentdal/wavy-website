@@ -1,4 +1,7 @@
-# 1.1.91[31. March 2025] -dev
+# 1.1.92[27. April 2025] -dev
+- Minor fixes
+
+# 1.1.91[31. March 2025] -dev -obsolete
 - Minor fixes
 
 # 1.1.9[2. march 2025] The drum update -dev
