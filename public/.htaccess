@@ -1,0 +1,14 @@
+RewriteEngine on
+
+# Redirects URLs ending with a slash (e.g., /about/) to the same URL without the slash (/about)
+# Use [L,R=301] for production (permanent redirect), [L,R] is a temporary redirect for testing
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteRule ^(.*)/$ /$1 [L,R] 
+
+# Redirects .html URLs (e.g., /about.html) to the clean version without the .html (e.g., /about)
+RewriteCond %{THE_REQUEST} /([^.]+)\.html [NC]
+RewriteRule ^ /%1 [NC,L,R]
+
+# Internally rewrites clean URLs (e.g., /about) to serve the corresponding .html file (e.g., /about.html) if it exists
+RewriteCond %{REQUEST_FILENAME}.html -f
+RewriteRule ^ %{REQUEST_URI}.html [NC,L]
