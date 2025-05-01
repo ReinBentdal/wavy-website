@@ -6,6 +6,7 @@
     import { onMount } from 'svelte';
     import { bluetoothManager, bluetoothState } from '~/stores/Bluetooth.svelte';
     import { routes } from '~/routes';
+    import DeviceBluetoothBrowsers from '../components/DeviceBluetoothBrowsers.svelte';
     
     const BT_MIDI_SERVICE_UUID = '03B80E5A-EDE8-4B33-A751-6CE34EC4C700'.toLowerCase();
     const filters = [{ namePrefix: 'WAVY MONKEY', services: [BT_MIDI_SERVICE_UUID] }];
@@ -48,10 +49,7 @@
       {#if isChecking}
         <div class="spinner">loading</div>
       {:else if !isBluetoothAvailable}
-        <p class="note" style="text-align: center;">
-          It looks like your browser is not supported :/<br />
-          <span>{browserSupportNote}</span>
-        </p>
+        <DeviceBluetoothBrowsers />
       {:else}
         <button
           class="btn btn-primary"
@@ -66,7 +64,7 @@
         </button>
   
         <p class="note" style="max-width: 400px; text-align: center;">
-          If you are having problems finding your device, make sure it is not already connected to anything else. <a href={routes.monkeyConnect}>read more</a>
+          If you are having problems finding your device, make sure it is not already connected to anything else. <!-- <a href={routes.monkeyConnect}>read more</a>> -->
         </p>
       {/if}
     {:else}
