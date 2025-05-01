@@ -40,28 +40,34 @@
             const image = await fetch(`/firmware/MONKEY/app_update_${firmwareVersion}.bin`)
                 .then(res => res.arrayBuffer());
 
-            await imageManager.uploadImage(image, (percent) => {
+            const success = await imageManager.uploadImage(image, (percent) => {
                 uploadProgress = percent;
             });
-
+            if (!success) {
+                throw "failed to upload image"
+            }
+            
             updateStage = 'applying';
             await new Promise((resolve) => {
                 bluetoothManager.onConnectionReestablished(() => {
                     resolve(null);
                 });
             });
-
+            
             updateStage = 'verifying';
             const newFirmware = await imageManager.getFirmwareVersion();
             if (newFirmware.versionString !== firmwareVersion) {
                 throw new Error(`Update failed: Device firmware version is ${newFirmware.versionString} but expected ${firmwareVersion}`);
             }
-
+            
             updateStage = 'done';
             await new Promise(resolve => setTimeout(resolve, 2000));
             updateStage = 'idle';
+            uploadProgress = 0;
         } catch (e) {
             console.log(e)
+            updateStage = 'failed'
+            await new Promise(resolve => setTimeout(resolve, 2000));
             updateStage = 'idle';
         }
     }
@@ -73,8 +79,11 @@
     </div>
     <div class="main-content">
         <div class="console">
-            {#if updateStage !== 'idle'}
+            {#if updateStage !== 'idle' && updateStage !== 'failed'}
                 <FirmwareUpdate stage={updateStage} uploadProgress={uploadProgress} />
+            {:else if updateStage === 'failed'}
+                <h1>Failed to upload firmware</h1>
+                <span>Please refresh the page and reboot the device and try again.</span>
             {:else if updateState === 'up-to-date'}
                 <h1>Your device is up to date!</h1>
                 <span class="tagline">Your device is running the newest firmware. To get notifications when new firmware versions are available, add your email at the bottom of this page.</span>
@@ -88,6 +97,8 @@
                 <span class="tagline">Your device running a beta firmware. Downgrade to stable release</span>
                 <span>v{imageState.firmwareVersion.versionString} ➔ v{newestAvailableFirmware}</span>
                 <button class="update-buttons" style="background-color: #fffb9e;" onclick={startUpdate}>Start downgrade</button>
+            {:else}
+                <h1>Waiting on device..</h1>
             {/if}
         </div>
         <hr />

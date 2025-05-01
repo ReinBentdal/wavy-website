@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@astrojs/svelte": "^7.0.6",
+    "@tonejs/midi": "^2.0.28",
     "@types/web-bluetooth": "^0.0.20",
     "@webcomponents/template-shadowroot": "^0.2.1",
     "astro": "^5.5.3",

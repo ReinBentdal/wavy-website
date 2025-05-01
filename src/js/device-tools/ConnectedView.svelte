@@ -7,6 +7,7 @@
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
     import ActionStatus from '../components/ActionStatus.svelte';
+    import { sampleState } from '~/stores/SampleManager.svelte';
 
     const View = {
         DeviceUpdate: 'DeviceUpdate',
@@ -41,7 +42,15 @@
         </div>
         <div>
             <a href="#device-update" class={currentView === View.DeviceUpdate ? 'active' : ''}>Device Update</a>
-            <a href="#sample-manager" class={currentView === View.SampleManager ? 'active' : ''}>Sample Manager</a>
+            <a 
+                href="#sample-manager" 
+                class={currentView === View.SampleManager ? 'active' : ''}
+                class:disabled={!sampleState.isSupported}
+                onclick={e => sampleState.isSupported == false && e.preventDefault()}
+                title={!sampleState.isSupported ? "firmware version 1.2.0 or greater is required" : ""}
+            >
+                Sample Manager
+            </a>
         </div>
     </nav>
 
@@ -84,5 +93,11 @@
 
     .active {
         border-bottom: 2px solid gray;
+    }
+
+    a.disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+        position: relative;
     }
 </style>

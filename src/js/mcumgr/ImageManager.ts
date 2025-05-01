@@ -99,7 +99,7 @@ class ImageManager {
     async uploadImage(image: ArrayBuffer, uploadProgressUpdate?: (percent: Number) => void): Promise<boolean> {
         if (this.state === IMG_STATE.UPLOADING) {
             log.error('Upload already in progress');
-            return;
+            return false;
         }
         this.state = IMG_STATE.UPLOADING;
 

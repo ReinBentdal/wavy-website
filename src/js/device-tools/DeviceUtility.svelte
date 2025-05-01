@@ -5,9 +5,9 @@
 </script>
 
 <section style="flex-grow: 2; display: flex; flex-direction: column; align-items: center;">
-    {#if bluetoothState.connectionState !== 'disconnected' && bluetoothState.connectionState !== 'connecting'}
-        <ConnectedView />
-    {:else}
+    {#if bluetoothState.connectionState == 'disconnected' || bluetoothState.connectionState == 'connecting'}
         <ConnectView />
+    {:else}
+        <ConnectedView />
     {/if}
 </section>

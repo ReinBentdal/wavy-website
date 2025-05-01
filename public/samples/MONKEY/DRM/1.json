@@ -1,6 +1,7 @@
 {
     "id": 1,
     "name": "Olli",
+    "author": "Olve",
     "loops": [
         {
             "length_beats": 16,

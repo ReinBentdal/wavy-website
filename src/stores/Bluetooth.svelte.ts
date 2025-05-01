@@ -21,7 +21,8 @@ bluetoothManager.onConnecting(() => {
   bluetoothState.connectionState = 'connecting';
 });
 bluetoothManager.onDisconnect(() => {
-  bluetoothState.connectionState = 'disconnected';
+  // bluetoothState.connectionState = 'disconnected';
+  window.location.reload();
 });
 bluetoothManager.onConnectionLoss(() => {
   bluetoothState.connectionState = 'connectionLoss';

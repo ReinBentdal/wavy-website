@@ -2,7 +2,7 @@ import { MCUManager, MGMT_OP, MGMT_ERR, ResponseError } from './mcumgr';
 import { Log } from '../utilities'; // Assuming you have an imageHash function
 import { samplesParser_encode, SamplePack, samplesParser_decode } from '../parsers/samples_parser';
 
-let log = new Log('smpl_mgr', Log.LEVEL_DEBUG);
+let log = new Log('smpl_mgr', Log.LEVEL_INFO);
 
 // Enums for better type safety
 enum _MGMT_ID {
@@ -83,7 +83,7 @@ export class SampleManager {
         return responseSuccess.ids;
     }
 
-    async getSpaceUsed(): Promise<number> {
+    async getSpaceUsed(): Promise<SpaceUsedResponse> {
         log.debug('Getting space used');
         const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.GROUP_ID, _MGMT_ID.SPACE_USED) as SpaceUsedResponse | ResponseError;
         if ((response as ResponseError).rc !== undefined && (response as ResponseError).rc !== MGMT_ERR.EOK) {
@@ -92,7 +92,7 @@ export class SampleManager {
         }
         const ok = response as SpaceUsedResponse;
         log.debug(`Received storage, total: ${ok.tot}, used: ${ok.usd}`);
-        return ok.usd / ok.tot * 100;
+        return ok;
     }
 
     // Start the image upload process
