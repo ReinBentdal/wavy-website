@@ -8,6 +8,7 @@
     "build": "astro build",
     "preview": "astro preview",
     "astro": "astro",
+    "deploy": "npm run build && python scripts/deploy.py",
     "test": "vitest"
   },
   "dependencies": {
