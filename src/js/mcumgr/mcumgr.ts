@@ -1,9 +1,10 @@
 // MCUManager.ts
 
 import { assert, Log } from '../utilities';
-import CBOR from './cbor'; // Assuming CBOR is imported from './cbor'
+import CBOR from './cbor';
+import { BluetoothManager } from '../bluetoothManager';
 
-let log = new Log('mcumgr', Log.LEVEL_DEBUG);
+let log = new Log('mcumgr', Log.LEVEL_INFO);
 
 export const SMP_ERR_RC: { [code: number]: string } = {
     0: 'No error, OK.',
@@ -55,38 +56,9 @@ interface ResponseResolver {
     reject: (error: any) => void;
 }
 
-type ConnectionState =
-  | { type: 'disconnected' }
-  | { type: 'selectingDevice' }
-  | { type: 'connecting' }
-  | { type: 'connected' }
-  | { type: 'disconnecting' }
-  | { type: 'connectionLoss' };
-
-  export class MCUManager {
-    private device: BluetoothDevice | null = null;
-    private service: BluetoothRemoteGATTService | null = null;
-    private characteristic: BluetoothRemoteGATTCharacteristic | null = null;
-    private mtu: number = 250; // Adjust if necessary
-    private buffer: Uint8Array = new Uint8Array([]);
+export class MCUManager {
     private smpSequenceNumber: number = 0;
     private responseResolvers: { [sequenceNumber: number]: ResponseResolver } = {};
-
-    // Connection state management
-    private state: ConnectionState = { type: 'disconnected' };
-
-    // Event callbacks
-    public onConnect: (() => void) | null = null;
-    public onDisconnect: (() => void) | null = null;
-    public onConnecting: (() => void) | null = null;
-    public onConnectionLoss: (() => void) | null = null;
-    public onConnectionReestablished: (() => void) | null = null;
-    
-    public onDeviceSelection: (() => void) | null = null;
-    public onDeviceSelectionCancel: (() => void) | null = null;
-
-    private readonly SMP_SERVICE_UUID: string = '8d53dc1d-1db7-4cd3-868b-8a527460aa84';
-    private readonly SMP_CHARACTERISTIC_UUID: string = 'da2e7828-fbce-4e01-ae9e-261174997c48';
     private readonly SMP_HEADER_SIZE: number = 8;
     private readonly SMP_HEADER_OP_IDX: number = 0;
     private readonly SMP_HEADER_FLAGS_IDX: number = 1;
@@ -97,143 +69,12 @@ type ConnectionState =
     private readonly SMP_HEADER_SEQ_IDX: number = 6;
     private readonly SMP_HEADER_ID_IDX: number = 7;
 
-    private async _requestDevice(filters?: BluetoothLEScanFilter[]): Promise<BluetoothDevice> {
-        const params = {
-            optionalServices: [this.SMP_SERVICE_UUID]
-        } as RequestDeviceOptions;
-
-        if (filters) {
-            (params as { filters: BluetoothLEScanFilter[] }).filters = filters;
-        } else {
-            (params as { acceptAllDevices: boolean }).acceptAllDevices = true;
-        }
-
-        // Invoke the device selection start callback
-        this.onDeviceSelection?.();
-
-        return navigator.bluetooth.requestDevice(params);
-    }
-
-    public async connect(filters?: BluetoothLEScanFilter[]): Promise<void> {
-        if (this.state.type !== 'disconnected') {
-            console.warn('Already connecting or connected.');
-            return;
-        }
-
-        this.state = { type: 'selectingDevice' };
-
-        try {
-            this.device = await this._requestDevice(filters);
-            // Device selected, move to connecting
-            this.state = { type: 'connecting' };
-            this.onConnecting?.();
-
-            console.debug(`Connecting to device ${this.device.name}...`);
-
-            this.device.addEventListener('gattserverdisconnected', this._handleDisconnection.bind(this));
-
-            await this._connectDevice();
-        } catch (error) {
-            if (error.name === 'NotFoundError') {
-                // User canceled the device selection
-                console.debug('Device selection canceled.');
-                this.state = { type: 'disconnected' };
-                this.onDeviceSelectionCancel?.();
-            } else {
-                console.error('Connection error:', error);
-                await this._handleDisconnected();
-            }
-        }
-    }
-
-    private async _connectDevice(): Promise<void> {
-        if (!this.device) {
-            console.error('No device to connect to');
-            return;
-        }
-
-        try {
-            const server = await this.device.gatt!.connect();
-            console.debug('Server connected. Awaiting SMP service...');
-
-            this.service = await server.getPrimaryService(this.SMP_SERVICE_UUID);
-            console.debug('Service connected.');
-
-            this.characteristic = await this.service.getCharacteristic(this.SMP_CHARACTERISTIC_UUID);
-            this.characteristic.addEventListener('characteristicvaluechanged', this._notification.bind(this));
-            await this.characteristic.startNotifications();
-
-            if (this.state.type === 'connecting' || this.state.type === 'connectionLoss') {
-                if (this.state.type === 'connectionLoss') {
-                    this.onConnectionReestablished?.();
-                } else {
-                    this.onConnect?.();
-                }
-                this.state = { type: 'connected' };
-            }
-        } catch (error) {
-            console.error('Error during connection:', error);
-            await this._handleDisconnected();
-        }
-    }
-
-    public disconnect(): void {
-        if (this.state.type !== 'connected') {
-            console.warn('Cannot disconnect because not connected.');
-            return;
-        }
-
-        this.state = { type: 'disconnecting' };
-
-        if (this.device && this.device.gatt) {
-            this.device.gatt.disconnect();
-        }
-    }
-
-    private async _handleDisconnection(): Promise<void> {
-        console.debug('Device disconnected');
-
-        if (this.state.type === 'connected') {
-            // Connection was lost unexpectedly
-            this.state = { type: 'connectionLoss' };
-            this.onConnectionLoss?.();
-
-            // Attempt to reconnect
-            await this._reconnect();
-        } else if (this.state.type === 'disconnecting') {
-            // User requested disconnect
-            await this._handleDisconnected();
-        }
-    }
-
-    private async _reconnect(): Promise<void> {
-        try {
-            // Wait a moment before attempting to reconnect
-            await new Promise(resolve => setTimeout(resolve, 1000));
-            await this._connectDevice();
-        } catch (error) {
-            console.error('Reconnection error:', error);
-            // Optionally retry or notify the user
-        }
-    }
-
-    private async _handleDisconnected(): Promise<void> {
-        this.state = { type: 'disconnected' };
-        this.onDisconnect?.();
-
-        // Clean up resources
-        this.device = null;
-        this.service = null;
-        this.characteristic = null;
-    }
-
-    public get name(): string | undefined {
-        return this.device?.name;
+    constructor(private bluetoothManager: BluetoothManager) {
+        this.bluetoothManager.onDataReceived(this._processMessage.bind(this));
     }
 
     public get maxPayloadSize(): number {
-        const MTU_OVERHEAD = 3; // ATT MTU overhead
-        return this.mtu - MTU_OVERHEAD - this.SMP_HEADER_SIZE;
+        return this.bluetoothManager.maxPayloadSize;
     }
 
     private _buildSMPMessage(op: number, flags: number, group: number, sequenceNumber: number, commandId: number, payload: Uint8Array = new Uint8Array([])): Uint8Array {
@@ -261,43 +102,15 @@ type ConnectionState =
             this.responseResolvers[sequenceNumber] = { resolve, reject };
 
             try {
-                if (!this.characteristic) {
-                    log.debug('Characteristic not available');
-                    throw new Error('Characteristic not available');
-                }
-                await this.characteristic.writeValueWithoutResponse(message);
+                await this.bluetoothManager.sendMessage(message);
             } catch (error) {
-                log.dbg(`Failed to send bluetooth characteristic message: ${error}`);
+                log.debug(`Failed to send bluetooth characteristic message: ${error}`);
                 delete this.responseResolvers[sequenceNumber];
                 reject(error);
             }
 
             // The promise will be resolved when the response arrives in the notification handler
         });
-    }
-
-    // Data received from the device
-    private async _notification(event: Event): Promise<void> {
-        const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
-        log.debug('Notification received');
-        log.debug(characteristic.value);
-        const value = new Uint8Array(characteristic.value!.buffer);
-        this.buffer = new Uint8Array([...this.buffer, ...value]);
-
-        // Process all complete messages in the buffer
-        while (this.buffer.length >= this.SMP_HEADER_SIZE) {
-            const length = (this.buffer[2] << 8) | this.buffer[3];
-            const totalLength = this.SMP_HEADER_SIZE + length;
-            if (this.buffer.length >= totalLength) {
-                const message = this.buffer.slice(0, totalLength);
-                log.debug('Processing message');
-                log.debug(message);
-                await this._processMessage(message);
-                this.buffer = this.buffer.slice(totalLength);
-            } else {
-                break;
-            }
-        }
     }
 
     private async _processMessage(message: Uint8Array): Promise<void> {
@@ -318,8 +131,7 @@ type ConnectionState =
             resolver.resolve(data);
             delete this.responseResolvers[seq];
         } else {
-            log.warn(`No resolver found for sequence number ${seq}`);
+            log.warning(`No resolver found for sequence number ${seq}`);
         }
-
     }
 }

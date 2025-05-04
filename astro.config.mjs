@@ -2,12 +2,12 @@ import { defineConfig } from 'astro/config';
 
 import mdx from '@astrojs/mdx';
 
-import lit from '@astrojs/lit';
+import svelte from '@astrojs/svelte';
 
 // https://astro.build/config
 export default defineConfig({
   build: {
-    format: 'file',
+    format: 'directory',
     assets: 'build_assets'
   },
   vite: {
@@ -18,5 +18,5 @@ export default defineConfig({
       }
     }
   },
-  integrations: [mdx(), lit()]
+  integrations: [mdx(), svelte()]
 });

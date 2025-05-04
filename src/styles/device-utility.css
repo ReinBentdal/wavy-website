@@ -18,16 +18,23 @@ h1 {
     padding: 4px 10px !important;
 }
 button, input[type="submit"] {
-	border: 1px solid #857852;
+	border: 1px solid black;
 	background-color: #EAE7DE;
     color: black;
 	border-radius: 3px;
-	padding: 8px 20px;
+	padding: 8px 15px;
 	font-size: 16px;
 	cursor: pointer;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
+
+    transition: all ease-in-out 0.2s;
 }
 button:hover, input[type="submit"]:hover {
-	background-color: #dedacd;
+    opacity: 0.85;
 }
 input[type="text"], input[type="email"], input[type="password"] {
     border: 1px solid #857852;
@@ -102,27 +109,6 @@ input[type="text"], input[type="email"], input[type="password"] {
 }
 #scene-main my-view[name="connected"] {
     width: 100%;
-}
-
-#changelog {
-    display: inline-flex;
-    flex-direction: column;
-    gap: 10px;
-    width: 400px;
-}
-.changelog-item {
-    border: 1px solid black;
-    border-radius: 3px;
-    padding: 10px;
-}
-.changelog-item[new] {
-    background-color: #FBFFF3;
-}
-.changelog-item > p {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    align-items: center;
 }
 
 #device-tools-header {

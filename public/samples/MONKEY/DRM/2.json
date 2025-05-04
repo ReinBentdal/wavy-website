@@ -1,0 +1,3266 @@
+{
+  "id": 2,
+  "name": "Well and mixed",
+    "author": "Rein",
+    "loops": [
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          0,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 86
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          12,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 86
+          }
+        ],
+        [
+          18,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 86
+          }
+        ],
+        [
+          30,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 86
+          }
+        ],
+        [
+          42,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          42,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          42,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 86
+          }
+        ],
+        [
+          48,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          48,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 86
+          }
+        ],
+        [
+          54,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          54,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          60,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 86
+          }
+        ],
+        [
+          66,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          72,
+          {
+            "note": 39,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 86
+          }
+        ],
+        [
+          78,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 39,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 47,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          90,
+          {
+            "note": 47,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          0,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          12,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          12,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          18,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          18,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          30,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          36,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          42,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          42,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          54,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          60,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          60,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          66,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          66,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          69,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          72,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          72,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          90,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          0,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 74
+          }
+        ],
+        [
+          3,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          3,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 74
+          }
+        ],
+        [
+          6,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          12,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          12,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 87
+          }
+        ],
+        [
+          18,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          30,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          36,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          42,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          48,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 97
+          }
+        ],
+        [
+          52,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          54,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          56,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          60,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          60,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          64,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          66,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          68,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          78,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          84,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          96,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          12,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          18,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          24,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          30,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          42,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          54,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          60,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          66,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          72,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          78,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          90,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          0,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          12,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          18,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          30,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          42,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          42,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          54,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          54,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          60,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          60,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          60,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          66,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          66,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          78,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          90,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          0,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          12,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          12,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          18,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          18,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          36,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          42,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          42,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          48,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          48,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          54,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          54,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          54,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          60,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          60,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          66,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          66,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          78,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          84,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          90,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          90,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 3
+          }
+        ],
+        [
+          96,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 100
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          18,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          24,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          42,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          66,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          90,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          0,
+          {
+            "note": 39,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          0,
+          {
+            "note": 43,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 39,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 43,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          18,
+          {
+            "note": 45,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          24,
+          {
+            "note": 39,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          24,
+          {
+            "note": 45,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 39,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 39,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          54,
+          {
+            "note": 39,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          66,
+          {
+            "note": 45,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 39,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 45,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 39,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 47,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          90,
+          {
+            "note": 47,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          6,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          18,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          24,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          42,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          54,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          66,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          90,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          0,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          12,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          18,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          18,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          24,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          24,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          36,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          42,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          42,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          48,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          54,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          54,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          60,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          66,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          66,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          84,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          90,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          90,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          48,
+          {
+            "note": 43,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          54,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          54,
+          {
+            "note": 43,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          60,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          66,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          66,
+          {
+            "note": 45,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 45,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 44,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          90,
+          {
+            "note": 44,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          0,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          4,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          8,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          12,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          16,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          18,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          20,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          28,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          32,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          36,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          36,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          40,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          42,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          44,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          48,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          52,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          54,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          56,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          60,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          64,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          66,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          68,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          68,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          76,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          80,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          84,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          84,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          88,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          90,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          92,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 8,
+      "events": [
+        [
+          0,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          0,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          6,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          48,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          54,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          54,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          78,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          96,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          96,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          102,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          102,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          112,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          116,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          120,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          126,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          132,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          136,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          144,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          144,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          148,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          150,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          156,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          160,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          162,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          164,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          168,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          174,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          180,
+          {
+            "note": 37,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          180,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          184,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          184,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          186,
+          {
+            "note": 37,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          188,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          188,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          192,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          0,
+          {
+            "note": 40,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          4,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          4,
+          {
+            "note": 40,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          16,
+          {
+            "note": 40,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          20,
+          {
+            "note": 40,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 40,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          40,
+          {
+            "note": 40,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          48,
+          {
+            "note": 40,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          52,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          52,
+          {
+            "note": 40,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          64,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          64,
+          {
+            "note": 40,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          68,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          68,
+          {
+            "note": 40,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          76,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 40,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          88,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          88,
+          {
+            "note": 40,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          92,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    },
+    {
+      "length_beats": 4,
+      "events": [
+        [
+          0,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          0,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 57
+          }
+        ],
+        [
+          6,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          6,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          18,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 57
+          }
+        ],
+        [
+          24,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          24,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          24,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          30,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 57
+          }
+        ],
+        [
+          36,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          36,
+          {
+            "note": 45,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          36,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          36,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 57
+          }
+        ],
+        [
+          42,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          42,
+          {
+            "note": 45,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          42,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          48,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 57
+          }
+        ],
+        [
+          54,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          60,
+          {
+            "note": 36,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          60,
+          {
+            "note": 47,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          66,
+          {
+            "note": 36,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          66,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 57
+          }
+        ],
+        [
+          66,
+          {
+            "note": 47,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          72,
+          {
+            "note": 38,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 42,
+            "state": 1,
+            "velocity": 101
+          }
+        ],
+        [
+          72,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 38,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 42,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          78,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 57
+          }
+        ],
+        [
+          84,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ],
+        [
+          84,
+          {
+            "note": 46,
+            "state": 1,
+            "velocity": 57
+          }
+        ],
+        [
+          90,
+          {
+            "note": 46,
+            "state": 0,
+            "velocity": 64
+          }
+        ]
+      ]
+    }
+  ]
+}

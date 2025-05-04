@@ -23,7 +23,7 @@ import logoImg from '../assets/logo.svg';
 import logoWhiteImg from '../assets/logo-white.svg';
 ---
 
-<header class={textColor == 'white' ? 'text-white' : 'text-black'} hide={hide}>
+<header class={textColor == 'white' ? 'text-white' : 'text-black'} {...(hide ? { hide: true } : {})}>
     <div class="logo">
         <a href={routes.home}><img src={textColor == 'white' ? logoWhiteImg.src : logoImg.src} /></a>
     </div>

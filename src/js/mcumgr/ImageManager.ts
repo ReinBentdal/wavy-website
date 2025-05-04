@@ -2,7 +2,7 @@ import { MCUManager, MGMT_OP, MGMT_ERR } from './mcumgr';
 import { imageHash, Log } from '../utilities'; // Assuming you have an imageHash function
 import CBOR from './cbor'; // Assuming you have a CBOR library
 
-let log = new Log('img_mgr', Log.LEVEL_DEBUG);
+let log = new Log('img_mgr', Log.LEVEL_WARNING);
 
 // Enums for better type safety
 enum IMG_MGMT_ID {
@@ -70,14 +70,14 @@ export interface ImageFirmwareVersion {
     revision: Number;
 }
 
-export const imageIsNewer = (currentVersion: ImageFirmwareVersion, newVersion: ImageFirmwareVersion): boolean => {
-    if (newVersion.major > currentVersion.major) {
+export const imageRhsIsNewer = (lhs: ImageFirmwareVersion, rhs: ImageFirmwareVersion): boolean => {
+    if (rhs.major > lhs.major) {
         return true;
-    } else if (newVersion.major === currentVersion.major) {
-        if (newVersion.minor > currentVersion.minor) {
+    } else if (rhs.major === lhs.major) {
+        if (rhs.minor > lhs.minor) {
             return true;
-        } else if (newVersion.minor === currentVersion.minor) {
-            if (newVersion.revision > currentVersion.revision) {
+        } else if (rhs.minor === lhs.minor) {
+            if (rhs.revision > lhs.revision) {
                 return true;
             }
         }
@@ -99,7 +99,7 @@ class ImageManager {
     async uploadImage(image: ArrayBuffer, uploadProgressUpdate?: (percent: Number) => void): Promise<boolean> {
         if (this.state === IMG_STATE.UPLOADING) {
             log.error('Upload already in progress');
-            return;
+            return false;
         }
         this.state = IMG_STATE.UPLOADING;
 
@@ -150,7 +150,7 @@ class ImageManager {
                 encodedPayload = CBOR.encode(payload);
                 log.debug(`total encoded size: ${encodedPayload.byteLength}`);
                 if (encodedPayload.byteLength > maxPayloadSize) {
-                    log.warn(`Payload too large: ${encodedPayload.byteLength} > ${maxPayloadSize}`);
+                    log.warning(`Payload too large: ${encodedPayload.byteLength} > ${maxPayloadSize}`);
                     // soft error, just continue and try
                     // this.state = IMG_STATE.IDLE;
                     // return false;
@@ -186,26 +186,39 @@ class ImageManager {
     }
     
     async getFirmwareVersion(): Promise<ImageFirmwareVersion> {
+        log.debug('Getting firmware version...');
+        
+        log.debug(`Sending message: op=${MGMT_OP.READ}, group=${this.IMAGE_GROUP_ID}, id=${IMG_MGMT_ID.STATE}`);
         const response = await this.mcumgr.sendMessage(MGMT_OP.READ, this.IMAGE_GROUP_ID, IMG_MGMT_ID.STATE) as ImageStateResponse;
+        log.debug('Received response:', response);
 
         if (response.images === undefined || response.images.length === 0) {
+            log.error('No image state found in response');
             throw new Error('No image state found');
         }
 
+        log.debug(`Found ${response.images.length} images in response`);
+
         // find which of the images are the active one
         const activeImage = response.images.find(image => image.active);
+        log.debug('Active image:', activeImage);
 
         if (!activeImage) {
+            log.error('No active image found - device may not use Image Manager');
             throw new Error('Device does not use Image Manager');
         }
 
         const version = activeImage.version.split('.').map(Number);
-        return {
+        log.debug(`Parsed version numbers: major=${version[0]}, minor=${version[1]}, revision=${version[2]}`);
+
+        const result = {
             versionString: activeImage.version,
             major: version[0],
             minor: version[1],
             revision: version[2],
         };
+        log.debug('Returning firmware version:', result);
+        return result;
     }
 }
 

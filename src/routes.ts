@@ -6,6 +6,7 @@ export const routes = {
     'monkeyGettingStarted': '/monkey/getting-started',
     'monkeyPurchase': '/monkey/purchase',
     'monkeyManual': '/resources/guides/monkey-manual',
+    'monkeyConnect': '/resources/guides/monkey-connect',
     'kd3': '/KD-3',
     'midiConnect': '/MIDI-connect',
     'support': '/resources/support',

@@ -71,20 +71,32 @@ section {
   const sessionId = urlParams.get('session_id');
   
   if (sessionId) {
-    fetch(`${apiUrl}/api/order/orderIdFromSessionId/${sessionId}`)
-      .then(response => response.json())
-      .then(data => {
-        if (data.order_id) {
-
-          if (data.order_id != null) {
-            const orderIFElem = document.getElementById('order-id')
-            orderIFElem.innerHTML = `Your order ID is <b><u>${data.order_id}</u></b>.`;
+    const fetchOrderId = (retryCount = 0) => {
+      fetch(`${apiUrl}/api/order/orderIdFromSessionId/${sessionId}`)
+        .then(response => {
+          if (!response.ok) {
+            if (response.status === 404 && retryCount < 5) {
+              const retryDelay = Math.pow(2, retryCount) * 1000; // Exponential backoff
+              console.warn(`Retrying fetch in ${retryDelay / 1000} seconds...`);
+              setTimeout(() => fetchOrderId(retryCount + 1), retryDelay);
+            } else {
+              console.error(`Failed to fetch order ID. Status: ${response.status}`);
+            }
+            return null;
           }
+          return response.json();
+        })
+        .then(data => {
+          if (data && data.order_id) {
+            const orderIFElem = document.getElementById('order-id');
+            orderIFElem.innerHTML = `Your order ID is <b><u>${data.order_id}</u></b>`;
+          } else if (data) {
+            console.error('Order not found');
+          }
+        })
+        .catch(error => console.error('Error fetching order ID:', error));
+    };
 
-        } else {
-          console.error('Order not found');
-        }
-      })
-      .catch(error => console.error('Error fetching order ID:', error));
+    fetchOrderId();
   }
   </script>
