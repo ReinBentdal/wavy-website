@@ -23,7 +23,7 @@
             disabled={sampleState.uploadPercentage != null}
         >
             {#if sampleState.uploadPercentage != null}
-                Uploading... {sampleState.uploadPercentage}%
+                Uploading... {sampleState.uploadPercentage == 0 ? "(preparing device)" : `${sampleState.uploadPercentage}%`}
             {:else}
                 Reupload default samples
             {/if}
