@@ -33,27 +33,27 @@ import flStudioCh10SelectImg from '~/assets/resources/fl-studio/4-ch10_select.pn
 
 <img alt="monkey overview" src={monkeyOverviewImg.src} />
 
-Before starting, insert a CR2032 battery into Monkey. The LEDs in the light house as well as the LEDs in the eyes of the monkey will briefly blink indicating it has booted successfully.
+Before starting, insert a CR2032 battery into MON**KEY**. The LEDs in the light house as well as the LEDs in the eyes of the MON**KEY** will briefly blink indicating it has successfully booted.
 
 <NoteInfo>Make sure there is no protection film on the battery</NoteInfo>
 
 ## Device updates
 
-Please make sure your device is up to date before continuing. The device is updated directly though the browser:
+Please make sure your device is up to date before continuing. The device is updated directly through the browser:
 
 <LinkButton href={routes.deviceUtility} target="_blank">Go to device update page</LinkButton>
 
 ## Connecting
 
-MONKEY supports a variety of hosts and works great in many types of setups. The connection process varies with the device you choose to use MONKEY with. For new users, we recommend starting with a mobile device. On mobile devices, it's typical for the music creation apps to handle connections. This is contrary to desktop operating systems such as Windows and macOS, where you typically handle the connection through the OS.
+MON**KEY** supports a variety of hosts and works great in many types of setups. The connection process varies with the device you choose to use MON**KEY** with. For new users, we recommend starting with a mobile device. On mobile devices, it's typical for the music creation apps to handle connections. This is contrary to desktop operating systems such as Windows and macOS, where you typically handle the connection through the OS.
 
 ### Connecting to mobile apps
 
-There is a bunch of fun apps to try out. We recommend checking out *N-Track Studio* which is available on both iOS, iPadOS, and Android. We specifically recommend this app because:
-- It has a usable free version
-- It’s relatively easy to get going with
-- You can control multiple instruments at once with MONKEY
-- For more advanced users, it has depth
+There are several fun apps to try out. We recommend checking out *N-Track Studio* which is available on both iOS, iPadOS, and Android. We specifically recommend this app because:
+- It has a usable free version.
+- It’s relatively easy to get going with.
+- You can control multiple instruments at once with MON**KEY**.
+- For more advanced users, it has depth.
 
 <a href="https://ntrack.com/ios.php" target="_blank">Check out N-Track Studio</a>
 <br />
@@ -64,26 +64,26 @@ There is a bunch of fun apps to try out. We recommend checking out *N-Track Stud
 ### Connecting to desktop operating systems
 
 <Accordion title="macOS">
-  <NoteInfo>Bluetooth MIDI devices will not appear in system Bluetooth settings. Instead, macOS has it's own utility.</NoteInfo>
+  <NoteInfo>Bluetooth MIDI devices will not appear in system Bluetooth settings. Instead, macOS has its own utility.</NoteInfo>
 
-  We have developed _MIDI Connect_ which simplifies connections on macOS. And it's not limited to Wavy devices. This is the easiest way to manage your Bluetooth MIDI devices, however it is not required. If you instead prefer to not install anything, please skip to the below instructions.
+  We have developed _MIDI Connect_ which simplifies connections on macOS. And it's not limited to Wavy devices. This is the easiest way to manage your Bluetooth MIDI devices, however it is not required. If you instead prefer to not install anything, please skip to the instructions below.
 
   <LinkButton target="_blank" href={routes.midiConnectAppStore}>MIDI Connect on App Store</LinkButton>
   <br />
   <br />
   <img src={midiConnectImg.src} alt="MIDI Connect preview" />
 
-  If you do not want to download this app, please follow the proceeding instructions.
+  If you do not want to download this app, please follow the following instructions.
 
-  **1.** Open up _Audio MIDI Setup_
+  **Step 1.** Open up _Audio MIDI Setup_
 
   <img alt="Search for Bluetooth" src={macConnect.src} />
 
-  **2.** Open MIDI studio
+  **Step 2.** Open MIDI studio
 
   <img alt="Open MIDI studio" src={macConnect2Img.src} />
 
-  **3.** Open the Bluetooth panel
+  **Step 3.** Open the Bluetooth panel
 
   <img alt="Open Bluetooth window" src={macConnect3Img.src} />
 
@@ -91,13 +91,13 @@ There is a bunch of fun apps to try out. We recommend checking out *N-Track Stud
 
   <img alt="Alternative Bluetooth option" src={macConnect3AltImg.src} />
 
-  **4.** Find your device in the list and connect
+  **Step 4.** Find your device in the list and connect
 
   <img alt="Connect to Monkey" src={macConnect4Img.src} />
 </Accordion>
 
 <Accordion title="Windows">
-  Windows currently does not have the best support for MIDI over Bluetooth. The steps below might look a bit complicated. But once it's initially done, it shouldn’t be too bad.
+  Windows currently does not have the best support for MIDI over Bluetooth. The steps below might look a bit complicated. But once it's initially done, it shouldn't be difficult after the initial setup.
 
   You will need the following programs installed:
 
@@ -106,39 +106,39 @@ There is a bunch of fun apps to try out. We recommend checking out *N-Track Stud
 
   Then follow these steps to start using Monkey:
 
-  **0.** Windows 11 users first have to enable _Advanced devices discovery_ in Bluetooth system settings.
+  **Step 0.** Windows 11 users first have to enable _Advanced devices discovery_ in Bluetooth system settings.
 
   <img alt="Windows advanced Bluetooth" src={windowsConnect0Img.src} />
 
-  **1.** Pair Monkey in Windows settings. You only need to do this step if Monkey is not paired with your Windows computer.
+  **Step 1.** Pair Monkey in Windows settings. You only need to do this if Monkey isn't already paired with your Windows computer.
 
   <img alt="Windows connect" src={windowsConnect1Img.src} />
   <img alt="Windows pairing" src={windowsConnect2Img.src} />
   <img alt="Windows paired" src={windowsConnect3Img.src} />
 
-  **2.** Configure a MIDI port using loopMIDI and name it "my midi port."
+  **Step 2.** Configure a MIDI port using loopMIDI and name it "my midi port."
 
   <img alt="Port create" src={windowsConnect4Img.src} />
 
-  **3.** Open MIDIBerry, select WAVY MONKEY as the input device and the MIDI port you created as the output.
+  **Step 3.** Open MIDIBerry, select WAVY MON**KEY** as the input device and the MIDI port you created as the output.
 
-  Now you are done! Test it by pressing random keys on Monkey and check if the notes are received in the _INPUT MONITOR_ of MIDIBerry.
+  Now you are done! Test it by pressing keys on MON**KEY** and check if the notes are received in the _INPUT MONITOR_ of MIDIBerry.
 
   <img alt="MIDIBerry input" src={windowsConnect5Img.src} />
 
-  Be aware that you need to keep MIDIBerry open to keep the connection. You might also experience having connected everything correctly but still not receiving any notes. In this case, try to disconnect from Monkey in Windows settings and reconnect, and making sure it's set up as descibed above.
+  Be aware that you need to keep MIDIBerry open to keep the connection. You might experience no notes being received even though everything looks connected. In that case, try disconnecting and reconnecting Monkey in the Windows settings. Also, make sure it's set up exactly as described above.
 </Accordion>
 
 ### Configure desktop DAW
 
-We provide guides for some DAWs though MONKEY should work with most of them. The gist is to assign instruments in your DAW to different MIDI channels, with a drum rack on MIDI channel 10.
+We provide guides for some DAWs, though MON**KEY** should work with most of them. The gist is to assign instruments in your DAW to different MIDI channels, with a drum rack on MIDI channel 10.
 
 <Accordion title="Ableton Live">
-  **1.** Make sure Monkey is enabled in MIDI Ports settings.
+  **Step 1.** Make sure Monkey is enabled in MIDI Ports settings.
 
   <img alt="Ableton settings" src={abletonSettingsImg.src} />
 
-  **2.** Configure the MIDI channel for each track. Use channels 1-10 for instruments, and channel 10 for your drum rack.
+  **Step 2.** Configure the MIDI channel for each track. Use channels 1-10 for instruments, and channel 10 for your drum rack.
 
   <img alt="Ableton channel" src={abletonChannelImg.src} />
 
@@ -148,15 +148,15 @@ We provide guides for some DAWs though MONKEY should work with most of them. The
 </Accordion>
 
 <Accordion title="FL Studio">
-  **1.** Enable the device in FL Studio settings.
+  **Step 1.** Enable the device in FL Studio settings.
 
   <img alt="FL Studio settings" src={flStudioEnableImg.src} />
 
-  **2.** Lock instruments to the keyboard to receive specific MIDI channels.
+  **Step 2.** Lock instruments to the keyboard to receive specific MIDI channels.
 
   <img alt="FL Studio assign to keyboard" src={flStudioAssignImg.src} />
 
-  **3.** Assign instruments to channels 1-10, and a drum rack to channel 10.
+  **Step 3.** Assign instruments to channels 1-10, and a drum rack to channel 10.
 
   <img alt="FL Studio configure channel" src={flStudioCh1SelectImg.src} />
   <img alt="FL Studio configure channel" src={flStudioCh10SelectImg.src} />

@@ -32,7 +32,7 @@ MONKEY gives feedback to the user through its LEDs. The light tower LED will giv
 
 The white circular moon in the middle of the device is a touch surface. When pressed, it will send MIDI CC Modulation according to the pressure applied.
 
-The lock switch is used to disable the keyboard. Note that it does not turn off the unit, but forces it into a low-power state and the keybed is disabled. Generally, you do not need to bother with the lock-switch, but it is there for the cases where it might be practical to disable the device, such as traveling. **You do not need to turn off MONKEY.** It will make sure to use as little battery as possible by it's own.
+The lock switch is used to disable the keyboard. Note that it does not turn off the unit, but forces it into a low-power state and the keybed is disabled. Generally, you do not need to bother with the lock-switch, but it is there for the cases where it might be practical to disable the device, such as traveling. **You don’t need to turn off MONKEY.** It will make sure to use as little battery as possible by itself.
 
 Communication is only through Bluetooth.
 
@@ -50,20 +50,20 @@ MONKEY has a system wide note polyphony of 20 notes.
 ### The SHIFT key
 Use the SHIFT key to access all the functions. While holding down SHIFT you gain access to all the functions printed below the bottom keys. As soon as you release the SHIFT key, MONKEY will exit *function mode* and you are back to playing the keys as normal. Thus while you are applying functions, keep the SHIFT key pressed for the entire duration. Releasing the SHIFT key will cancel the current operation.
 
-Each of the functions have a simple interface. There are two types of functions:
+Each of the functions has a simple interface. There are two types of functions:
 1. Function is directly applied by pressing the key
 2. Function is applied after pressing the key followed by a sequence of numbers using the numbered keys
 
-Furthermore each function might also have a long press function. When prompted to type in numbers for a long press function, the light tower will blink but with a different blink pattern than with a normal press blink pattern. This way you can distinguish wether you are about to do a normal press action or a long press action. The long press action is activated if you keep a function key pressed for more than 1 second.
+Furthermore each function might also have a long press function. When prompted to type in numbers for a long press function, the light tower will blink but with a different blink pattern than with a normal press blink pattern. This way you can distinguish whether you are about to do a normal press action or a long press action. The long press action is activated if you keep a function key pressed for more than 1 second.
 
 Below you can see a table of how each of the functions behave, according to the two function types listed above.
 
 <img alt="monkey function types table"  src={monkeyFunctionTypesImg.src} />
 
-THe light tower will directly indicate what you should do or what happened. For the function which toggle (HOLD and the effects) the light tower will blink once when activating and blink twise when deactivating.
+The light tower will directly indicate what you should do or what happened. For the function which toggle (HOLD and the effects) the light tower will blink once when activating and blink twice when deactivating.
 
 ### WAKE
-The first function you should get familiar with is the WAKE key. Pressing **SHIFT** + **WAKE** will reset the device, and **SHIFT** + **long pressing WAKE** will reboot the device. If you ever get lost, use WAKE to quickly reset the device state back to it's default state.
+The first function you should get familiar with is the WAKE key. Pressing **SHIFT** + **WAKE** will reset the device, and **SHIFT** + **long pressing WAKE** reboots the device. If you ever get lost, use WAKE to quickly reset the device state back to it's default state.
 
 <GIFDemo src={resetGif.src} alt="reset demo" label="reset demo" text="WAKE brief press to reset." />
 <GIFDemo src={rebootGif.src} alt="reboot demo" label="reboot demo" text="WAKE long press to reboot." />
@@ -74,14 +74,14 @@ OCT- and OCT+ are the most straightforward functions as they only change the oct
 <GIFDemo src={octaveGif.src} alt="Octave select demo" label="octave select demo" text="First adjust octave up, then adjust down." />
 
 ### BPM
-BPM stands for *beats per minute* and let's you change the global tempo of MONKEY. WHile pressing SHIFT, press BPM followed by typing your desired BPM using the numbered keys.
+BPM stands for *beats per minute* and lets you change the global tempo of MONKEY. WHile pressing SHIFT, press BPM followed by typing your desired BPM using the numbered keys.
 
-By defauly the BPM on MONKEY is 120.
+By default the BPM on MONKEY is 120.
 
 <GIFDemo src={bpmGif.src} alt="BPM select demo" label="BPM select demo" text="Setting tempo to 120BPM." />
 
 ### CH
-To use MONKEY with multiple instruments at the same time, you can configure each instrument to receive notes on different channels. Then you can use the CH function on MONKEY to change betweeen these instruments.
+To use MONKEY with multiple instruments at the same time, you can configure each instrument to receive notes on different channels. Then you can use the CH function on MONKEY to change between these instruments.
 
 While pressing SHIFT, press CH followed by your desired channel. Selecting 0 corresponds to MIDI channel 10.
 
@@ -113,10 +113,10 @@ Arpeggio effect. Presets change the arpeggio algorithm.
 Double effect. For each key you press, this effect will add extra notes. The presets change which notes are added and with what delay.
 
 ### STTR
-Stutter effect. Plays the notes which are pressed in a rythmic pattern. The presets change the pattern.
+Stutter effect. Plays the notes which are pressed in a rhythmic pattern. The presets change the pattern.
 
 ### ECHO
-The echo effect will repeat the notes you play in a feedback loop. The behaviour of each preset are varied and unconventional by design. Some presets have a infinite feedback loop where the note is not removed from the loop until the velocity of the key reaches 0.
+The echo effect will repeat the notes you play in a feedback loop. The behavior of each preset is varied and unconventional by design. Some presets have an infinite feedback loop where the note is not removed from the loop until the velocity of the key reaches 0.
 
 ### PAT
 Pattern effect. Pre-made note patterns. Preset changes the swing.
@@ -128,7 +128,7 @@ Drum effect. The bottom keys are drum loops and the upper keys are drum fills. Y
 The loop recorder is your playground to combine recordings from multiple instruments into an idea. Currently, the loop recorder is fixed with a length of 16 beats. The loop recorder uses the following keys:
 - PLAY: Toggle on and off loop playback. The monkey LEDs will blink in tempo during playback.
 - REC: Toggle on and off loop recording. The behavior of this key depends on if the loop is currently playing or not. If it is not playing, it will toggle on and off "arm to record." The monkey LEDs will then be solid. As soon as you start playing on the keys, the looper will start playing and recording. If the looper is already playing, then recording will be toggled on and off. Notice how the monkey LEDs blink differently between only playback and playback with recording. When recording, the LEDs will remain lit longer.
-- UNDO: Each time you stop recording, a new record checkpoint is generated. Pressing UNDO will erase the last checkpoint. Long pressing UNDO will allow you to select an entire MIDI channel to erase. After SHIFT + long press UNDO, while keeping SHIFT pressed, select the MIDI channel to erase by pressing a corresponding numbered key. As always, the number 0 is MIDI channel 10 and is reserved for the drums.
+- UNDO: Every time you stop recording, a new record checkpoint is generated. Pressing UNDO will erase the last checkpoint. Long pressing UNDO will allow you to select an entire MIDI channel to erase. After SHIFT + long press UNDO, while keeping SHIFT pressed, select the MIDI channel to erase by pressing a corresponding numbered key. As always, the number 0 is MIDI channel 10 and is reserved for the drums.
 
 ### Recommendations
 It's a good idea to record something rhythmical initially so that you keep track of the tempo and know when the loop recorder loops back on itself. If you don't want to have rhythmical elements in your loop, you might first record something rhythmical such as drums. Then, when you have recorded something on top of the drums, erase the drums from the loop (UNDO long press).
