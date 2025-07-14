@@ -1,7 +1,17 @@
+# 1.1.94[06. May 2026] -dev
+- New UNDO checkpoint when DRM is enabled/disabled
+- Reduce risk of muting channel when wanting to change channel
+
+# 1.1.93[05. May 2025] -dev
+- New UNDO checkpoint created when changing channels
+- Looper UNDO minor fixes
+- Fix data transfer speed issue
+- Known issue: DRM modifier repeat creating zero-length notes in some cases
+
 # 1.1.92[27. April 2025] -dev
 - Minor fixes
 
-# 1.1.91[31. March 2025] -dev -obsolete
+# 1.1.91[31. March 2025] -dev
 - Minor fixes
 
 # 1.1.9[2. march 2025] The drum update -dev
