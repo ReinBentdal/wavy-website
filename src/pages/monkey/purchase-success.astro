@@ -17,6 +17,109 @@ import monkeyImg from '~/assets/monkey/packaging/Monkey with packaging.jpg';
       <p id="order-id"></p>
       <img width="100%" src={monkeyImg.src} alt="Monkey with packaging" />
     </div>
+    <div class="content" style="display: none;">
+      <h3>We'd love your feedback!</h3>
+      <p>The feedback directly from our customers are invaluable to us. We would be very happy if you chose to share a few things with us.</p>
+      <form id="post-purchase-form">
+        <div class="form-section">
+          <h4>What inspired you to get MONKEY today?</h4>
+          <div class="checkbox-group">
+            <input type="checkbox" id="inspiration-design" name="inspiration" value="Love the design" onchange="toggleOtherInput('inspiration')" />
+            <label for="inspiration-design">Love the design</label><br />
+            <input type="checkbox" id="inspiration-portable" name="inspiration" value="Needed something ultra-portable" onchange="toggleOtherInput('inspiration')" />
+            <label for="inspiration-portable">Needed something ultra-portable</label><br />
+            <input type="checkbox" id="inspiration-creative" name="inspiration" value="Trying a new creative tool" onchange="toggleOtherInput('inspiration')" />
+            <label for="inspiration-creative">Trying a new creative tool</label><br />
+            <input type="checkbox" id="inspiration-social" name="inspiration" value="Liked what I saw on social media" onchange="toggleOtherInput('inspiration')" />
+            <label for="inspiration-social">Liked what I saw on social media</label><br />
+            <input type="checkbox" id="inspiration-event" name="inspiration" value="Saw it at an event (e.g., Superbooth)" onchange="toggleOtherInput('inspiration')" />
+            <label for="inspiration-event">Saw it at an event (e.g., Superbooth)</label><br />
+            <input type="checkbox" id="inspiration-friend" name="inspiration" value="A friend recommended it" onchange="toggleOtherInput('inspiration')" />
+            <label for="inspiration-friend">A friend recommended it</label><br />
+            <input type="checkbox" id="inspiration-other" name="inspiration" value="Other" onchange="toggleOtherInput('inspiration')" />
+            <label for="inspiration-other">Other</label><br />
+          </div>
+          <input type="text" id="inspiration-other-text" name="inspiration_other" placeholder="Please specify" style="display:none; margin-top:4px;" />
+        </div>
+        <div class="form-section">
+          <h4>What's your experience with music creation or production?</h4>
+          <select id="experience" name="experience" required onchange="toggleOtherInput('experience')">
+            <option value="Beginner">Beginner</option>
+            <option value="Hobbyist">Hobbyist</option>
+            <option value="Semi-professional">Semi-professional</option>
+            <option value="Professional">Professional</option>
+            <option value="I'm not a musician, just curious!">I'm not a musician, just curious!</option>
+            <option value="Other">Other</option>
+          </select>
+          <input type="text" id="experience-other" name="experience_other" placeholder="Please specify" style="display:none; margin-top:4px;" />
+        </div>
+        <div class="form-section">
+          <h4>What do you plan to use MONKEY for?</h4>
+          <div class="checkbox-group">
+            <input type="checkbox" id="plan-home" name="plan" value="Home studio recording" onchange="toggleOtherInput('plan')" />
+            <label for="plan-home">Home studio recording</label><br />
+            <input type="checkbox" id="plan-live" name="plan" value="Live performance" onchange="toggleOtherInput('plan')" />
+            <label for="plan-live">Live performance</label><br />
+            <input type="checkbox" id="plan-mobile" name="plan" value="Music production on the go" onchange="toggleOtherInput('plan')" />
+            <label for="plan-mobile">Music production on the go</label><br />
+            <input type="checkbox" id="plan-experiment" name="plan" value="Experimentation/sound design" onchange="toggleOtherInput('plan')" />
+            <label for="plan-experiment">Experimentation/sound design</label><br />
+            <input type="checkbox" id="plan-teaching" name="plan" value="Teaching" onchange="toggleOtherInput('plan')" />
+            <label for="plan-teaching">Teaching</label><br />
+            <input type="checkbox" id="plan-installations" name="plan" value="Visual/audio installations" onchange="toggleOtherInput('plan')" />
+            <label for="plan-installations">Visual/audio installations</label><br />
+            <input type="checkbox" id="plan-other" name="plan" value="Other" onchange="toggleOtherInput('plan')" />
+            <label for="plan-other">Other</label><br />
+          </div>
+          <input type="text" id="plan-other-text" name="plan_other" placeholder="Please specify" style="display:none; margin-top:4px;" />
+        </div>
+        <div class="form-section">
+          <h4>How did you first hear about MONKEY?</h4>
+          <select id="heard" name="heard" required onchange="toggleOtherInput('heard')">
+            <option value="Instagram">Instagram</option>
+            <option value="TikTok">TikTok</option>
+            <option value="YouTube">YouTube</option>
+            <option value="Reddit/forum">Reddit/forum</option>
+            <option value="Google search">Google search</option>
+            <option value="Event (e.g., Superbooth)">Event (e.g., Superbooth)</option>
+            <option value="A friend or community">A friend or community</option>
+            <option value="Other">Other</option>
+          </select>
+          <input type="text" id="heard-other" name="heard_other" placeholder="Please specify" style="display:none; margin-top:4px;" />
+        </div>
+        <div class="form-section">
+          <h4>What software, DAWs, or gear do you use regularly?</h4>
+          <div class="checkbox-group">
+            <input type="checkbox" id="software-ableton" name="software" value="Ableton Live" onchange="toggleOtherInput('software')" />
+            <label for="software-ableton">Ableton Live</label><br />
+            <input type="checkbox" id="software-fl" name="software" value="FL Studio" onchange="toggleOtherInput('software')" />
+            <label for="software-fl">FL Studio</label><br />
+            <input type="checkbox" id="software-logic" name="software" value="Logic Pro" onchange="toggleOtherInput('software')" />
+            <label for="software-logic">Logic Pro</label><br />
+            <input type="checkbox" id="software-protools" name="software" value="Pro Tools" onchange="toggleOtherInput('software')" />
+            <label for="software-protools">Pro Tools</label><br />
+            <input type="checkbox" id="software-garageband" name="software" value="GarageBand" onchange="toggleOtherInput('software')" />
+            <label for="software-garageband">GarageBand</label><br />
+            <input type="checkbox" id="software-maschine" name="software" value="Maschine" onchange="toggleOtherInput('software')" />
+            <label for="software-maschine">Maschine</label><br />
+            <input type="checkbox" id="software-mpc" name="software" value="MPC" onchange="toggleOtherInput('software')" />
+            <label for="software-mpc">MPC</label><br />
+            <input type="checkbox" id="software-modular" name="software" value="Modular gear" onchange="toggleOtherInput('software')" />
+            <label for="software-modular">Modular gear</label><br />
+            <input type="checkbox" id="software-synths" name="software" value="Synths/samplers" onchange="toggleOtherInput('software')" />
+            <label for="software-synths">Synths/samplers</label><br />
+            <input type="checkbox" id="software-other" name="software" value="Other" onchange="toggleOtherInput('software')" />
+            <label for="software-other">Other</label><br />
+          </div>
+          <input type="text" id="software-other-text" name="software_other" placeholder="Please specify" style="display:none; margin-top:4px;" />
+        </div>
+        <div class="form-section">
+          <h4>Any other product you are interested in, or have you considered something like KD-3?</h4>
+          <input type="text" id="other_products" name="other_products" />
+        </div>
+        <button type="submit">Submit Feedback</button>
+      </form>
+    </div>
     <a href={routes.home} class="back-link"><img height="10px" src={arrowRightImg.src} alt="arrow right" /> Back to website</a>
   </section>
 </Layout>
@@ -60,6 +163,14 @@ section {
   background-color: #4378ff;
   cursor: pointer;
 }
+
+.form-section {
+  margin-bottom: 20px;
+}
+
+.form-section h4 {
+  margin: 0 0 10px 0;
+}
 </style>
 
 <script>
@@ -69,9 +180,171 @@ section {
   const queryString = window.location.search;
   const urlParams = new URLSearchParams(queryString);
   const sessionId = urlParams.get('session_id');
-  
+
+  let orderId = null;
+
+  function showThankYou() {
+    const formDiv = document.querySelector('.content form')?.parentElement;
+    if (formDiv) {
+      formDiv.innerHTML = '<h3>Thank you for submitting your feedback!</h3>';
+    }
+  }
+
+  function showForm() {
+    const formDiv = document.querySelector('.content form')?.parentElement;
+    if (formDiv) {
+      formDiv.style.display = '';
+    }
+  }
+
+  function checkFormAvailable(orderId) {
+    console.log('Checking form availability for order:', orderId);
+    fetch(`${apiUrl}/api/order/${orderId}/post_purchase_form/available`)
+      .then(response => response.json())
+      .then(data => {
+        console.log('Form availability response:', data);
+        if (data.available) {
+          console.log('Form is available, showing form');
+          showForm();
+        } else {
+          console.log('Form is not available, keeping hidden');
+        }
+        // If not available, do nothing - form stays hidden
+      })
+      .catch((error) => {
+        console.error('Error checking form availability:', error);
+        // fallback: do nothing - form stays hidden
+      });
+  }
+
+  function handleFormSubmit(event) {
+    event.preventDefault();
+    console.log('Form submitted');
+    
+    const formData = new FormData(event.target);
+    const answers = {};
+    
+    // Map form fields to full question strings
+    const questionMap = {
+      'inspiration': 'What inspired you to get MONKEY today?',
+      'experience': 'What\'s your experience with music creation or production?',
+      'plan': 'What do you plan to use MONKEY for?',
+      'heard': 'How did you first hear about MONKEY?',
+      'software': 'What software, DAWs, or gear do you use regularly?',
+      'other_products': 'Any other product you are interested in, or have you considered something like KD-3?'
+    };
+    
+    // Collect answers with full question strings as keys
+    for (const [key, question] of Object.entries(questionMap)) {
+      let value;
+      
+      if (key === 'inspiration' || key === 'plan' || key === 'software') {
+        // Handle checkbox arrays
+        const checkboxes = document.querySelectorAll(`input[name="${key}"]:checked`);
+        const values = Array.from(checkboxes).map(cb => (cb as HTMLInputElement).value);
+        
+        // Handle "Other" options for checkboxes
+        if (values.includes('Other')) {
+          const otherValue = formData.get(key + '_other');
+          const otherText = otherValue ? otherValue.toString() : 'Other';
+          const otherIndex = values.indexOf('Other');
+          values[otherIndex] = otherText;
+        }
+        
+        value = values; // Keep as array instead of joining with commas
+      } else {
+        const formValue = formData.get(key);
+        value = formValue ? formValue.toString() : '';
+        
+        // Handle "Other" options for select fields
+        if (key === 'experience' && value === 'Other') {
+          const otherValue = formData.get('experience_other');
+          value = otherValue ? otherValue.toString() : 'Other';
+        } else if (key === 'heard' && value === 'Other') {
+          const otherValue = formData.get('heard_other');
+          value = otherValue ? otherValue.toString() : 'Other';
+        }
+      }
+      
+      answers[question] = value;
+    }
+    
+    console.log('Form answers:', answers);
+    
+    // Submit to backend
+    if (orderId) {
+      console.log('Submitting form for order:', orderId);
+      fetch(`${apiUrl}/api/order/${orderId}/post_purchase_form`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          name: 'post-purchase-monkey',
+          version: 1,
+          form_json: answers
+        })
+      })
+      .then(response => {
+        console.log('Form submission response status:', response.status);
+        if (response.ok) {
+          console.log('Form submitted successfully, showing thank you');
+          showThankYou();
+        } else {
+          console.error('Failed to submit form');
+        }
+      })
+      .catch(error => {
+        console.error('Error submitting form:', error);
+      });
+    } else {
+      console.error('No order ID available for form submission');
+    }
+  }
+
+  function toggleOtherInput(field) {
+    console.log('Toggling other input for field:', field);
+    if (field === 'inspiration') {
+      const checkboxes = document.querySelectorAll('input[name="inspiration"]:checked');
+      const otherInput = document.getElementById('inspiration-other-text');
+      const hasOther = Array.from(checkboxes).some(cb => (cb as HTMLInputElement).value === 'Other');
+      otherInput.style.display = hasOther ? '' : 'none';
+    } else if (field === 'plan') {
+      const checkboxes = document.querySelectorAll('input[name="plan"]:checked');
+      const otherInput = document.getElementById('plan-other-text');
+      const hasOther = Array.from(checkboxes).some(cb => (cb as HTMLInputElement).value === 'Other');
+      otherInput.style.display = hasOther ? '' : 'none';
+    } else if (field === 'software') {
+      const checkboxes = document.querySelectorAll('input[name="software"]:checked');
+      const otherInput = document.getElementById('software-other-text');
+      const hasOther = Array.from(checkboxes).some(cb => (cb as HTMLInputElement).value === 'Other');
+      otherInput.style.display = hasOther ? '' : 'none';
+    } else {
+      const select = document.getElementById(field) as HTMLSelectElement;
+      const otherInput = document.getElementById(field + '-other');
+      otherInput.style.display = select.value === 'Other' ? '' : 'none';
+    }
+  }
+
+  // Make toggleOtherInput globally accessible
+  (window as any).toggleOtherInput = toggleOtherInput;
+
+  // Add form submit event listener
+  document.addEventListener('DOMContentLoaded', () => {
+    console.log('DOM loaded, setting up form event listener');
+    const form = document.getElementById('post-purchase-form');
+    if (form) {
+      form.addEventListener('submit', handleFormSubmit);
+      console.log('Form event listener added');
+    } else {
+      console.error('Form not found');
+    }
+  });
+
   if (sessionId) {
+    console.log('Session ID found:', sessionId);
     const fetchOrderId = (retryCount = 0) => {
+      console.log('Fetching order ID, attempt:', retryCount + 1);
       fetch(`${apiUrl}/api/order/orderIdFromSessionId/${sessionId}`)
         .then(response => {
           if (!response.ok) {
@@ -81,6 +354,7 @@ section {
               setTimeout(() => fetchOrderId(retryCount + 1), retryDelay);
             } else {
               console.error(`Failed to fetch order ID. Status: ${response.status}`);
+              // hideForm(); // This line is removed as per the edit hint
             }
             return null;
           }
@@ -88,15 +362,25 @@ section {
         })
         .then(data => {
           if (data && data.order_id) {
+            orderId = data.order_id;
+            console.log('Order ID fetched:', orderId);
             const orderIFElem = document.getElementById('order-id');
-            orderIFElem.innerHTML = `Your order ID is <b><u>${data.order_id}</u></b>`;
+            orderIFElem.innerHTML = `Your order ID is <b><u>${orderId}</u></b>`;
+            checkFormAvailable(orderId);
           } else if (data) {
             console.error('Order not found');
+            // hideForm(); // This line is removed as per the edit hint
           }
         })
-        .catch(error => console.error('Error fetching order ID:', error));
+        .catch(error => {
+          console.error('Error fetching order ID:', error);
+          // hideForm(); // This line is removed as per the edit hint
+        });
     };
-
     fetchOrderId();
+  } else {
+    console.log('No session ID found');
+    // If no sessionId, hide the form by default
+    // hideForm(); // This line is removed as per the edit hint
   }
-  </script>
+</script>
