@@ -1,6 +1,7 @@
 ---
 import '~/styles/global.css';
 import Layout from "~/layouts/Layout.astro";
+import StockSubscribe from '~/components/StockSubscribe.astro';
 
 import logoImg from '~/assets/logo.svg';
 import arrowRightImg from '~/assets/icons/arrow.right.svg';
@@ -34,7 +35,12 @@ import arrowRightImg from '~/assets/icons/arrow.right.svg';
         </div>
       </div>
     </div>
+    <!-- <hr /> -->
     <a href="" id="checkout-link" class="chechout-button" target="_self">Proceed to checkout <img height="10px" src={arrowRightImg.src} alt="arrow right" /></a>
+    <br/>
+   <div id="stock-notify-form" class="content hidden">
+     <StockSubscribe />
+   </div>
   </section>
 </Layout>
 
@@ -192,7 +198,12 @@ async function getStockStatus() {
         break;
       case 'out of stock':
         shippingStatus.classList.add('out-of-stock');
-        shippingLeadtime.innerHTML = 'Lead time: 3-4 weeks';
+        shippingLeadtime.innerHTML = 'Lead time: 1. August';
+
+        const notifyForm = document.getElementById('stock-notify-form');
+        if (notifyForm) {
+          notifyForm.classList.remove('hidden');
+        }
         break;
       case 'low stock':
         shippingStatus.classList.add('low-stock');

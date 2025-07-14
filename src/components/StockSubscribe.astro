@@ -1,0 +1,148 @@
+---
+const { ...rest } = Astro.props;
+
+import "~/styles/global.css";
+---
+
+<div id="mc_embed_shell" {...rest}>
+  <style>
+    #mc_embed_signup {
+      clear: left;
+      font: 14px Helvetica, Arial, sans-serif;
+      width: 100%;
+      max-width: 600px;
+      box-sizing: border-box;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input[type="email"] {
+      width: 100%;
+      max-width: 100%;
+    }
+
+    .note {
+      font-style: italic;
+      margin-bottom: 1em;
+    }
+
+    .optional-message {
+      margin-top: 1em;
+      font-size: 14px;
+      line-height: 1.4;
+    }
+
+    .input-small, .input-small {
+    padding: 4px 10px !important;
+}
+    button, input[type="submit"] {
+	border: 1px solid black;
+	background-color: #EAE7DE;
+    color: black;
+	border-radius: 3px;
+	padding: 8px 15px;
+	font-size: 16px;
+	cursor: pointer;
+
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 2px;
+
+    transition: all ease-in-out 0.2s;
+}
+button:hover, input[type="submit"]:hover {
+    opacity: 0.85;
+}
+input[type="text"], input[type="email"], input[type="password"] {
+    border: 1px solid #857852;
+    border-radius: 3px;
+    padding: 8px 10px;
+    font-size: 16px;
+    background-color: #F4F2ED;
+    color: black;
+}
+  </style>
+
+  <div id="mc_embed_signup">
+    <p class="note">Get notified when MONKEY is back in stock</p>
+
+    <form
+      action="https://wavyindustries.us16.list-manage.com/subscribe/post?u=bb7820faa1731474446659e64&amp;id=c034f9210c&amp;f_id=00f2c2e1f0"
+      method="post"
+      id="mc-embedded-subscribe-form"
+      name="mc-embedded-subscribe-form"
+      class="validate"
+      target="_blank"
+    >
+          <input
+            type="email"
+            name="EMAIL"
+            class="required email"
+            id="mce-EMAIL"
+            placeholder="Enter email address.."
+            required
+          />
+
+
+        <div hidden>
+          <input type="hidden" name="tags" value="63" />
+        </div>
+
+        <div id="mce-responses" class="clear foot">
+          <div class="response" id="mce-error-response" style="display: none;"></div>
+          <div class="response" id="mce-success-response" style="display: none;"></div>
+        </div>
+
+        <div
+          aria-hidden="true"
+          style="position: absolute; left: -5000px;"
+        >
+          <input
+            type="text"
+            name="b_bb7820faa1731474446659e64_c034f9210c"
+            tabindex="-1"
+            value=""
+          />
+        </div>
+
+
+
+        <input
+          type="submit"
+          name="subscribe"
+          id="mc-embedded-subscribe"
+          class="button input-small"
+          value="Notify Me"
+        />
+
+    </form>
+  </div>
+</div>
+
+<script type="text/javascript">
+  function loadMailchimpScript() {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    script.src = "//s3.amazonaws.com/downloads.mailchimp.com/js/mc-validate.js";
+    document.head.appendChild(script);
+
+    script.onload = function () {
+      (function ($) {
+        window.fnames = new Array();
+        window.ftypes = new Array();
+        fnames[0] = "EMAIL";
+        ftypes[0] = "email";
+      })(jQuery);
+      var $mcj = jQuery.noConflict(true);
+    };
+  }
+
+  window.addEventListener("load", function () {
+    setTimeout(loadMailchimpScript, 100);
+  });
+</script>
