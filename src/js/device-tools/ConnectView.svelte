@@ -8,7 +8,9 @@
     import { routes } from '~/routes';
     import DeviceBluetoothBrowsers from '../components/DeviceBluetoothBrowsers.svelte';
     
-    const BT_MIDI_SERVICE_UUID = '03B80E5A-EDE8-4B33-A751-6CE34EC4C700'.toLowerCase();
+    // The device advertises the MIDI service, so we use that for discovery
+    // Both SMP and MIDI services are treated equally once connected
+    const BT_MIDI_SERVICE_UUID = '03b80e5a-ede8-4b33-a751-6ce34ec4c700';
     const filters = [{ namePrefix: 'WAVY MONKEY', services: [BT_MIDI_SERVICE_UUID] }];
   
     let isBluetoothAvailable = $state(false);

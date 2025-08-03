@@ -69,8 +69,54 @@ export class MCUManager {
     private readonly SMP_HEADER_SEQ_IDX: number = 6;
     private readonly SMP_HEADER_ID_IDX: number = 7;
 
+    // SMP service and characteristic UUIDs
+    private readonly SMP_SERVICE_UUID = '8d53dc1d-1db7-4cd3-868b-8a527460aa84';
+    private readonly SMP_CHARACTERISTIC_UUID = 'da2e7828-fbce-4e01-ae9e-261174997c48';
+    private smpCharacteristic: BluetoothRemoteGATTCharacteristic | null = null;
+    private smpInitialized: boolean = false;
+    private smpInitPromise: Promise<void> | null = null;
+
     constructor(private bluetoothManager: BluetoothManager) {
-        this.bluetoothManager.onDataReceived(this._processMessage.bind(this));
+        // Initialize SMP characteristic when connected
+        this.bluetoothManager.onConnect(() => {
+            this._initializeSMP();
+        });
+    }
+
+    private async _initializeSMP(): Promise<void> {
+        if (this.smpInitPromise) {
+            return this.smpInitPromise;
+        }
+
+        this.smpInitPromise = this._doInitializeSMP();
+        return this.smpInitPromise;
+    }
+
+    private async _doInitializeSMP(): Promise<void> {
+        try {
+            console.log('Initializing SMP characteristic...');
+            
+            this.smpCharacteristic = await this.bluetoothManager.getCharacteristic(
+                this.SMP_SERVICE_UUID, 
+                this.SMP_CHARACTERISTIC_UUID
+            );
+
+            if (!this.smpCharacteristic) {
+                console.error('Failed to get SMP characteristic');
+                return;
+            }
+
+            // Start notifications for SMP messages
+            await this.smpCharacteristic.startNotifications();
+            
+            // Add event listener for SMP messages
+            this.smpCharacteristic.addEventListener('characteristicvaluechanged', this._handleSMPMessage.bind(this));
+            
+            this.smpInitialized = true;
+            console.log('SMP characteristic initialized successfully');
+        } catch (error) {
+            console.error('Failed to initialize SMP characteristic:', error);
+        }
     }
 
     public get maxPayloadSize(): number {
@@ -92,6 +138,11 @@ export class MCUManager {
     }
 
     public async sendMessage(op: number, group: number, id: number, payload: Uint8Array = new Uint8Array([])): Promise<Object> {
+        // Wait for SMP initialization to complete
+        if (!this.smpInitialized) {
+            await this._initializeSMP();
+        }
+
         const sequenceNumber = this.smpSequenceNumber;
         this.smpSequenceNumber = (this.smpSequenceNumber + 1) % 256;
         const flags = 0;
@@ -102,15 +153,26 @@ export class MCUManager {
             this.responseResolvers[sequenceNumber] = { resolve, reject };
 
             try {
-                await this.bluetoothManager.sendMessage(message);
+                if (!this.smpCharacteristic) {
+                    throw new Error('SMP characteristic not available');
+                }
+                await this.smpCharacteristic.writeValueWithoutResponse(message);
             } catch (error) {
-                log.debug(`Failed to send bluetooth characteristic message: ${error}`);
+                log.debug(`Failed to send SMP message: ${error}`);
                 delete this.responseResolvers[sequenceNumber];
                 reject(error);
             }
 
             // The promise will be resolved when the response arrives in the notification handler
         });
+    }
+
+    private async _handleSMPMessage(event: Event): Promise<void> {
+        const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
+        const value = new Uint8Array(characteristic.value!.buffer);
+        
+        console.log('SMP message received:', value);
+        await this._processMessage(value);
     }
 
     private async _processMessage(message: Uint8Array): Promise<void> {

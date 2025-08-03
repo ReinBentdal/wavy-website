@@ -10,10 +10,20 @@ type ConnectionState =
   | { type: 'disconnecting' }
   | { type: 'connectionLoss' };
 
+/**
+ * BluetoothManager - Handles multiple Bluetooth services equally
+ * 
+ * This manager treats all services at the same level. No service is "primary".
+ * All services (SMP, MIDI, etc.) are treated equally and can be accessed.
+ * 
+ * Architecture:
+ * - Connects to device using any available service
+ * - Automatically discovers and makes available all services
+ * - Each service can have its own manager (SMP, MIDI, etc.)
+ * - All services work simultaneously without hierarchy
+ */
 export class BluetoothManager {
     private device: BluetoothDevice | null = null;
-    private service: BluetoothRemoteGATTService | null = null;
-    private characteristic: BluetoothRemoteGATTCharacteristic | null = null;
     private mtu: number = 250; // Adjust if necessary
     private buffer: Uint8Array = new Uint8Array([]);
 
@@ -26,6 +36,8 @@ export class BluetoothManager {
     private _onConnectionLoss = new Set<() => void>();
     private _onConnectionReestablished = new Set<() => void>();
     private _onDataReceived = new Set<(data: Uint8Array) => void>();
+    private _onDeviceSelection = new Set<() => void>();
+    private _onDeviceSelectionCancel = new Set<() => void>();
 
     // Event trigger methods
     public onConnect(callback: () => void) {
@@ -52,15 +64,49 @@ export class BluetoothManager {
         this._onDataReceived.add(callback);
     }
 
-    constructor(
-        private readonly serviceUUID: string,
-        private readonly characteristicUUID: string,
-        private readonly headerSize: number = 8
-    ) {}
+    public onDeviceSelection(callback: () => void) {
+        this._onDeviceSelection.add(callback);
+    }
+
+    public onDeviceSelectionCancel(callback: () => void) {
+        this._onDeviceSelectionCancel.add(callback);
+    }
+
+    constructor() {}
+
+    // Get the connected device for other services to use
+    public get connectedDevice(): BluetoothDevice | null {
+        return this.device;
+    }
+
+    // Get the GATT server for other services to use
+    public get gattServer(): BluetoothRemoteGATTServer | null {
+        return this.device?.gatt || null;
+    }
+
+    // Method to get characteristics from any service - all services are equal
+    public async getCharacteristic(serviceUUID: string, characteristicUUID: string): Promise<BluetoothRemoteGATTCharacteristic | null> {
+        if (!this.device || !this.device.gatt) {
+            console.error('No device connected');
+            return null;
+        }
+
+        try {
+            const service = await this.device.gatt.getPrimaryService(serviceUUID);
+            const characteristic = await service.getCharacteristic(characteristicUUID);
+            return characteristic;
+        } catch (error) {
+            console.error(`Failed to get characteristic ${characteristicUUID} from service ${serviceUUID}:`, error);
+            return null;
+        }
+    }
 
     private async _requestDevice(filters?: BluetoothLEScanFilter[]): Promise<BluetoothDevice> {
         const params = {
-            optionalServices: [this.serviceUUID]
+            optionalServices: [
+                '03b80e5a-ede8-4b33-a751-6ce34ec4c700', // MIDI service
+                '8d53dc1d-1db7-4cd3-868b-8a527460aa84'  // SMP service
+            ]
         } as RequestDeviceOptions;
 
         if (filters) {
@@ -70,7 +116,7 @@ export class BluetoothManager {
         }
 
         // Invoke the device selection start callback
-        // this.onDeviceSelection?.();
+        this._onDeviceSelection.forEach(callback => callback());
 
         return navigator.bluetooth.requestDevice(params);
     }
@@ -99,7 +145,7 @@ export class BluetoothManager {
                 // User canceled the device selection
                 console.debug('Device selection canceled.');
                 this.state = { type: 'disconnected' };
-                // this.onDeviceSelectionCancel?.();
+                this._onDeviceSelectionCancel.forEach(callback => callback());
             } else {
                 console.error('Connection error:', error);
                 await this._handleDisconnected();
@@ -115,14 +161,10 @@ export class BluetoothManager {
 
         try {
             const server = await this.device.gatt!.connect();
-            console.debug('Server connected. Awaiting service...');
+            console.debug('Server connected. All services are available.');
 
-            this.service = await server.getPrimaryService(this.serviceUUID);
-            console.debug('Service connected.');
-
-            this.characteristic = await this.service.getCharacteristic(this.characteristicUUID);
-            this.characteristic.addEventListener('characteristicvaluechanged', this._notification.bind(this));
-            await this.characteristic.startNotifications();
+            // No primary service concept - all services are equal
+            // Services will be accessed as needed by their respective managers
 
             if (this.state.type === 'connecting' || this.state.type === 'connectionLoss') {
                 if (this.state.type === 'connectionLoss') {
@@ -184,8 +226,6 @@ export class BluetoothManager {
 
         // Clean up resources
         this.device = null;
-        this.service = null;
-        this.characteristic = null;
     }
 
     public get name(): string | undefined {
@@ -194,18 +234,10 @@ export class BluetoothManager {
 
     public get maxPayloadSize(): number {
         const MTU_OVERHEAD = 3; // ATT MTU overhead
-        return this.mtu - MTU_OVERHEAD - this.headerSize;
+        return this.mtu - MTU_OVERHEAD - 8; // Default header size of 8
     }
 
-    public async sendMessage(message: Uint8Array): Promise<void> {
-        if (!this.characteristic) {
-            log.debug('Characteristic not available');
-            throw new Error('Characteristic not available');
-        }
-        await this.characteristic.writeValueWithoutResponse(message);
-    }
-
-    // Data received from the device
+    // Data received from the device - this is mainly for SMP messages
     private async _notification(event: Event): Promise<void> {
         const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
         log.debug('Notification received');
@@ -214,9 +246,9 @@ export class BluetoothManager {
         this.buffer = new Uint8Array([...this.buffer, ...value]);
 
         // Process all complete messages in the buffer
-        while (this.buffer.length >= this.headerSize) {
+        while (this.buffer.length >= 8) { // Default header size
             const length = (this.buffer[2] << 8) | this.buffer[3];
-            const totalLength = this.headerSize + length;
+            const totalLength = 8 + length;
             if (this.buffer.length >= totalLength) {
                 const message = this.buffer.slice(0, totalLength);
                 log.debug('Processing message');

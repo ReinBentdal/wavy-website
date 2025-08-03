@@ -1,4 +1,7 @@
-# 1.1.94[06. May 2026] -dev
+# 1.1.95[03. Aug 2025] -dev -obsolete
+- Prevent user from being able to select a drum bank which does not have any drums
+
+# 1.1.94[06. May 2025] -dev
 - New UNDO checkpoint when DRM is enabled/disabled
 - Reduce risk of muting channel when wanting to change channel
 

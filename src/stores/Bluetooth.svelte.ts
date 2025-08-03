@@ -1,10 +1,9 @@
 // bluetoothManager.svelte.js
 import { BluetoothManager } from '../js/bluetoothManager';
 
-export const bluetoothManager = new BluetoothManager(
-  '8d53dc1d-1db7-4cd3-868b-8a527460aa84', // MIDI service UUID
-  'da2e7828-fbce-4e01-ae9e-261174997c48'  // MIDI characteristic UUID
-);
+// Create BluetoothManager - no primary service concept
+// All services (SMP, MIDI) are treated equally
+export const bluetoothManager = new BluetoothManager();
 
 // Reactive state object
 export const bluetoothState = $state({

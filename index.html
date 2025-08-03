@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <title>Bluetooth MIDI Tester</title>
+  <style>
+    body {
+      font-family: sans-serif;
+      margin: 20px;
+    }
+
+    body.test-completed {
+    background-color: #8f8;
+    transition: background-color 0.5s;
+  }
+
+    h1 {
+      font-size: 1.5em;
+    }
+
+    #controls {
+      margin-bottom: 20px;
+    }
+
+    button {
+      margin: 5px;
+      padding: 10px 15px;
+      font-size: 1em;
+    }
+
+    #status {
+      margin-top: 10px;
+      font-weight: bold;
+    }
+
+    #ccDisplay {
+      margin-top: 10px;
+      font-size: 1.2em;
+    }
+
+    /* CC display gets a green background when “passed” */
+    #ccValue.cc-active {
+      background-color: #8f8;
+      padding: 2px 4px;
+    }
+
+    #keybed {
+      margin-top: 20px;
+      display: flex;
+      flex-wrap: wrap;
+      max-width: 800px;
+      border: 2px solid #333;
+      padding: 10px;
+    }
+
+    .key {
+      border: 1px solid #555;
+      width: 40px;
+      height: 120px;
+      margin: 2px;
+      line-height: 120px;
+      text-align: center;
+      user-select: none;
+      transition: background-color 0.2s;
+      background-color: #eee;
+    }
+
+    /* “Passed” keys appear green; “failed” keys red. Once set, these classes persist until cleared. */
+    .key.active {
+      background-color: #8f8;
+    }
+
+    .key.failed {
+      background-color: #f88;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>Bluetooth MIDI Tester</h1>
+  <div id="controls">
+    <button id="connectBtn">Connect</button>
+    <button id="disconnectBtn" disabled>Disconnect</button>
+    <button id="clearBtn" disabled>Clear State</button>
+    <button id="octaveBtn" disabled>Change Octave</button>
+    <div id="status">Status: Disconnected</div>
+    <div id="ccDisplay">CC Modulation: <span id="ccValue">N/A</span></div>
+    <div>
+      <input type="checkbox" id="soundToggle" checked>
+      <label for="soundToggle">Enable Sound</label>
+    </div>
+  </div>
+  <div id="keybed">
+    <!-- Keys will be rendered here -->
+  </div>
+
+  <script>
+    // --- Global Variables ---
+    // Lowercase UUID strings are required.
+    const MIDI_SERVICE_UUID = '03b80e5a-ede8-4b33-a751-6ce34ec4c700';
+    const MIDI_CHARACTERISTIC_UUID = '7772e5db-3868-4112-a1a9-f2669d106bf3';
+
+    let bluetoothDevice = null;
+    let midiCharacteristic = null;
+    // Start with 3 octaves (3 x 12 = 36 keys) and starting note 41.
+    let currentOctaves = 3;
+    const startingNote = 41;
+
+    // Create a global AudioContext (initialized on first user interaction).
+    let audioCtx = null;
+    function getAudioContext() {
+      if (!audioCtx) {
+        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      }
+      return audioCtx;
+    }
+
+    function checkTestCompletion() {
+  // Check if first two octaves (41-65) are marked as passed
+  let firstTwoOctavesComplete = true;
+  for (let note = 41; note <= 65; note++) {
+    const keyEl = document.getElementById('key-' + note);
+    if (!keyEl || keyEl.dataset.tested !== 'passed') {
+      firstTwoOctavesComplete = false;
+      break;
+    }
+  }
+
+  // Check if at least one key above 65 is marked as passed
+  let higherKeyPassed = false;
+  for (let note = 66; note <= 77; note++) {
+    const keyEl = document.getElementById('key-' + note);
+    if (keyEl && keyEl.dataset.tested === 'passed') {
+      higherKeyPassed = true;
+      break;
+    }
+  }
+
+  // Check if CC modulation is active
+  const ccActive = ccValueSpan.classList.contains('cc-active');
+
+  // Update body background if all conditions are met
+  if (firstTwoOctavesComplete && higherKeyPassed && ccActive) {
+    document.body.classList.add('test-completed');
+  } else {
+    document.body.classList.remove('test-completed');
+  }
+}
+
+    // Play a small "tick" sound for valid activation.
+    function playTickSound() {
+      if (!soundEnabled) return;
+      const ctx = getAudioContext();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 400; // Hz
+      gainNode.gain.value = 0.2; // volume
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.05);
+    }
+
+    function playCCSound() {
+      if (!soundEnabled) return;
+      const ctx = getAudioContext();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 500; // Hz
+      gainNode.gain.value = 0.1; // volume
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.05);
+    }
+
+    function playFailSound() {
+      if (!soundEnabled) return;
+      const ctx = getAudioContext();
+      const oscillator = ctx.createOscillator();
+      const gainNode = ctx.createGain();
+      oscillator.type = 'sine';
+      oscillator.frequency.value = 200; // Hz
+      gainNode.gain.value = 0.2;
+      oscillator.connect(gainNode);
+      gainNode.connect(ctx.destination);
+      oscillator.start();
+      oscillator.stop(ctx.currentTime + 0.1);
+    }
+
+    // --- UI Elements ---
+    const connectBtn = document.getElementById('connectBtn');
+    const disconnectBtn = document.getElementById('disconnectBtn');
+    const clearBtn = document.getElementById('clearBtn');
+    const octaveBtn = document.getElementById('octaveBtn');
+    const statusDiv = document.getElementById('status');
+    const ccValueSpan = document.getElementById('ccValue');
+    const keybedDiv = document.getElementById('keybed');
+
+    // --- Functions to Render the Keybed ---
+    function renderKeybed() {
+      // Create keys for (currentOctaves * 12) keys.
+      keybedDiv.innerHTML = '';
+      const totalKeys = 12 * currentOctaves;
+      for (let i = 0; i < totalKeys; i++) {
+        const noteNumber = startingNote + i;
+        const keyDiv = document.createElement('div');
+        keyDiv.classList.add('key');
+        keyDiv.id = 'key-' + noteNumber;
+        // For keys after the 25th, prefix the note number with an "E".
+        keyDiv.textContent = (i < 25) ? noteNumber : 'E' + noteNumber;
+        // Remove any stored test state.
+        keyDiv.dataset.tested = "";
+        keyDiv.dataset.timestamp = "";
+        keybedDiv.appendChild(keyDiv);
+      }
+    }
+
+    // --- Functions to Mark Keys ---
+    // New behavior:
+    // - If a key is pressed and then pressed again within 1 second, mark it as failed (red)
+    //   and play the fail sound.
+    // - If a press happens after 1 second, "blink" the color off then reapply the "active" state,
+    //   playing a tick sound.
+    function markKeyActive(note) {
+      const keyEl = document.getElementById('key-' + note);
+      if (!keyEl) return;
+      const now = Date.now();
+      if (!keyEl.dataset.timestamp) {
+        // First press ever on this key – mark as passed (green)
+        keyEl.classList.add('active');
+        keyEl.dataset.tested = 'passed';
+        keyEl.dataset.timestamp = now;
+        playTickSound();
+      } else {
+        const prevTime = parseInt(keyEl.dataset.timestamp);
+        const diff = now - prevTime;
+        if (diff < 300) {
+          // Two presses within 1 second: mark the key as failed (red) and play the fail sound.
+          if (keyEl.dataset.tested !== 'failed') {
+            keyEl.classList.remove('active');
+            keyEl.classList.add('failed');
+            keyEl.dataset.tested = 'failed';
+            playFailSound();
+          }
+          // Update the timestamp for subsequent comparisons.
+          keyEl.dataset.timestamp = now;
+        } else {
+          // A new press after 1 second: blink the key off then reapply active.
+          keyEl.classList.remove('active');
+          keyEl.classList.remove('failed');
+          setTimeout(() => {
+            keyEl.classList.add('active');
+          }, 100);
+          keyEl.dataset.tested = 'passed';
+          keyEl.dataset.timestamp = now;
+          playTickSound();
+        }
+      }
+      checkTestCompletion();
+    }
+
+    // For this test, note-off events do not change the stored color.
+    function handleNoteOff(note) {
+      // No action taken on note off.
+    }
+
+    // --- Handle CC messages ---
+    function handleControlChange(controller, value) {
+      // Update the CC display.
+      ccValueSpan.textContent = `${value} (controller ${controller})`;
+      // If the value exceeds 50 and the display isn’t already marked, add the "cc-active" style.
+      if (value > 50 && !ccValueSpan.classList.contains('cc-active')) {
+        playCCSound();
+        ccValueSpan.classList.add('cc-active');
+      }
+      checkTestCompletion();
+    }
+
+    // --- MIDI Message Parsing ---
+    // This parser now ignores the first two timestamp bytes and the channel nibble.
+    // It expects messages that are at least 5 bytes long.
+    function onMIDIMessage(event) {
+      const data = new Uint8Array(event.target.value.buffer);
+      if (data.length < 5) {
+        console.warn("Received MIDI message too short:", data);
+        return;
+      }
+      // Bytes 0 and 1 are timestamp (ignored)
+      // Byte 2 is the status byte (ignoring channel via mask)
+      const status = data[2];
+      const type = status & 0xF0;
+      // Byte 3 is the note (or controller) value.
+      const noteOrController = data[3];
+      // Byte 4 is the velocity (or controller value).
+      const value = data[4];
+
+      if (type === 0x90) { // Note On
+        if (value === 0) {
+          // Note On with zero velocity is treated as Note Off.
+          handleNoteOff(noteOrController);
+        } else {
+          markKeyActive(noteOrController);
+        }
+      } else if (type === 0x80) { // Note Off
+        handleNoteOff(noteOrController);
+      } else if (type === 0xB0) { // Control Change
+        handleControlChange(noteOrController, value);
+      }
+    }
+
+    // --- Connection / Disconnection Functions ---
+    async function connectDevice() {
+      try {
+        statusDiv.textContent = 'Status: Requesting device...';
+        bluetoothDevice = await navigator.bluetooth.requestDevice({
+          filters: [{ name: 'WAVY MONKEY' }],
+          optionalServices: [MIDI_SERVICE_UUID]
+        });
+        bluetoothDevice.addEventListener('gattserverdisconnected', onDisconnected);
+
+        statusDiv.textContent = 'Status: Connecting to GATT server...';
+        const server = await bluetoothDevice.gatt.connect();
+
+        statusDiv.textContent = 'Status: Getting MIDI service...';
+        const service = await server.getPrimaryService(MIDI_SERVICE_UUID);
+
+        statusDiv.textContent = 'Status: Getting MIDI characteristic...';
+        midiCharacteristic = await service.getCharacteristic(MIDI_CHARACTERISTIC_UUID);
+
+        await midiCharacteristic.startNotifications();
+        midiCharacteristic.addEventListener('characteristicvaluechanged', onMIDIMessage);
+
+        statusDiv.textContent = 'Status: Connected to ' + bluetoothDevice.name;
+        disconnectBtn.disabled = false;
+        clearBtn.disabled = false;
+        octaveBtn.disabled = false;
+
+        // Render the keybed and clear any previous state.
+        renderKeybed();
+        clearState();
+      } catch (error) {
+        console.error('Connection failed!', error);
+        statusDiv.textContent = 'Status: Error connecting – ' + error;
+      }
+    }
+
+    function onDisconnected() {
+      statusDiv.textContent = 'Status: Disconnected';
+      disconnectBtn.disabled = true;
+      clearBtn.disabled = true;
+      octaveBtn.disabled = true;
+      clearState();
+      keybedDiv.innerHTML = '';
+    }
+
+    async function disconnectDevice() {
+      if (bluetoothDevice && bluetoothDevice.gatt.connected) {
+        bluetoothDevice.gatt.disconnect();
+      }
+      clearState();
+      keybedDiv.innerHTML = '';
+      statusDiv.textContent = 'Status: Disconnected';
+      disconnectBtn.disabled = true;
+      clearBtn.disabled = true;
+      octaveBtn.disabled = true;
+    }
+
+    // --- Other UI Functions ---
+    // Clear the stored test state on all keys and the CC display.
+    function clearState() {
+      // Clear each key's stored state.
+      const keys = document.getElementsByClassName('key');
+      for (let key of keys) {
+        key.classList.remove('active');
+        key.classList.remove('failed');
+        key.dataset.tested = "";
+        key.dataset.timestamp = "";
+      }
+      // Reset the CC display.
+      ccValueSpan.textContent = 'N/A';
+      ccValueSpan.classList.remove('cc-active');
+      checkTestCompletion();
+    }
+
+    // Change octave now toggles between 3 and 4 octaves.
+    function changeOctave() {
+      if (currentOctaves === 3) {
+        currentOctaves = 4;
+        statusDiv.textContent = 'Status: Octave changed – now 4 octaves displayed';
+      } else {
+        currentOctaves = 3;
+        statusDiv.textContent = 'Status: Octave changed – now 3 octaves displayed';
+      }
+      renderKeybed();
+      clearState();
+    }
+
+    // --- Event Listeners ---
+    connectBtn.addEventListener('click', connectDevice);
+    disconnectBtn.addEventListener('click', disconnectDevice);
+    clearBtn.addEventListener('click', clearState);
+    octaveBtn.addEventListener('click', changeOctave);
+
+    let soundEnabled = true;
+    const soundToggle = document.getElementById('soundToggle');
+    soundToggle.addEventListener('change', (e) => {
+      soundEnabled = e.target.checked;
+    });
+  </script>
+</body>
+
+</html>

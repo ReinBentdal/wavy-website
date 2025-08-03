@@ -1,9 +1,17 @@
 <script>
+    // Dev Mode Feature:
+    // - Type "enable dev mode" in the browser console to show the Device Tester tab
+    // - Type "disable dev mode" to hide it
+    // - Dev mode state persists in localStorage
+    // - The Device Tester allows testing Bluetooth MIDI functionality with the WAVY MONKEY device
+    
     import { bluetoothManager, bluetoothState } from '~/stores/Bluetooth.svelte';
     import ConnectionStatus from '~/js/components/ConnectionStatus.svelte';
     import DeviceUpdate from './DeviceUpdate.svelte';
     import DeviceSampleManager from './DeviceSampleManager.svelte';
+    import DeviceTester from './DeviceTester.svelte';
     import { imageState } from '~/stores/ImageManager.svelte';
+    import { devMode } from '~/stores/DevMode.svelte';
     import { onMount } from 'svelte';
     import { fade } from 'svelte/transition';
     import ActionStatus from '../components/ActionStatus.svelte';
@@ -11,7 +19,8 @@
 
     const View = {
         DeviceUpdate: 'DeviceUpdate',
-        SampleManager: 'SampleManager'
+        SampleManager: 'SampleManager',
+        DeviceTester: 'DeviceTester'
     };
 
     let currentView = $state(View.DeviceUpdate);
@@ -19,7 +28,13 @@
     // Update view based on URL hash
     function updateView() {
         const hash = window.location.hash.slice(1); // Remove the # symbol
-        currentView = hash === 'sample-manager' ? View.SampleManager : View.DeviceUpdate;
+        if (hash === 'sample-manager') {
+            currentView = View.SampleManager;
+        } else if (hash === 'device-tester' && $devMode) {
+            currentView = View.DeviceTester;
+        } else {
+            currentView = View.DeviceUpdate;
+        }
     }
 
     onMount(() => {
@@ -39,6 +54,9 @@
             <ConnectionStatus />
                 <span>v{imageState?.firmwareVersion?.versionString ?? '?.?.?'}</span>
             <ActionStatus />
+            {#if $devMode}
+                <span class="dev-indicator" title="Dev mode active - type 'disable dev mode' in console to disable">🔧</span>
+            {/if}
         </div>
         <div>
             <a href="#device-update" class={currentView === View.DeviceUpdate ? 'active' : ''}>Device Update</a>
@@ -51,6 +69,14 @@
             >
                 Sample Manager
             </a>
+            {#if $devMode}
+                <a 
+                    href="#device-tester" 
+                    class={currentView === View.DeviceTester ? 'active' : ''}
+                >
+                    Device Tester
+                </a>
+            {/if}
         </div>
     </nav>
 
@@ -61,6 +87,10 @@
     {:else if currentView === View.SampleManager}
         <div in:fade={{ duration: 200 }}>
             <DeviceSampleManager />
+        </div>
+    {:else if currentView === View.DeviceTester}
+        <div in:fade={{ duration: 200 }}>
+            <DeviceTester />
         </div>
     {/if}
 </div>
@@ -99,5 +129,11 @@
         opacity: 0.5;
         cursor: not-allowed;
         position: relative;
+    }
+
+    .dev-indicator {
+        font-size: 1.2em;
+        opacity: 0.7;
+        cursor: help;
     }
 </style>
