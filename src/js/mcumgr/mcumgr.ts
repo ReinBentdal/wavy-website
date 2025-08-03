@@ -4,7 +4,7 @@ import { assert, Log } from '../utilities';
 import CBOR from './cbor';
 import { BluetoothManager } from '../bluetoothManager';
 
-let log = new Log('mcumgr', Log.LEVEL_INFO);
+let log = new Log('mcumgr', Log.LEVEL_DEBUG);
 
 export const SMP_ERR_RC: { [code: number]: string } = {
     0: 'No error, OK.',
@@ -74,50 +74,68 @@ export class MCUManager {
     private readonly SMP_CHARACTERISTIC_UUID = 'da2e7828-fbce-4e01-ae9e-261174997c48';
     private smpCharacteristic: BluetoothRemoteGATTCharacteristic | null = null;
     private smpInitialized: boolean = false;
-    private smpInitPromise: Promise<void> | null = null;
     private smpBuffer: Uint8Array = new Uint8Array([]);
+    private smpInitPromise: Promise<void> | null = null;
+    private smpWritePromise: Promise<void> | null = null;
 
     constructor(private bluetoothManager: BluetoothManager) {
-        // Initialize SMP characteristic when connected
         this.bluetoothManager.onConnect(() => {
+            this.smpInitPromise = null;
+            this.smpInitialized = false;
             this._initializeSMP();
+        });
+        // Listen for reconnection events to re-initialize SMP
+        this.bluetoothManager.onConnectionReestablished(() => {
+            this.smpInitPromise = null;
+            this.smpInitialized = false;
+            this._initializeSMP(); // Re-initialize immediately
         });
     }
 
     private async _initializeSMP(): Promise<void> {
+
         if (this.smpInitPromise) {
+            console.log('SMP initialization already in progress, waiting...');
             return this.smpInitPromise;
         }
 
-        this.smpInitPromise = this._doInitializeSMP();
-        return this.smpInitPromise;
-    }
-
-    private async _doInitializeSMP(): Promise<void> {
-        try {
-            console.log('Initializing SMP characteristic...');
+        console.log('Starting SMP initialization...');
+        this.smpInitPromise = new Promise<void>(async (resolve, reject) => {
             
-            this.smpCharacteristic = await this.bluetoothManager.getCharacteristic(
-                this.SMP_SERVICE_UUID, 
-                this.SMP_CHARACTERISTIC_UUID
-            );
-
-            if (!this.smpCharacteristic) {
-                console.error('Failed to get SMP characteristic');
-                return;
+            try {
+                console.log('Initializing SMP characteristic...');
+                
+                this.smpCharacteristic = await this.bluetoothManager.getCharacteristic(
+                    this.SMP_SERVICE_UUID, 
+                    this.SMP_CHARACTERISTIC_UUID
+                );
+    
+                if (!this.smpCharacteristic) {
+                    console.error('Failed to get SMP characteristic');
+                    reject(new Error('Failed to get SMP characteristic'));
+                    return;
+                }
+    
+                // Start notifications for SMP messages
+                console.log('Starting SMP notifications...');
+                await this.smpCharacteristic.startNotifications();
+                
+                // Add event listener for SMP messages
+                this.smpCharacteristic.addEventListener('characteristicvaluechanged', this._handleSMPMessage.bind(this));
+                
+                this.smpInitialized = true;
+                console.log('SMP characteristic initialized successfully');
+                resolve();
+            } catch (error) {
+                console.error('Failed to initialize SMP characteristic:', error);
+                reject(error);
+            } finally {
+                console.log('SMP initialization promise completed, clearing reference');
+                this.smpInitPromise = null;
             }
+        });
 
-            // Start notifications for SMP messages
-            await this.smpCharacteristic.startNotifications();
-            
-            // Add event listener for SMP messages
-            this.smpCharacteristic.addEventListener('characteristicvaluechanged', this._handleSMPMessage.bind(this));
-            
-            this.smpInitialized = true;
-            console.log('SMP characteristic initialized successfully');
-        } catch (error) {
-            console.error('Failed to initialize SMP characteristic:', error);
-        }
+        return this.smpInitPromise;
     }
 
     public get maxPayloadSize(): number {
@@ -154,13 +172,41 @@ export class MCUManager {
             this.responseResolvers[sequenceNumber] = { resolve, reject };
 
             try {
+                // Wait for any ongoing write operation to complete
+                if (this.smpWritePromise) {
+                    console.log('Waiting for previous write operation to complete...');
+                    await this.smpWritePromise;
+                }
+
                 if (!this.smpCharacteristic) {
                     throw new Error('SMP characteristic not available');
                 }
-                await this.smpCharacteristic.writeValueWithoutResponse(message);
+
+                // Create a new write promise
+                this.smpWritePromise = this.smpCharacteristic.writeValueWithoutResponse(message);
+                await this.smpWritePromise;
+                this.smpWritePromise = null; // Clear after completion
+                
             } catch (error) {
                 log.debug(`Failed to send SMP message: ${error}`);
                 delete this.responseResolvers[sequenceNumber];
+                this.smpWritePromise = null; // Clear on error
+                
+                // If the characteristic is invalid, re-initialize and retry once
+                if (error.message.includes('no longer valid') || error.message.includes('Characteristic')) {
+                    console.log('SMP characteristic invalid, re-initializing...');
+                    this.smpInitialized = false;
+                    try {
+                        await this._initializeSMP();
+                        if (this.smpCharacteristic) {
+                            await this.smpCharacteristic.writeValueWithoutResponse(message);
+                            return; // Success, don't reject
+                        }
+                    } catch (retryError) {
+                        log.debug(`Retry failed: ${retryError}`);
+                    }
+                }
+                
                 reject(error);
             }
 
@@ -217,4 +263,5 @@ export class MCUManager {
             log.warning(`No resolver found for sequence number ${seq}`);
         }
     }
+
 }

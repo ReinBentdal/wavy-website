@@ -177,32 +177,30 @@
     // Initialize keybed on mount
     onMount(() => {
         renderKeybed();
+        
+        // Set up MIDI event handlers once on mount
+        midiManager.onNoteOn((note, velocity, channel) => {
+            markKeyActive(note);
+            console.log('Note On received:', note, 'velocity:', velocity, 'channel:', channel);
+            addPressedKey(note);
+        });
+
+        midiManager.onNoteOff((note, velocity, channel) => {
+            console.log('Note Off received:', note, 'velocity:', velocity, 'channel:', channel);
+            removePressedKey(note);
+        });
+
+        midiManager.onControlChange((controller, value, channel) => {
+            handleControlChange(controller, value);
+        });
     });
 
-    // Set up MIDI event handlers when MIDI is initialized
+    // Initialize MIDI when connected
     $effect(() => {
         if (bluetoothState.connectionState === 'connected') {
-            
-            // Initialize MIDI manager
             midiManager.initialize().then(success => {
                 if (success) {
-                    
-                    // Set up high-level MIDI event handlers
-                    midiManager.onNoteOn((note, velocity, channel) => {
-                        markKeyActive(note);
-                        console.log('Note On received:', note, 'velocity:', velocity, 'channel:', channel);
-                        addPressedKey(note);
-                    });
-
-                    midiManager.onNoteOff((note, velocity, channel) => {
-                        console.log('Note Off received:', note, 'velocity:', velocity, 'channel:', channel);
-                        removePressedKey(note);
-                    });
-
-                    midiManager.onControlChange((controller, value, channel) => {
-                        handleControlChange(controller, value);
-                    });
-
+                    console.log('MIDI manager initialized successfully');
                     renderKeybed();
                     clearState();
                 } else {

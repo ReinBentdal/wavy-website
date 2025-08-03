@@ -15,12 +15,22 @@ export class MIDIManager {
     private _onNoteOn = new Set<(note: number, velocity: number, channel: number) => void>();
     private _onNoteOff = new Set<(note: number, velocity: number, channel: number) => void>();
     private _onControlChange = new Set<(controller: number, value: number, channel: number) => void>();
+    private midiWritePromise: Promise<void> | null = null;
+    private midiInitPromise: Promise<void> | null = null;
 
     // Standard MIDI service and characteristic UUIDs
     private readonly MIDI_SERVICE_UUID = '03b80e5a-ede8-4b33-a751-6ce34ec4c700';
     private readonly MIDI_CHARACTERISTIC_UUID = '7772e5db-3868-4112-a1a9-f2669d106bf3';
 
-    constructor(private bluetoothManager: BluetoothManager) {}
+    constructor(private bluetoothManager: BluetoothManager) {
+        // Re-initialize when connection is re-established
+        this.bluetoothManager.onConnectionReestablished(() => {
+            console.log('Reconnection detected, re-initializing MIDI...');
+            this.characteristic = null;
+            this.midiInitPromise = null;
+            this.initialize(); // Re-initialize immediately
+        });
+    }
 
     // High-level event handlers
     public onMIDIMessage(callback: (data: Uint8Array) => void) {
@@ -41,39 +51,79 @@ export class MIDIManager {
 
     // Initialize MIDI characteristic and start listening
     public async initialize(): Promise<boolean> {
-        try {
-            console.log('Initializing MIDI manager...');
-            
-            this.characteristic = await this.bluetoothManager.getCharacteristic(
-                this.MIDI_SERVICE_UUID, 
-                this.MIDI_CHARACTERISTIC_UUID
-            );
+        if (this.midiInitPromise) {
+            console.log('MIDI initialization already in progress, waiting...');
+            await this.midiInitPromise;
+            return this.characteristic !== null;
+        }
 
-            if (!this.characteristic) {
-                console.error('Failed to get MIDI characteristic');
-                return false;
+        console.log('Starting MIDI initialization...');
+        this.midiInitPromise = new Promise<void>(async (resolve, reject) => {
+            try {
+                console.log('Initializing MIDI characteristic...');
+                
+                this.characteristic = await this.bluetoothManager.getCharacteristic(
+                    this.MIDI_SERVICE_UUID, 
+                    this.MIDI_CHARACTERISTIC_UUID
+                );
+
+                if (!this.characteristic) {
+                    console.error('Failed to get MIDI characteristic');
+                    reject(new Error('Failed to get MIDI characteristic'));
+                    return;
+                }
+
+                // Start notifications
+                console.log('Starting MIDI notifications...');
+                await this.characteristic.startNotifications();
+                
+                // Add event listener
+                this.characteristic.addEventListener('characteristicvaluechanged', this._handleMIDIMessage.bind(this));
+                
+                console.log('MIDI manager initialized successfully');
+                resolve();
+            } catch (error) {
+                console.error('Failed to initialize MIDI manager:', error);
+                reject(error);
+            } finally {
+                console.log('MIDI initialization promise completed, clearing reference');
+                this.midiInitPromise = null;
             }
+        });
 
-            // Start notifications
-            await this.characteristic.startNotifications();
-            
-            // Add event listener
-            this.characteristic.addEventListener('characteristicvaluechanged', this._handleMIDIMessage.bind(this));
-            
-            console.log('MIDI manager initialized successfully');
+        try {
+            await this.midiInitPromise;
             return true;
         } catch (error) {
-            console.error('Failed to initialize MIDI manager:', error);
             return false;
         }
     }
 
     // Send MIDI message
     public async sendMIDIMessage(message: Uint8Array): Promise<void> {
+        // Wait for initialization to complete
+        if (!this.characteristic) {
+            console.log('MIDI characteristic not available, waiting for initialization...');
+            const success = await this.initialize();
+            if (!success) {
+                throw new Error('Failed to initialize MIDI characteristic');
+            }
+        }
+
         if (!this.characteristic) {
             throw new Error('MIDI characteristic not available');
         }
-        await this.characteristic.writeValueWithoutResponse(message);
+
+        // Wait for any ongoing write operation to complete
+        if (this.midiWritePromise) {
+            console.log('Waiting for previous MIDI write operation to complete...');
+            await this.midiWritePromise;
+        }
+
+        // Create a new write promise
+        this.midiWritePromise = this.characteristic.writeValueWithoutResponse(message);
+        await this.midiWritePromise;
+        this.midiWritePromise = null; // Clear after completion
     }
 
     // High-level MIDI send methods
