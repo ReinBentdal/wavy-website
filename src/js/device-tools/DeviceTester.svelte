@@ -1,7 +1,7 @@
 <script>
     import { onMount } from 'svelte';
     import { bluetoothState, bluetoothManager } from '~/stores/Bluetooth.svelte';
-    import { midiManager } from '~/stores/midi.svelte';
+    import { midiManager, deviceTesterState, clearDeviceTesterState } from '~/stores/midi.svelte';
 
     // Both SMP and MIDI services work at the same level:
     // - SMP service: Used by DeviceUpdate, SampleManager, etc.
@@ -100,99 +100,16 @@
                 timestamp: null
             });
         }
+        // Also update the store
+        deviceTesterState.keys = keys;
     }
 
     // Initialize keys
     renderKeybed();
 
-    function markKeyActive(note) {
-        const keyIndex = keys.findIndex(k => k.id === note);
-        
-        if (keyIndex === -1) {
-            return;
-        }
-
-        const key = keys[keyIndex];
-        const now = Date.now();
-
-        if (!key.timestamp) {
-            // First press ever on this key
-            key.tested = 'passed';
-            key.timestamp = now;
-            playTickSound();
-        } else {
-            const diff = now - key.timestamp;
-            if (diff < 300) {
-                // Two presses within 300ms: mark as failed
-                if (key.tested !== 'failed') {
-                    key.tested = 'failed';
-                    playFailSound();
-                }
-                key.timestamp = now;
-            } else {
-                // New press after 300ms: blink and reapply active
-                key.tested = 'passed';
-                key.timestamp = now;
-                playTickSound();
-            }
-        }
-
-        checkTestCompletion();
-    }
-
-    function handleControlChange(controller, value) {
-        ccValue = `${value} (controller ${controller})`;
-        if (value > 50 && !ccActive) {
-            playCCSound();
-            ccActive = true;
-        }
-        checkTestCompletion();
-    }
-
-    function checkTestCompletion() {
-        // Check if first two octaves (41-65) are marked as passed
-        let firstTwoOctavesComplete = true;
-        for (let note = 41; note <= 65; note++) {
-            const key = keys.find(k => k.id === note);
-            if (!key || key.tested !== 'passed') {
-                firstTwoOctavesComplete = false;
-                break;
-            }
-        }
-
-        // Check if at least one key above 65 is marked as passed
-        let higherKeyPassed = false;
-        for (let note = 66; note <= 77; note++) {
-            const key = keys.find(k => k.id === note);
-            if (key && key.tested === 'passed') {
-                higherKeyPassed = true;
-                break;
-            }
-        }
-
-        // Check if CC modulation is active
-        testCompleted = firstTwoOctavesComplete && higherKeyPassed && ccActive;
-    }
-
     // Initialize keybed on mount
     onMount(() => {
         renderKeybed();
-        
-        // Set up MIDI event handlers once on mount
-        midiManager.onNoteOn((note, velocity, channel) => {
-            markKeyActive(note);
-            console.log('Note On received:', note, 'velocity:', velocity, 'channel:', channel);
-            addPressedKey(note);
-        });
-
-        midiManager.onNoteOff((note, velocity, channel) => {
-            console.log('Note Off received:', note, 'velocity:', velocity, 'channel:', channel);
-            removePressedKey(note);
-        });
-
-        midiManager.onControlChange((controller, value, channel) => {
-            handleControlChange(controller, value);
-        });
     });
 
     // Initialize MIDI when connected
@@ -202,26 +119,12 @@
                 if (success) {
                     console.log('MIDI manager initialized successfully');
                     renderKeybed();
-                    clearState();
+                    clearDeviceTesterState();
                 } else {
                     console.warn('Failed to initialize MIDI manager');
                 }
             });
         }
-    });
-
-    function clearState() {
-        keys.forEach(key => {
-            key.tested = '';
-            key.timestamp = null;
-        });
-        ccValue = 'N/A';
-        ccActive = false;
-        testCompleted = false;
-    }
-
-    onMount(() => {
-        renderKeybed();
     });
 
     // Helper functions for keyboard layout
@@ -265,8 +168,8 @@
     }
 
     function getCCValue() {
-        if (ccValue === 'N/A') return 0;
-        const value = parseInt(ccValue.split(' ')[0]);
+        if (deviceTesterState.ccValue === 'N/A') return 0;
+        const value = parseInt(deviceTesterState.ccValue.split(' ')[0]);
         return isNaN(value) ? 0 : value;
     }
 
@@ -275,12 +178,12 @@
     }
 
     function isKeyTested(note) {
-        const key = keys.find(k => k.id === note);
+        const key = deviceTesterState.keys.find(k => k.id === note);
         return key && key.tested === 'passed';
     }
 
     function isKeyFailed(note) {
-        const key = keys.find(k => k.id === note);
+        const key = deviceTesterState.keys.find(k => k.id === note);
         return key && key.tested === 'failed';
     }
 </script>
@@ -289,7 +192,7 @@
         <h2>Device Tester</h2>
         
         <div class="controls">
-            <button onclick={clearState} disabled={bluetoothState.connectionState !== 'connected'}>
+            <button onclick={clearDeviceTesterState} disabled={bluetoothState.connectionState !== 'connected'}>
                 Clear State
             </button>
             
@@ -306,11 +209,11 @@
                 <div class="cc-threshold-line"></div>
                 <div class="cc-threshold">Threshold: 50</div>
             </div>
-            <div class="cc-value">{ccValue}</div>
+            <div class="cc-value">{deviceTesterState.ccValue}</div>
         </div>
 
-        <div class="keyboard" class:test-completed={testCompleted}>
-            {#each keys.filter(k => k.id >= 41 && k.id <= 77).sort((a, b) => a.id - b.id) as key}
+        <div class="keyboard" class:test-completed={deviceTesterState.testCompleted}>
+            {#each deviceTesterState.keys.filter(k => k.id >= 41 && k.id <= 77).sort((a, b) => a.id - b.id) as key}
                 {#if key.display.startsWith('E')}
                     <!-- Extra keys with keyboard style -->
                     <div 
@@ -318,7 +221,7 @@
                         class:black-key={isBlackKey(key.id)}
                         class:tested={isKeyTested(key.id)}
                         class:failed={isKeyFailed(key.id)}
-                        class:pressed={momentaryPressedKeys.has(key.id)}
+                        class:pressed={deviceTesterState.momentaryPressedKeys.has(key.id)}
                         style="left: {getKeyPosition(key.id) * 30}px"
                     >
                         {key.display}
@@ -330,7 +233,7 @@
                         class:black-key={isBlackKey(key.id)}
                         class:tested={isKeyTested(key.id)}
                         class:failed={isKeyFailed(key.id)}
-                        class:pressed={momentaryPressedKeys.has(key.id)}
+                        class:pressed={deviceTesterState.momentaryPressedKeys.has(key.id)}
                         style="left: {getKeyPosition(key.id) * 30}px"
                     >
                         {key.display}
