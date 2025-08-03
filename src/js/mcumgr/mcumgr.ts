@@ -75,6 +75,7 @@ export class MCUManager {
     private smpCharacteristic: BluetoothRemoteGATTCharacteristic | null = null;
     private smpInitialized: boolean = false;
     private smpInitPromise: Promise<void> | null = null;
+    private smpBuffer: Uint8Array = new Uint8Array([]);
 
     constructor(private bluetoothManager: BluetoothManager) {
         // Initialize SMP characteristic when connected
@@ -172,13 +173,31 @@ export class MCUManager {
         const value = new Uint8Array(characteristic.value!.buffer);
         
         console.log('SMP message received:', value);
-        await this._processMessage(value);
+        
+        // Add to buffer and process complete messages
+        this.smpBuffer = new Uint8Array([...this.smpBuffer, ...value]);
+        
+        // Process all complete messages in the buffer
+        while (this.smpBuffer.length >= this.SMP_HEADER_SIZE) {
+            const length = (this.smpBuffer[2] << 8) | this.smpBuffer[3];
+            const totalLength = this.SMP_HEADER_SIZE + length;
+            
+            if (this.smpBuffer.length >= totalLength) {
+                const message = this.smpBuffer.slice(0, totalLength);
+                log.debug('Processing complete SMP message');
+                log.debug(message);
+                await this._processMessage(message);
+                this.smpBuffer = this.smpBuffer.slice(totalLength);
+            } else {
+                break;
+            }
+        }
     }
 
     private async _processMessage(message: Uint8Array): Promise<void> {
         const [op, flags, length_hi, length_lo, group_hi, group_lo, seq, id] = message.slice(0, this.SMP_HEADER_SIZE);
         const payload = message.slice(this.SMP_HEADER_SIZE);
-        log.debug("payload");
+        log.debug("SMP payload");
         log.debug(payload);
         
         let data;
@@ -186,7 +205,9 @@ export class MCUManager {
             data = CBOR.decode(payload.buffer);    
         } catch (error) {
             log.error('Error decoding CBOR:', error);
+            return;
         }
+        
         // Resolve the promise associated with this sequence number
         const resolver = this.responseResolvers[seq];
         if (resolver) {

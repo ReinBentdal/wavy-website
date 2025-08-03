@@ -25,7 +25,6 @@ type ConnectionState =
 export class BluetoothManager {
     private device: BluetoothDevice | null = null;
     private mtu: number = 250; // Adjust if necessary
-    private buffer: Uint8Array = new Uint8Array([]);
 
     // Connection state management
     private state: ConnectionState = { type: 'disconnected' };
@@ -235,29 +234,5 @@ export class BluetoothManager {
     public get maxPayloadSize(): number {
         const MTU_OVERHEAD = 3; // ATT MTU overhead
         return this.mtu - MTU_OVERHEAD - 8; // Default header size of 8
-    }
-
-    // Data received from the device - this is mainly for SMP messages
-    private async _notification(event: Event): Promise<void> {
-        const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
-        log.debug('Notification received');
-        log.debug(characteristic.value);
-        const value = new Uint8Array(characteristic.value!.buffer);
-        this.buffer = new Uint8Array([...this.buffer, ...value]);
-
-        // Process all complete messages in the buffer
-        while (this.buffer.length >= 8) { // Default header size
-            const length = (this.buffer[2] << 8) | this.buffer[3];
-            const totalLength = 8 + length;
-            if (this.buffer.length >= totalLength) {
-                const message = this.buffer.slice(0, totalLength);
-                log.debug('Processing message');
-                log.debug(message);
-                this._onDataReceived.forEach(callback => callback(message));
-                this.buffer = this.buffer.slice(totalLength);
-            } else {
-                break;
-            }
-        }
     }
 }
