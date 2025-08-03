@@ -21,6 +21,23 @@
     // Key states
     let keys = $state([]);
     let keyStates = $state({});
+    let momentaryPressedKeys = $state(new Set()); // Track currently pressed keys
+
+    // For reactive collections in Svelte runes, we need to trigger reactivity manually
+    function addPressedKey(note) {
+        momentaryPressedKeys.add(note);
+        // Trigger reactivity by reassigning
+        momentaryPressedKeys = new Set(momentaryPressedKeys);
+    }
+
+    function removePressedKey(note) {
+        momentaryPressedKeys.delete(note);
+        // Trigger reactivity by reassigning
+        momentaryPressedKeys = new Set(momentaryPressedKeys);
+    }
+
+    // Reactive statement to ensure Svelte detects set changes
+    let momentaryPressedKeysSize = $derived(momentaryPressedKeys.size);
 
     function getAudioContext() {
         if (!audioCtx) {
@@ -89,12 +106,9 @@
     renderKeybed();
 
     function markKeyActive(note) {
-        console.log('markKeyActive called with note:', note);
         const keyIndex = keys.findIndex(k => k.id === note);
-        console.log('keyIndex:', keyIndex, 'keys length:', keys.length);
         
         if (keyIndex === -1) {
-            console.log('Key not found for note:', note);
             return;
         }
 
@@ -103,7 +117,6 @@
 
         if (!key.timestamp) {
             // First press ever on this key
-            console.log('First press on key:', note);
             key.tested = 'passed';
             key.timestamp = now;
             playTickSound();
@@ -111,7 +124,6 @@
             const diff = now - key.timestamp;
             if (diff < 300) {
                 // Two presses within 300ms: mark as failed
-                console.log('Double press on key:', note);
                 if (key.tested !== 'failed') {
                     key.tested = 'failed';
                     playFailSound();
@@ -119,7 +131,6 @@
                 key.timestamp = now;
             } else {
                 // New press after 300ms: blink and reapply active
-                console.log('Re-press on key:', note);
                 key.tested = 'passed';
                 key.timestamp = now;
                 playTickSound();
@@ -171,27 +182,29 @@
     // Set up MIDI event handlers when MIDI is initialized
     $effect(() => {
         if (bluetoothState.connectionState === 'connected') {
-            console.log('Device connected, initializing MIDI...');
             
             // Initialize MIDI manager
             midiManager.initialize().then(success => {
                 if (success) {
-                    console.log('MIDI manager initialized successfully');
                     
                     // Set up high-level MIDI event handlers
                     midiManager.onNoteOn((note, velocity, channel) => {
-                        console.log('Note On received:', note, 'velocity:', velocity, 'channel:', channel);
                         markKeyActive(note);
+                        console.log('Note On received:', note, 'velocity:', velocity, 'channel:', channel);
+                        addPressedKey(note);
+                    });
+
+                    midiManager.onNoteOff((note, velocity, channel) => {
+                        console.log('Note Off received:', note, 'velocity:', velocity, 'channel:', channel);
+                        removePressedKey(note);
                     });
 
                     midiManager.onControlChange((controller, value, channel) => {
-                        console.log('Control Change received:', controller, 'value:', value, 'channel:', channel);
                         handleControlChange(controller, value);
                     });
 
                     renderKeybed();
                     clearState();
-                    console.log('MIDI event handlers set up');
                 } else {
                     console.warn('Failed to initialize MIDI manager');
                 }
@@ -209,19 +222,69 @@
         testCompleted = false;
     }
 
-    function changeOctave() {
-        if (currentOctaves === 3) {
-            currentOctaves = 4;
-        } else {
-            currentOctaves = 3;
-        }
-        renderKeybed();
-        clearState();
-    }
-
     onMount(() => {
         renderKeybed();
     });
+
+    // Helper functions for keyboard layout
+    function isBlackKey(note) {
+        // MIDI note 41 is F, so we need to map from F onwards
+        // F=41(white), F#=42(black), G=43(white), G#=44(black), A=45(white), A#=46(black), B=47(white), C=48(white), C#=49(black), D=50(white), D#=51(black), E=52(white)
+        const noteInOctave = (note - 41) % 12;
+        // Black keys are at positions 1, 3, 5, 8, 10 in the octave (0-based)
+        return [1, 3, 5, 8, 10].includes(noteInOctave);
+    }
+
+    function getKeyPosition(note) {
+        // MIDI note 41 is F, which should be a white key
+        // Let's map the notes properly starting from F (41)
+        const startNote = 41; // F
+        const relativeNote = note - startNote;
+        
+        // Each octave has 7 white keys, so we need to calculate position
+        const octave = Math.floor(relativeNote / 12);
+        const noteInOctave = relativeNote % 12;
+        
+        // Map each note in the octave to its position (F=0, F#=0.5, G=1, etc.)
+        // F=0, F#=1, G=2, G#=3, A=4, A#=5, B=6, C=7, C#=8, D=9, D#=10, E=11
+        const notePositions = {
+            0: 0,   // F (white key)
+            1: 0.5, // F# (black key)
+            2: 1,   // G (white key)
+            3: 1.5, // G# (black key)
+            4: 2,   // A (white key)
+            5: 2.5, // A# (black key)
+            6: 3,   // B (white key)
+            7: 4,   // C (white key) - new octave starts
+            8: 4.5, // C# (black key)
+            9: 5,   // D (white key)
+            10: 5.5, // D# (black key)
+            11: 6   // E (white key)
+        };
+        
+        const position = (octave * 7) + notePositions[noteInOctave];
+        return position;
+    }
+
+    function getCCValue() {
+        if (ccValue === 'N/A') return 0;
+        const value = parseInt(ccValue.split(' ')[0]);
+        return isNaN(value) ? 0 : value;
+    }
+
+    function getCCPercentage() {
+        return (getCCValue() / 127) * 100;
+    }
+
+    function isKeyTested(note) {
+        const key = keys.find(k => k.id === note);
+        return key && key.tested === 'passed';
+    }
+
+    function isKeyFailed(note) {
+        const key = keys.find(k => k.id === note);
+        return key && key.tested === 'failed';
+    }
 </script>
 
     <div class="device-tester">
@@ -231,13 +294,6 @@
             <button onclick={clearState} disabled={bluetoothState.connectionState !== 'connected'}>
                 Clear State
             </button>
-            <button onclick={changeOctave} disabled={bluetoothState.connectionState !== 'connected'}>
-                Change Octave
-            </button>
-            
-            <div class="cc-display">
-                CC Modulation: <span class:cc-active={ccActive}>{ccValue}</span>
-            </div>
             
             <div class="sound-toggle">
                 <input type="checkbox" bind:checked={soundEnabled} id="soundToggle">
@@ -245,15 +301,43 @@
             </div>
         </div>
 
-        <div class="keybed" class:test-completed={testCompleted}>
-            {#each keys as key}
-                <div 
-                    class="key" 
-                    class:active={key.tested === 'passed'} 
-                    class:failed={key.tested === 'failed'}
-                >
-                    {key.display}
-                </div>
+        <div class="cc-display">
+            <div class="cc-label">CC Modulation:</div>
+            <div class="cc-bar-container">
+                <div class="cc-bar" style="width: {getCCPercentage()}%"></div>
+                <div class="cc-threshold-line"></div>
+                <div class="cc-threshold">Threshold: 50</div>
+            </div>
+            <div class="cc-value">{ccValue}</div>
+        </div>
+
+        <div class="keyboard" class:test-completed={testCompleted}>
+            {#each keys.filter(k => k.id >= 41 && k.id <= 77).sort((a, b) => a.id - b.id) as key}
+                {#if key.display.startsWith('E')}
+                    <!-- Extra keys with keyboard style -->
+                    <div 
+                        class="key extra-key-style" 
+                        class:black-key={isBlackKey(key.id)}
+                        class:tested={isKeyTested(key.id)}
+                        class:failed={isKeyFailed(key.id)}
+                        class:pressed={momentaryPressedKeys.has(key.id)}
+                        style="left: {getKeyPosition(key.id) * 30}px"
+                    >
+                        {key.display}
+                    </div>
+                {:else}
+                    <!-- Main keyboard layout -->
+                    <div 
+                        class="key" 
+                        class:black-key={isBlackKey(key.id)}
+                        class:tested={isKeyTested(key.id)}
+                        class:failed={isKeyFailed(key.id)}
+                        class:pressed={momentaryPressedKeys.has(key.id)}
+                        style="left: {getKeyPosition(key.id) * 30}px"
+                    >
+                        {key.display}
+                    </div>
+                {/if}
             {/each}
         </div>
     </div>
@@ -271,11 +355,13 @@
     }
 
     .controls {
+        display: flex;
+        align-items: center;
+        gap: 20px;
         margin-bottom: 20px;
     }
 
     .controls button {
-        margin: 5px;
         padding: 10px 15px;
         font-size: 1em;
         background: #007bff;
@@ -294,59 +380,221 @@
         background: #0056b3;
     }
 
-    .status {
-        margin-top: 10px;
-        font-weight: bold;
+    .sound-toggle {
+        display: flex;
+        align-items: center;
+        gap: 8px;
     }
 
     .cc-display {
-        margin-top: 10px;
-        font-size: 1.2em;
+        margin-bottom: 20px;
     }
 
-    .cc-active {
-        background-color: #8f8;
-        padding: 2px 4px;
-        border-radius: 2px;
+    .cc-label {
+        font-weight: bold;
+        margin-bottom: 8px;
     }
 
-    .sound-toggle {
-        margin-top: 10px;
+    .cc-bar-container {
+        position: relative;
+        height: 20px;
+        background: #eee;
+        border-radius: 10px;
+        margin-bottom: 8px;
+        overflow: hidden;
     }
 
-    .keybed {
+    .cc-bar {
+        height: 100%;
+        background: #007bff;
+        width: 0%;
+    }
+
+    .cc-threshold-line {
+        position: absolute;
+        left: 39.4%; /* 50/127 * 100 = 39.4% */
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background: #ff4444;
+        z-index: 1;
+    }
+
+    .cc-threshold {
+        position: absolute;
+        right: 8px;
+        top: 50%;
+        transform: translateY(-50%);
+        font-size: 0.8em;
+        color: #666;
+    }
+
+    .cc-value {
+        font-size: 0.9em;
+        color: #666;
+    }
+
+    .keyboard {
+        position: relative;
+        height: 200px;
         margin-top: 20px;
-        display: flex;
-        flex-wrap: wrap;
-        max-width: 800px;
         border: 2px solid #333;
         padding: 10px;
         border-radius: 4px;
+        overflow: hidden;
     }
 
-    .keybed.test-completed {
+    .keyboard.test-completed {
         background-color: #8f8;
         transition: background-color 0.5s;
     }
 
+    .keyboard-row {
+        display: flex;
+        position: relative;
+        height: 60px;
+    }
+
     .key {
-        border: 1px solid #555;
-        width: 40px;
+        position: absolute;
+        width: 28px;
         height: 120px;
-        margin: 2px;
-        line-height: 120px;
-        text-align: center;
+        border: 1px solid #555;
+        background-color: #fff;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 8px;
+        font-size: 0.8em;
         user-select: none;
-        transition: background-color 0.2s;
-        background-color: #eee;
-        border-radius: 2px;
+        transition: all 0.2s ease;
+        border-radius: 2px 2px 4px 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        top: 0;
+    }
+
+    .key.black-key {
+        width: 18px;
+        height: 80px;
+        background-color: #333;
+        color: white;
+        z-index: 1;
+        border-radius: 0 0 2px 2px;
+        top: 0;
     }
 
     .key.active {
         background-color: #8f8;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .key.black-key.active {
+        background-color: #4CAF50;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .key.tested {
+        background-color: #8f8;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .key.black-key.tested {
+        background-color: #4CAF50;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
     }
 
     .key.failed {
         background-color: #f88;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .key.black-key.failed {
+        background-color: #F44336;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .key.pressed {
+        background-color: #2196F3;
+        color: white;
+        transform: translateY(4px);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .key.black-key.pressed {
+        background-color: #2196F3;
+        color: white;
+        transform: translateY(4px);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .key.extra-key-style {
+        width: 28px; /* Match main key width */
+        height: 120px; /* Match main key height */
+        border: 1px solid #555;
+        background-color: #fff;
+        display: flex;
+        align-items: flex-end;
+        justify-content: center;
+        padding-bottom: 8px;
+        font-size: 0.8em;
+        user-select: none;
+        transition: all 0.2s ease;
+        border-radius: 2px 2px 4px 4px;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        top: 0;
+    }
+
+    .key.extra-key-style.black-key {
+        width: 18px;
+        height: 80px;
+        background-color: #333;
+        color: white;
+        z-index: 1;
+        border-radius: 0 0 2px 2px;
+        top: 0;
+    }
+
+    .key.extra-key-style.tested {
+        background-color: #8f8;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .key.extra-key-style.black-key.tested {
+        background-color: #4CAF50;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .key.extra-key-style.failed {
+        background-color: #f88;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .key.extra-key-style.black-key.failed {
+        background-color: #F44336;
+        transform: translateY(2px);
+        box-shadow: 0 1px 2px rgba(0,0,0,0.2);
+    }
+
+    .key.extra-key-style.pressed {
+        background-color: #2196F3;
+        color: white;
+        transform: translateY(4px);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .key.extra-key-style.black-key.pressed {
+        background-color: #2196F3;
+        color: white;
+        transform: translateY(4px);
+        box-shadow: inset 0 2px 4px rgba(0,0,0,0.3);
     }
 </style> 
